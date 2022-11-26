@@ -11,7 +11,9 @@
     "react-scripts": "5.0.1",
     "web-vitals": "^2.1.4",
     "pokedex-promise-v2": "4.0.0",
-    "react-gauge-chart": "*"
+    "react-gauge-chart": "*", 
+    "reactjs-popup": "*",
+    "react-dropdown": "*"
   },
   "scripts": {
     "start": "react-scripts start",
