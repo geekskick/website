@@ -3,10 +3,12 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import { CaptureGuage } from './capture_gauge';
 import Pokedex from 'pokedex-promise-v2';
-import Popup from 'reactjs-popup';
 import Dropdown from 'react-dropdown';
 import 'reactjs-popup/dist/index.css';
 import 'react-dropdown/style.css';
+import { NotificationContainer, NotificationManager } from 'react-notifications';
+import 'react-notifications/lib/notifications.css';
+
 
 
 const P = new Pokedex();
@@ -19,7 +21,7 @@ class App extends React.Component {
             selected_mon: null,
             capture_rate: null,
             selected_generation: null,
-            possible_generations: this.props.generations
+            possible_generations: this.props.generations,
         }
     }
 
@@ -37,14 +39,12 @@ class App extends React.Component {
         }
         catch (error) {
             console.log("onSelect::error = ", error);
-            <Popup trigger={<button> Trigger</button>} position="right center">
-                <div>Popup content here !!</div>
-            </Popup>
+            NotificationManager.error("Unable to get the details of pokemon species " + mon.value);
             this.setState(
                 previous_state => ({
-                    selected_generation: previous_state.selected_generation,
+                    selected_generation: null,
                     possible_generations: previous_state.possible_generations,
-                    selected_mon: previous_state.selected_mon,
+                    selected_mon: null,
                     capture_rate: null
                 })
 
@@ -59,7 +59,7 @@ class App extends React.Component {
                 selected_generation: mon.value.name,
                 possible_generations: previous_state.possible_generations,
                 selected_mon: previous_state.selected_mon,
-                capture_rate: previous_state.capture_rate
+                capture_rate: previous_state.capture_rate,
             })
 
         );
@@ -67,10 +67,15 @@ class App extends React.Component {
 
     render() {
         console.log("App::render = ", this.state);
-        return (<div style={{ width: 250 }}>
-            <Dropdown
+
+
+        return (<div style={{
+            width: '50%'
+        }}>
+            <Dropdown 
                 options={this.props.names}
                 onChange={this.onSelectPokemon.bind(this)}
+                value={this.state.selected_mon}
                 placeholder="Select a Pokemon" />
             <CaptureGuage
                 mon={this.state.selected_mon}
@@ -79,38 +84,33 @@ class App extends React.Component {
                 onChange={this.onSelectGenerations.bind(this)}
                 value={this.state.selected_generation}
                 placeholder="Select a Generation" />
+            <NotificationContainer />
         </div>)
     }
 
 }
 
 async function getPokemonList(api) {
-    console.log("getPokemonList::api = ", api);
     const prom = await api.getPokemonsList({ limit: 1500 });
-    console.log("getPokemonList::promise = ", prom);
-    console.log("getPokemonList::prom = ", prom);
-    console.log("getPokemonList:: returning");
     return prom.results.map(p => p.name);
 }
 
 async function getGenerationsList(api) {
     const prom = await api.getGenerationsList();
-    console.log(prom);
     return prom.results.map(p => p.name);
 }
 
 // ========================================
 
+const root = ReactDOM.createRoot(document.getElementById("root"));
 (async () => {
     try {
         const names = await getPokemonList(P);
         const generations = await getGenerationsList(P);
-        console.log("names = ", names);
-        console.log("generations = ", generations);
-        const root = ReactDOM.createRoot(document.getElementById("root"));
         root.render(<App api={P} names={names} generations={generations} />);
     } catch (error) {
         console.log("Error = ", error);
-        throw error;
+        NotificationManager.error("Unable to get either the pokemon list, or the generation list. Try refreshing the page");
+        root.render(<NotificationContainer />);
     }
 })()
