@@ -12,15 +12,24 @@ export class CaptureGuage extends React.Component {
     }
 
     toPercentage(rate) {
-        const rc = rate / this.state.max_level;
-        console.log("Capture Rate " + rate + " as a percentage is " + rc);
-        return rc;
+        try {
+            const rc = rate / this.state.max_level;
+            console.log("Capture Rate " + rate + " as a percentage is " + rc);
+            return rc;
+        }
+        catch (error) {
+            this.props.onError(error);
+        }
     }
 
     fromPercentage(rate) {
-        const rc = parseInt(this.state.max_level * (rate / 100), 10);
-        console.log("Percentage " + rate + " as a rate is " + rc);
-        return rc;
+        try {
+            const rc = parseInt(this.state.max_level * (rate / 100), 10);
+            console.log("Percentage " + rate + " as a rate is " + rc);
+            return rc;
+        } catch (error) {
+            this.props.onError(error);
+        }
     }
 
     render() {
