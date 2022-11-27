@@ -33,15 +33,11 @@ export class CaptureGuage extends React.Component {
     }
 
     render() {
-        const chartStyle = {
-            height: 250,
-        }
         let gauge;
         console.log("rendering CaptureGuage");
 
         if (this.props.rate) {
             gauge = <GaugeChart
-                style={chartStyle}
                 nrOfLevels={this.state.max_level / 10}
                 percent={this.toPercentage(this.props.rate)}
                 formatTextValue={value => this.fromPercentage(value)}
@@ -53,7 +49,6 @@ export class CaptureGuage extends React.Component {
         }
         else {
             gauge = <GaugeChart
-                style={chartStyle}
                 nrOfLevels={this.state.max_level / 10}
                 animDelay={0}
                 percent={0.50}

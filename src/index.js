@@ -8,33 +8,10 @@ import 'reactjs-popup/dist/index.css';
 import 'react-dropdown/style.css';
 import { NotificationContainer, NotificationManager } from 'react-notifications';
 import 'react-notifications/lib/notifications.css';
-
+import { ErrorBoundary } from './error_boundary';
 
 const P = new Pokedex();
-class ErrorBoundary extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = { hasError: false };
-    }
 
-    static getDerivedStateFromError(error) {
-        // Update state so the next render will show the fallback UI.
-        return { hasError: true };
-    }
-
-    componentDidCatch(error, errorInfo) {
-        console.log("Error: " + error +"\n"+errorInfo);
-        this.props.onError(error, errorInfo);
-    }
-    render() {
-        if (this.state.hasError) {
-            // You can render any custom fallback UI
-            return <h1>Something went wrong.</h1>;
-        }
-
-        return this.props.children;
-    }
-}
 
 class App extends React.Component {
 
@@ -50,11 +27,11 @@ class App extends React.Component {
         }
     }
 
-    onGenericError(error, info){
+    onGenericError(error, info) {
         NotificationManager.error(error + info);
     }
 
-    onSelectBall(ball){
+    onSelectBall(ball) {
         console.log("onSelectBall::ball = " + ball);
         NotificationManager.info("Selected " + ball.value);
     }
@@ -70,7 +47,7 @@ class App extends React.Component {
                 possible_generations: previous_state.possible_generations,
                 selected_mon: mon.value,
                 capture_rate: prom.capture_rate,
-                capture_probability: this.calculateCaptureRate()
+                capture_probability: this.calculateCaptureRate(prom.generation.name)
             }));
         }
         catch (error) {
@@ -94,11 +71,11 @@ class App extends React.Component {
         NotificationManager.info("Selected " + mon.value);
         this.setState(
             previous_state => ({
-                selected_generation: mon.value.name,
+                selected_generation: mon.value,
                 possible_generations: previous_state.possible_generations,
                 selected_mon: previous_state.selected_mon,
                 capture_rate: previous_state.capture_rate,
-                capture_probability: this.calculateCaptureRate()
+                capture_probability: this.calculateCaptureRate(mon.value)
             })
 
         );
@@ -129,15 +106,19 @@ class App extends React.Component {
         return p0 + p1;
     }
 
-    calculateCaptureRate() {
+    calculateCaptureRate(generation_name) {
         try {
             const rate_calculators = {
-                "generation-i": this.calculateGenICaptureRate
+                "generation-i": this.calculateGenICaptureRate.bind(this)
             }
-            return rate_calculators[this.state.selected_generation];
+            console.log("Selected generation = " + generation_name);
+            const rc = rate_calculators[generation_name]();
+            console.log("Rate calculated as " + rc);
+            return rc;
         }
         catch (error) {
-            NotificationManager.error("Unable to calculate propability of catch: " + error);
+            console.log(error)
+            NotificationManager.error(generation_name + " is not a valid generation name", "Calculation Error");
         }
     }
 
@@ -146,31 +127,49 @@ class App extends React.Component {
         NotificationManager.error("Error in the capture gauge: " + error);
     }
 
+    onStatusChange(status) {
+        console.log("New status = " + status.value);
+    }
     render() {
         console.log("App::render = ", this);
         return (
             <div>
                 <ErrorBoundary onError={this.onGenericError.bind(this)}>
-                <Dropdown 
-                        options={["Pokeball","Greatball"]}
+                    <Dropdown
+                        className="ball-selector"
+                        options={["Pokeball", "Greatball"]}
                         onChange={this.onSelectBall.bind(this)}
                         value={this.state.selected_Ball}
-                        placeholder="Select a Ball Type" /> 
-                <Dropdown
-                    options={this.props.pokemon}
-                    onChange={this.onSelectPokemon.bind(this)}
-                    value={this.state.selected_mon}
-                    placeholder="Select a Pokemon" />
-                <CaptureGuage
-                    mon={this.state.selected_mon}
-                    rate={this.state.capture_rate}
-                    onError={this.onCaptureGaugeError.bind(this)} />
-                <Dropdown 
-                    options={this.props.generations}
-                    onChange={this.onSelectGenerations.bind(this)}
-                    value={this.state.selected_generation}
-                    placeholder="Select a Generation" />
-                <p>{this.state.capture_probability}</p>
+                        placeholder="Select a Ball Type" />
+                    <hr className="rule"/>
+                    <Dropdown
+                        classname="pokemon-selector"
+                        options={this.props.pokemon}
+                        onChange={this.onSelectPokemon.bind(this)}
+                        value={this.state.selected_mon}
+                        placeholder="Select a Pokemon" />
+                    <hr className="rule"/>
+                    <CaptureGuage
+                        classname="capture-gauge"
+                        mon={this.state.selected_mon}
+                        rate={this.state.capture_rate}
+                        onError={this.onCaptureGaugeError.bind(this)} />
+                    <hr className="rule"/>
+                    <Dropdown
+                        classname="generation-selector"
+                        options={this.props.generations}
+                        onChange={this.onSelectGenerations.bind(this)}
+                        value={this.state.selected_generation}
+                        placeholder="Select a Generation" />
+                    <hr className="rule"/>
+                    <Dropdown
+                        classname='status-selector'
+                        options={["none"]}
+                        onChange={this.onStatusChange.bind(this)}
+                        value={["none"]}
+                    />
+                    <hr className="rule"/>
+                    <h1 className="probability">{this.state.capture_probability}</h1>
                 </ErrorBoundary>
                 <NotificationContainer />
 

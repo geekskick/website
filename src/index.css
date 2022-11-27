@@ -1,51 +1,32 @@
-body {
-    font: 14px "Century Gothic", Futura, sans-serif;
-    margin: 20px;
+/*#capture-guage {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: #000;
+    z-index: 0;
+    width: 50%
+}
+*/
+
+
+.Dropdown {
+    background-color: #ff4444;
 }
 
-ol,
-ul {
-    padding-left: 30px;
+.ball-selector {
+    background-color: aquamarine;
 }
 
-.board-row:after {
-    clear: both;
-    content: "";
-    display: table;
+.capture-gauge{
+    background-color: aqua;
+}
+.rule{
+    background: lime;
+    height: 3px;
 }
 
-.status {
-    margin-bottom: 10px;
-}
-
-.square {
-    background: #fff;
-    border: 1px solid #999;
-    float: left;
-    font-size: 24px;
-    font-weight: bold;
-    line-height: 34px;
-    height: 34px;
-    margin-right: -1px;
-    margin-top: -1px;
-    padding: 0;
-    text-align: center;
-    width: 34px;
-}
-
-.square:focus {
-    outline: none;
-}
-
-.kbd-navigation .square:focus {
-    background: #ddd;
-}
-
-.game {
-    display: flex;
-    flex-direction: row;
-}
-
-.game-info {
-    margin-left: 20px;
+.probability{
+    color: #ff4444;
 }
