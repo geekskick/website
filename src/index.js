@@ -4,7 +4,6 @@ import './index.css';
 import { CaptureGuage } from './capture_gauge';
 import Pokedex from 'pokedex-promise-v2';
 import Dropdown from 'react-dropdown';
-import 'reactjs-popup/dist/index.css';
 import 'react-dropdown/style.css';
 import { NotificationContainer, NotificationManager } from 'react-notifications';
 import 'react-notifications/lib/notifications.css';
