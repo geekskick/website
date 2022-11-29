@@ -11,22 +11,21 @@
 */
 
 
-.Dropdown {
-    background-color: #ff4444;
-}
+
 
 .ball-selector {
     background-color: aquamarine;
 }
 
-.capture-gauge{
+.capture-gauge {
     background-color: aqua;
 }
-.rule{
+
+.rule {
     background: lime;
     height: 3px;
 }
 
-.probability{
+.probability {
     color: #ff4444;
 }
