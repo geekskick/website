@@ -1,0 +1,6 @@
+{
+    "balls":[
+        {"name": "pokeball",
+         "multiplier": 1}
+    ]
+}

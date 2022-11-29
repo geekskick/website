@@ -8,79 +8,57 @@ import 'react-dropdown/style.css';
 import { NotificationContainer, NotificationManager } from 'react-notifications';
 import 'react-notifications/lib/notifications.css';
 import { ErrorBoundary } from './error_boundary';
+import balls from './data/balls.json'
 
 const P = new Pokedex();
+const PAGE_SIZE = 20;
 
+function App(props) {
 
-class App extends React.Component {
+    const [selectedMon, setSelectedMon] = React.useState('');
+    const [captureRate, setCaptureRate] = React.useState(0.0);
+    const [selectedGeneration, setSelectedGeneration] = React.useState('');
+    const [possibleGenerations, setPossibleGenerations] = React.useState('');
+    const [captureProbability, setCaptureProbability] = React.useState(0.0);
+    const [selectedBall, setSelectedBall] = React.useState('');
 
-    constructor(props) {
-        super(props)
-        this.state = {
-            selected_mon: null,
-            capture_rate: null,
-            selected_generation: null,
-            possible_generations: this.props.generations,
-            capture_probability: null,
-            selected_ball: null
-        }
-    }
-
-    onGenericError(error, info) {
+    const onGenericError = (error, info) => {
         NotificationManager.error(error + info);
     }
 
-    onSelectBall(ball) {
-        console.log("onSelectBall::ball = " + ball);
-        NotificationManager.info("Selected " + ball.target.value);
+    const onSelectBall = (ball) => {
+        console.log(`onSelectBall::ball = ${ball}`);
+        NotificationManager.info(`Selected ${ball.target.value}`);
     }
 
-    async onSelectPokemon(mon) {
-        console.log("onSelect::mon = ", mon);
-        NotificationManager.info("Selected " + mon.target.value);
+    const onSelectPokemon = async (mon) => {
+        console.log(`onSelect::mon = ${mon}`);
+        NotificationManager.info(`Selected ${mon.target.value}`);
         try {
-            const prom = await this.props.api.getPokemonSpeciesByName(mon.target.value);
-            console.log("onSelect::prom = ", prom);
-            this.setState(previous_state => ({
-                selected_generation: prom.generation.name,
-                possible_generations: previous_state.possible_generations,
-                selected_mon: mon.target.value,
-                capture_rate: prom.capture_rate,
-                capture_probability: this.calculateCaptureRate(prom.generation.name)
-            }));
+            const prom = await props.api.getPokemonSpeciesByName(mon.target.value);
+            console.log(`onSelect::prom = ${prom}`);
+            setSelectedGeneration(prom.generation.name);
+            setCaptureRate(prom.capture_rate);
+            setCaptureProbability(calculateCaptureRate(prom.generation.name));
         }
         catch (error) {
             console.log("onSelect::error = ", error);
-            NotificationManager.error("Unable to get the details of pokemon species " + mon.value);
-            this.setState(
-                previous_state => ({
-                    selected_generation: null,
-                    possible_generations: previous_state.possible_generations,
-                    selected_mon: null,
-                    capture_rate: null,
-                    capture_probability: null
-                })
-
-            );
+            NotificationManager.error(`Unable to get the details of pokemon species ${mon.target.value}`);
+            setSelectedGeneration(null);
+            setSelectedMon(null);
+            setCaptureRate(null);
+            setCaptureProbability(null);
         }
     }
 
-    onSelectGenerations(mon) {
-        console.log("Selected = ", mon.target.value);
-        NotificationManager.info("Selected " + mon.target.value);
-        this.setState(
-            previous_state => ({
-                selected_generation: mon.target.value,
-                possible_generations: previous_state.possible_generations,
-                selected_mon: previous_state.selected_mon,
-                capture_rate: previous_state.capture_rate,
-                capture_probability: this.calculateCaptureRate(mon.target.value)
-            })
-
-        );
+    const onSelectGenerations = (mon) => {
+        console.log(`Selected = ${mon.target.value}`);
+        NotificationManager.info(`Selected ${mon.target.value}`);
+        setSelectedGeneration(mon.target.value);
+        setCaptureProbability(calculateCaptureRate(mon.target.value));
     }
 
-    calculateGenIF() {
+    const calculateGenIF = () => {
         const hp_max = 100;
         const hp_current = 50;
         // assume pokeball
@@ -88,7 +66,7 @@ class App extends React.Component {
         return (hp_max * 255 * 4) / (hp_current * ball);
     }
 
-    calculateGenICaptureRate() {
+    const calculateGenICaptureRate = () => {
         // https://bulbapedia.bulbagarden.net/wiki/Catch_rate
         // TODO: Get user status ailment
         const status_ailent = 0;
@@ -98,81 +76,87 @@ class App extends React.Component {
         const p0 = status_ailent / (ball_mod + 1);
 
         // TODO: Calculate this
-        const f = this.calculateGenIF();
-        console.log("GenIF() = " + f);
-        const p1 = ((this.state.capture_rate + 1) / (ball_mod + 1)) * ((f + 1) / 256);
-        console.log("p0 = " + p0 + ", p1 = " + p1);
+        const f = calculateGenIF();
+        console.log(`GenIF() = ${f}`);
+        const p1 = ((captureRate + 1) / (ball_mod + 1)) * ((f + 1) / 256);
+        console.log(`p0 = ${p0}, p1 = ${p1}`);
         return p0 + p1;
     }
 
-    calculateCaptureRate(generation_name) {
+    const calculateCaptureRate = (generation_name) => {
         try {
             const rate_calculators = {
-                "generation-i": this.calculateGenICaptureRate.bind(this)
+                "generation-i": calculateGenICaptureRate
             }
-            console.log("Selected generation = " + generation_name);
+            console.log(`Selected generation = ${generation_name}`);
             const rc = rate_calculators[generation_name]();
-            console.log("Rate calculated as " + rc);
+            console.log(`Rate calculated as ${rc}`);
             return rc;
         }
         catch (error) {
             console.log(error)
-            NotificationManager.error(generation_name + " is not a valid generation name", "Calculation Error");
+            NotificationManager.error(`${generation_name} is not a valid generation name`, "Calculation Error");
         }
     }
 
-    onCaptureGaugeError(error) {
+    const onCaptureGaugeError = (error) => {
         console.log(error);
-        NotificationManager.error("Error in the capture gauge: " + error);
+        NotificationManager.error(`Error in the capture gauge: ${error}`);
     }
 
-    onStatusChange(status) {
-        console.log("New status = " + status.value);
-    }
-    render() {
-        console.log("App::render = ", this);
-        return (
-            <div>
-                <ErrorBoundary onError={this.onGenericError.bind(this)}>
-                    <LabelledDropdown
-                        className="ball-selector"
-                        options={["Pokeball", "Greatball"]}
-                        onChange={this.onSelectBall.bind(this)}
-                        placeholder="Select a Ball Type" />
-                    <hr className="rule"/>
-                    <LabelledDropdown
-                        classname="pokemon-selector"
-                        options={this.props.pokemon}
-                        onChange={this.onSelectPokemon.bind(this)}
-                        placeholder="Select a Pokemon" />
-                    <hr className="rule"/>
-                    <CaptureGuage
-                        classname="capture-gauge"
-                        mon={this.state.selected_mon}
-                        rate={this.state.capture_rate}
-                        onError={this.onCaptureGaugeError.bind(this)} />
-                    <hr className="rule"/>
-                    <LabelledDropdown
-                        classname="generation-selector"
-                        options={this.props.generations}
-                        onChange={this.onSelectGenerations.bind(this)}
-                        placeholder="Select a Generation" />
-                    <hr className="rule"/>
-                    <LabelledDropdown
-                        classname='status-selector'
-                        options={["none"]}
-                        onChange={this.onStatusChange.bind(this)}
-                        value={["none"]}
-                    />
-                    <hr className="rule"/>
-                    <h1 className="probability">{this.state.capture_probability}</h1>
-                </ErrorBoundary>
-                <NotificationContainer />
-
-            </div>)
+    const onStatusChange = (status) => {
+        console.log(`New status = ${status}`);
     }
 
+    const hasSelectedAGeneration = selectedGeneration != '';
+    let selectedGenProp;
+    if (hasSelectedAGeneration) {
+        selectedGenProp = selectedGeneration;
+    }
+
+    return (
+        <div>
+            <ErrorBoundary onError={onGenericError}>
+                <LabelledDropdown
+                    className="ball-selector"
+                    options={["Pokeball", "Greatball"]}
+                    onChange={onSelectBall}
+                    placeholder="Select a Ball Type" />
+                <hr className="rule" />
+                <LabelledDropdown
+                    classname="pokemon-selector"
+                    options={props.pokemon_names}
+                    onChange={onSelectPokemon}
+                    placeholder="Select a Pokemon" />
+                <hr className="rule" />
+                <CaptureGuage
+                    classname="capture-gauge"
+                    mon={selectedMon}
+                    rate={captureRate}
+                    onError={onCaptureGaugeError} />
+                <hr className="rule" />
+                <LabelledDropdown
+                    classname="generation-selector"
+                    options={props.generations}
+                    onChange={onSelectGenerations}
+                    placeholder="Select a Generation"
+                />
+                <hr className="rule" />
+                <LabelledDropdown
+                    classname='status-selector'
+                    options={["none"]}
+                    onChange={onStatusChange}
+                    value={["none"]}
+                />
+                <hr className="rule" />
+                <h1 className="probability">{captureProbability}</h1>
+            </ErrorBoundary>
+            <NotificationContainer />
+
+        </div>)
 }
+
+
 
 function getRandomInt(max) {
     return Math.floor(Math.random() * max);
@@ -195,7 +179,7 @@ const root = ReactDOM.createRoot(document.getElementById("root"));
     try {
         const pokemon = await getPokemonList(P);
         const generations = await getGenerationsList(P);
-        root.render(<App api={P} pokemon={pokemon.map(p => p.name)} generations={generations} />);
+        root.render(<App api={P} pokemon_names={pokemon.map(p => p.name)} generations={generations} />);
     } catch (error) {
         console.log("Error = ", error);
         NotificationManager.error("Unable to get either the pokemon list, or the generation list. Try refreshing the page");
