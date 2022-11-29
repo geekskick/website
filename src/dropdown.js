@@ -1,13 +1,13 @@
 import Select from '@mui/material/Select'
-import MenuItem from '@mui/material/MenuItem'
 import FormControl from '@mui/material/FormControl'
 import InputLabel from '@mui/material/InputLabel'
+import MenuItem from '@mui/material/MenuItem'
 import React from 'react'
 
-export default function Dropdown(props) {
+export default function LabelledDropdown(props) {
     console.log(props)
-
     return (
+        <div>
         <FormControl fullWidth>
             <InputLabel id="demo-simple-select-label">{props.placeholder}</InputLabel>
             <Select
@@ -19,12 +19,11 @@ export default function Dropdown(props) {
                 onChange={props.onChange}
             >
             {
-                props.options.map(
-                    option => {
-                        return <MenuItem value={option}>{option}</MenuItem>
-                    })
+                props.options.map(option => {
+                    return <MenuItem value={option} key={option}>{option}</MenuItem>;
+                })
             }
-        
             </Select>
-        </FormControl>);
+            </FormControl>
+        </div>);
 }

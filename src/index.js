@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import { CaptureGuage } from './capture_gauge';
 import Pokedex from 'pokedex-promise-v2';
-import Dropdown from './dropdown';
+import LabelledDropdown from './dropdown';
 import 'react-dropdown/style.css';
 import { NotificationContainer, NotificationManager } from 'react-notifications';
 import 'react-notifications/lib/notifications.css';
@@ -32,19 +32,19 @@ class App extends React.Component {
 
     onSelectBall(ball) {
         console.log("onSelectBall::ball = " + ball);
-        NotificationManager.info("Selected " + ball.value);
+        NotificationManager.info("Selected " + ball.target.value);
     }
 
     async onSelectPokemon(mon) {
         console.log("onSelect::mon = ", mon);
-        NotificationManager.info("Selected " + mon.value);
+        NotificationManager.info("Selected " + mon.target.value);
         try {
-            const prom = await this.props.api.getPokemonSpeciesByName(mon.value);
+            const prom = await this.props.api.getPokemonSpeciesByName(mon.target.value);
             console.log("onSelect::prom = ", prom);
             this.setState(previous_state => ({
                 selected_generation: prom.generation.name,
                 possible_generations: previous_state.possible_generations,
-                selected_mon: mon.value,
+                selected_mon: mon.target.value,
                 capture_rate: prom.capture_rate,
                 capture_probability: this.calculateCaptureRate(prom.generation.name)
             }));
@@ -66,15 +66,15 @@ class App extends React.Component {
     }
 
     onSelectGenerations(mon) {
-        console.log("Selected = ", mon.value);
-        NotificationManager.info("Selected " + mon.value);
+        console.log("Selected = ", mon.target.value);
+        NotificationManager.info("Selected " + mon.target.value);
         this.setState(
             previous_state => ({
-                selected_generation: mon.value,
+                selected_generation: mon.target.value,
                 possible_generations: previous_state.possible_generations,
                 selected_mon: previous_state.selected_mon,
                 capture_rate: previous_state.capture_rate,
-                capture_probability: this.calculateCaptureRate(mon.value)
+                capture_probability: this.calculateCaptureRate(mon.target.value)
             })
 
         );
@@ -134,13 +134,13 @@ class App extends React.Component {
         return (
             <div>
                 <ErrorBoundary onError={this.onGenericError.bind(this)}>
-                    <Dropdown
+                    <LabelledDropdown
                         className="ball-selector"
                         options={["Pokeball", "Greatball"]}
                         onChange={this.onSelectBall.bind(this)}
                         placeholder="Select a Ball Type" />
                     <hr className="rule"/>
-                    <Dropdown
+                    <LabelledDropdown
                         classname="pokemon-selector"
                         options={this.props.pokemon}
                         onChange={this.onSelectPokemon.bind(this)}
@@ -152,13 +152,13 @@ class App extends React.Component {
                         rate={this.state.capture_rate}
                         onError={this.onCaptureGaugeError.bind(this)} />
                     <hr className="rule"/>
-                    <Dropdown
+                    <LabelledDropdown
                         classname="generation-selector"
                         options={this.props.generations}
                         onChange={this.onSelectGenerations.bind(this)}
                         placeholder="Select a Generation" />
                     <hr className="rule"/>
-                    <Dropdown
+                    <LabelledDropdown
                         classname='status-selector'
                         options={["none"]}
                         onChange={this.onStatusChange.bind(this)}
