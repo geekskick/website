@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import { CaptureGuage } from './capture_gauge';
 import Pokedex from 'pokedex-promise-v2';
-import Dropdown from 'react-dropdown';
+import Dropdown from './dropdown';
 import 'react-dropdown/style.css';
 import { NotificationContainer, NotificationManager } from 'react-notifications';
 import 'react-notifications/lib/notifications.css';
@@ -138,14 +138,12 @@ class App extends React.Component {
                         className="ball-selector"
                         options={["Pokeball", "Greatball"]}
                         onChange={this.onSelectBall.bind(this)}
-                        value={this.state.selected_Ball}
                         placeholder="Select a Ball Type" />
                     <hr className="rule"/>
                     <Dropdown
                         classname="pokemon-selector"
                         options={this.props.pokemon}
                         onChange={this.onSelectPokemon.bind(this)}
-                        value={this.state.selected_mon}
                         placeholder="Select a Pokemon" />
                     <hr className="rule"/>
                     <CaptureGuage
@@ -158,7 +156,6 @@ class App extends React.Component {
                         classname="generation-selector"
                         options={this.props.generations}
                         onChange={this.onSelectGenerations.bind(this)}
-                        value={this.state.selected_generation}
                         placeholder="Select a Generation" />
                     <hr className="rule"/>
                     <Dropdown
