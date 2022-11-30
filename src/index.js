@@ -11,7 +11,8 @@ import { ErrorBoundary } from './error_boundary';
 import balls from './data/balls.json'
 
 const P = new Pokedex();
-const PAGE_SIZE = 20;
+
+
 
 function App(props) {
 
@@ -108,7 +109,7 @@ function App(props) {
         console.log(`New status = ${status}`);
     }
 
-    const hasSelectedAGeneration = selectedGeneration != '';
+    const hasSelectedAGeneration = selectedGeneration !== '';
     let selectedGenProp;
     if (hasSelectedAGeneration) {
         selectedGenProp = selectedGeneration;

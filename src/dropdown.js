@@ -6,6 +6,9 @@ import React from 'react'
 
 export default function LabelledDropdown(props) {
     console.log(props)
+    // TODO: figure out how to make the default selected value optional
+    // https://reactjs.org/docs/uncontrolled-components.html
+    // use defaultValue?
     return (
         <div>
             <FormControl fullWidth>
