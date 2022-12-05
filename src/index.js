@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import { CaptureGuage } from './capture_gauge';
@@ -8,11 +8,54 @@ import 'react-dropdown/style.css';
 import { NotificationContainer, NotificationManager } from 'react-notifications';
 import 'react-notifications/lib/notifications.css';
 import { ErrorBoundary } from './error_boundary';
-import balls from './data/balls.json'
+import PokemonListManager from './pokemon_list_manager';
+import ImageList from '@mui/material/ImageList';
+import ImageListItem from '@mui/material/ImageListItem';
 
 const P = new Pokedex();
 
+function getWindowDimensions() {
+    const { innerWidth: width, innerHeight: height } = window;
+    return {
+        width,
+        height
+    };
+}
 
+function useWindowDimensions() {
+    const [windowDimensions, setWindowDimensions] = React.useState(getWindowDimensions());
+
+    useEffect(() => {
+        function handleResize() {
+            setWindowDimensions(getWindowDimensions());
+        }
+
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
+
+    return windowDimensions;
+}
+
+function PokemonImages(props) {
+    console.log("PokemonImages rendering :", props);
+    // TODO: Get this to shrink when the window gets too small
+    return (
+        <ImageList cols={props.cols} rowHeight={props.dim}>
+            {props.pokemonList.map(pokemon => {
+                return (<ImageListItem key={pokemon.name}>
+                    <img
+                        src={`${pokemon.sprite}?w=${props.dim}&h=${props.dim}&fit=crop&auto=format`}
+                        srcSet={`${pokemon.sprite}?w=${props.dim}&h=${props.dim}&fit=crop&auto=format&dpr=2 2x`}
+                        alt={pokemon.name}
+                        loading="lazy"
+                    />
+                </ImageListItem>)
+            })
+            }
+        </ImageList>
+    );
+}
 
 function App(props) {
 
@@ -22,7 +65,11 @@ function App(props) {
     const [possibleGenerations, setPossibleGenerations] = React.useState('');
     const [captureProbability, setCaptureProbability] = React.useState(0.0);
     const [selectedBall, setSelectedBall] = React.useState('');
+    const [pokemonList, setPokemonList] = React.useState(props.pokemonListManager.pokemonList);
+    const [windowDimensions, setWindowDimensions] = React.useState(getWindowDimensions());
 
+
+    console.log(`Pokemon list = `, pokemonList);
     const onGenericError = (error, info) => {
         NotificationManager.error(error + info);
     }
@@ -109,11 +156,28 @@ function App(props) {
         console.log(`New status = ${status}`);
     }
 
-    const hasSelectedAGeneration = selectedGeneration !== '';
-    let selectedGenProp;
-    if (hasSelectedAGeneration) {
-        selectedGenProp = selectedGeneration;
+    async function getPokemonSprite(idx) {
+        const url = pokemonList[idx].url;
+        const response = await fetch(url);
+        const json = await response.json();
+        console.log("Response from " + url + " was ", json);
+        return json.sprites.front_default;
     }
+
+
+    if (!props.pokemonListManager.hasSprites) {
+        console.log("Loading sprite urls");
+        pokemonList.map(async (pokemon, idx) => {
+            pokemon.sprite = await getPokemonSprite(idx);
+        });
+        props.pokemonListManager.hasSprites = true;
+    }
+    console.log(pokemonList);
+
+    const width = windowDimensions.width;
+    const sprite_width = Math.max(0.2 * width, 164);
+    const rows = width / sprite_width;
+    console.log("With a width of ", width, " and a sprite dimension of ", sprite_width, " I can fit ", rows, " in");
 
     return (
         <div>
@@ -126,9 +190,11 @@ function App(props) {
                 <hr className="rule" />
                 <LabelledDropdown
                     classname="pokemon-selector"
-                    options={props.pokemon_names}
+                    options={pokemonList.map((pokemon => { return pokemon.name }))}
                     onChange={onSelectPokemon}
                     placeholder="Select a Pokemon" />
+                <hr className="rule" />
+                <PokemonImages pokemonList={pokemonList} dim={sprite_width} cols={rows} />
                 <hr className="rule" />
                 <CaptureGuage
                     classname="capture-gauge"
@@ -153,19 +219,13 @@ function App(props) {
                 <h1 className="probability">{captureProbability}</h1>
             </ErrorBoundary>
             <NotificationContainer />
-
-        </div>)
+        </div >)
 }
 
 
 
 function getRandomInt(max) {
     return Math.floor(Math.random() * max);
-}
-
-async function getPokemonList(api) {
-    const prom = await api.getPokemonsList({ limit: 1500 });
-    return prom.results
 }
 
 async function getGenerationsList(api) {
@@ -178,9 +238,10 @@ async function getGenerationsList(api) {
 const root = ReactDOM.createRoot(document.getElementById("root"));
 (async () => {
     try {
-        const pokemon = await getPokemonList(P);
         const generations = await getGenerationsList(P);
-        root.render(<App api={P} pokemon_names={pokemon.map(p => p.name)} generations={generations} />);
+        const plm = new PokemonListManager(P);
+        await plm.getNextPage();
+        root.render(<App api={P} pokemonListManager={plm} generations={generations} />);
     } catch (error) {
         console.log("Error = ", error);
         NotificationManager.error("Unable to get either the pokemon list, or the generation list. Try refreshing the page");
