@@ -9,57 +9,14 @@ import { NotificationContainer, NotificationManager } from 'react-notifications'
 import 'react-notifications/lib/notifications.css';
 import { ErrorBoundary } from './error_boundary';
 import PokemonListManager from './pokemon_list_manager';
-import ImageList from '@mui/material/ImageList';
-import ImageListItem from '@mui/material/ImageListItem';
 import Autocomplete, { createFilterOptions } from '@mui/material/Autocomplete';
 import TextField from '@mui/material/TextField';
 import { debounce } from "lodash"
 import calculateCaptureRate from './calculations'
+import PokemonImages from './pokemon_images'
+import getWindowDimensions from './window_dimensions';
 
 const P = new Pokedex();
-
-function getWindowDimensions() {
-    const { innerWidth: width, innerHeight: height } = window;
-    return {
-        width,
-        height
-    };
-}
-
-function useWindowDimensions() {
-    const [windowDimensions, setWindowDimensions] = React.useState(getWindowDimensions());
-
-    useEffect(() => {
-        function handleResize() {
-            setWindowDimensions(getWindowDimensions());
-        }
-
-        window.addEventListener('resize', handleResize);
-        return () => window.removeEventListener('resize', handleResize);
-    }, []);
-
-    return windowDimensions;
-}
-
-function PokemonImages(props) {
-    console.log("PokemonImages rendering :", props);
-    // TODO: Get this to shrink when the window gets too small
-    return (
-        <ImageList cols={props.cols} rowHeight={props.dim}>
-            {props.pokemonList.map(pokemon => {
-                return (<ImageListItem key={pokemon.name}>
-                    <img
-                        src={`${pokemon.sprite}?w=${props.dim}&h=${props.dim}&fit=crop&auto=format`}
-                        srcSet={`${pokemon.sprite}?w=${props.dim}&h=${props.dim}&fit=crop&auto=format&dpr=2 2x`}
-                        alt={pokemon.name}
-                        loading="lazy"
-                    />
-                </ImageListItem>)
-            })
-            }
-        </ImageList>
-    );
-}
 
 function App(props) {
 
@@ -73,7 +30,6 @@ function App(props) {
     const [windowDimensions, setWindowDimensions] = React.useState(getWindowDimensions());
 
 
-    console.log(`Pokemon list = `, pokemonList);
     const onGenericError = (error, info) => {
         NotificationManager.error(error + info);
     }
@@ -121,7 +77,7 @@ function App(props) {
         console.log(`New status = ${status}`);
     }
 
-    async function getPokemonSprite(idx) {
+    const getPokemonSprite = async (idx) => {
         const url = pokemonList[idx].url;
         const response = await fetch(url);
         const json = await response.json();
@@ -129,16 +85,17 @@ function App(props) {
         return json.sprites.front_default;
     }
 
-
-    if (!props.pokemonListManager.hasSprites) {
-        console.log("Loading sprite urls");
-        pokemonList.map(async (pokemon, idx) => {
-            pokemon.sprite = await getPokemonSprite(idx);
-        });
-        props.pokemonListManager.hasSprites = true;
+    const ensurePokemonListHasSprites = () => {
+        if (!props.pokemonListManager.hasSprites) {
+            console.log("Loading sprite urls");
+            pokemonList.map(async (pokemon, idx) => {
+                pokemon.sprite = await getPokemonSprite(idx);
+            });
+            props.pokemonListManager.hasSprites = true;
+        }
     }
-    console.log(pokemonList);
 
+    ensurePokemonListHasSprites();
     const width = windowDimensions.width;
     const sprite_width = Math.max(0.2 * width, 164);
     const rows = width / sprite_width;
@@ -173,12 +130,12 @@ function App(props) {
             <ErrorBoundary onError={onGenericError}>
                 <Autocomplete
                     autoComplete
-                    id="combo-box-demo"
                     options={pokemonList.map(pokemon => {
                         return { label: pokemon.name, id: pokemon.name }
                     })}
                     filterOptions={filterOptions}
                     onChange={((event, newValue) => {
+                        console.log(event);
                         debouncedSetFilteredOptions([newValue.id]);
                         onSelectPokemon(newValue.id);
                     })}
