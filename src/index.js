@@ -9,16 +9,12 @@ import { NotificationContainer, NotificationManager } from 'react-notifications'
 import 'react-notifications/lib/notifications.css';
 import { ErrorBoundary } from './error_boundary';
 import PokemonListManager from './pokemon_list_manager';
-import Autocomplete, { createFilterOptions } from '@mui/material/Autocomplete';
-import TextField from '@mui/material/TextField';
-import { debounce } from "lodash"
 import calculateCaptureRate from './calculations'
 import PokemonImages from './pokemon_images'
 import getWindowDimensions from './window_dimensions';
 import NavBar from './navbar';
-import Dialog from '@mui/material/Dialog';
-import DialogTitle from '@mui/material/DialogTitle';
-import { DialogContentText } from '@mui/material';
+import AboutDialog from './about_dialog';
+import FilteringAutocomplete from './filtering_autocomplete';
 
 const P = new Pokedex();
 
@@ -33,6 +29,28 @@ function App(props) {
     const [pokemonList, setPokemonList] = React.useState(props.pokemonListManager.pokemonList);
     const [windowDimensions, setWindowDimensions] = React.useState(getWindowDimensions());
     const [aboutOpen, setAboutOpen] = React.useState(false);
+    const [filteredPokemonOptions, setFilteredPokemonOptions] = React.useState([]);
+    const [filteredBallOptions, setFilteredBallOptions] = React.useState([]);
+    const [ballList, setBallList] = React.useState([]);
+
+
+    const getBallList = async () => {
+        const _ballList = [];
+        console.log("Getting the ball list");
+        const balls = await props.api.getItemPocketByName("pokeballs");
+        await balls.categories.forEach(async element => {
+            const specificBalls = await (await fetch(element.url)).json();
+            specificBalls.items.forEach(async element => {
+                const ball = await (await fetch(element.url)).json();
+                console.log("Setting ballList with", ball);
+                _ballList.push({ name: ball.name, sprite: ball.sprites.default });
+            })
+        });
+        setBallList(_ballList);
+    }
+    if (ballList.length === 0) {
+        getBallList();
+    }
 
 
     const onGenericError = (error, info) => {
@@ -106,28 +124,6 @@ function App(props) {
     const rows = width / sprite_width;
     console.log("With a width of ", width, " and a sprite dimension of ", sprite_width, " I can fit ", rows, " in");
 
-    const _filterOptions = createFilterOptions();
-    const debouncedSetFilteredOptions = React.useRef(
-        debounce(criteria => {
-            setFilteredOptions(criteria);
-        }, 300)
-    ).current;
-
-    useEffect(() => {
-        return () => {
-            debouncedSetFilteredOptions.cancel();
-        };
-    }, [debouncedSetFilteredOptions]);
-    const [filteredOptions, setFilteredOptions] = React.useState([]);
-    const filterOptions = React.useCallback((options, state) => {
-        console.log(options);
-        console.log(state);
-        const results = _filterOptions(options, state);
-        // This callback gets called loads when the user has focus on the autocomplete box
-        // so deboucing is needed here to prevent it all locking up
-        debouncedSetFilteredOptions(results.map(option => option.id));
-        return results;
-    }, [_filterOptions, debouncedSetFilteredOptions]);
 
 
     const handleAboutClick = () => {
@@ -139,45 +135,51 @@ function App(props) {
     }
 
     console.log("Selected Pokemon = " + selectedPokemon);
+    console.log("Ball list = ", ballList);
     return (
         <div>
             <NavBar onAboutClick={handleAboutClick} />
-            <Dialog onClose={handleAboutClose} open={aboutOpen}>
-                <DialogTitle>About</DialogTitle>
-                <DialogContentText>Hello</DialogContentText>
-            </Dialog>
+            <AboutDialog open={aboutOpen} handleAboutClose={handleAboutClose} />
             <ErrorBoundary onError={onGenericError}>
-                <Autocomplete
-                    autoComplete
-                    options={pokemonList.map(pokemon => {
+                <FilteringAutocomplete
+                    optionsSuperSet={pokemonList.map(pokemon => {
                         return { label: pokemon.name, id: pokemon.name }
                     })}
-                    filterOptions={filterOptions}
-                    onChange={((event, newValue) => {
-                        console.log(event);
-                        debouncedSetFilteredOptions([newValue.id]);
-                        onSelectPokemon(newValue.id);
-                    })}
-
-
-                    renderInput={(params) => <TextField {...params} label="Type to Select Pokemon" />}
+                    filteredOptions={filteredPokemonOptions}
+                    onSelect={onSelectPokemon}
+                    onNewFilteredList={(list) => { setFilteredPokemonOptions(list) }}
+                    label="Type to Select Pokemon"
                 />
                 <hr className="rule" />
                 <PokemonImages pokemonList={pokemonList.filter(pokemon => {
-                    const listExists = filteredOptions.length > 0;
+                    const listExists = filteredPokemonOptions.length > 0;
                     if (!listExists) {
                         // If there's no filter list then we want to show the lot
                         return true;
                     }
-                    return filteredOptions.includes(pokemon.name);
+                    return filteredPokemonOptions.includes(pokemon.name);
 
                 })} dim={sprite_width} cols={rows} />
                 <hr className="rule" />
-                <LabelledDropdown
-                    className="ball-selector"
-                    options={["Pokeball", "Greatball"]}
-                    onChange={onSelectBall}
-                    placeholder="Select a Ball Type" />
+                <FilteringAutocomplete
+                    optionsSuperSet={ballList.map(ball => {
+                        return { label: ball.name, id: ball.name }
+                    })}
+                    filteredOptions={filteredBallOptions}
+                    onNewFilteredList={(list) => { setFilteredBallOptions(list) }}
+                    onSelect={onSelectBall}
+                    label="Type to Select Pokeball"
+                />
+                <hr className="rule" />
+                <PokemonImages pokemonList={ballList.filter(ball => {
+                    const listExists = filteredBallOptions.length > 0;
+                    if (!listExists) {
+                        // If there's no filter list then we want to show the lot
+                        return true;
+                    }
+                    return filteredBallOptions.includes(ball.name);
+
+                })} dim={sprite_width} cols={rows} />
                 <hr className="rule" />
                 <CaptureGuage
                     classname="capture-gauge"
