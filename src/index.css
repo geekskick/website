@@ -37,3 +37,14 @@
     border-style: solid;
     background-color: green;
 }
+
+
+.MuiAppBar-root {
+    color: green;
+    background: green;
+    background-color: green;
+    border-radius: 3px;
+    border-width: 3px;
+    border-color: black;
+    border-style: solid;
+}

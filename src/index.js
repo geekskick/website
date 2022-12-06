@@ -15,6 +15,10 @@ import { debounce } from "lodash"
 import calculateCaptureRate from './calculations'
 import PokemonImages from './pokemon_images'
 import getWindowDimensions from './window_dimensions';
+import NavBar from './navbar';
+import Dialog from '@mui/material/Dialog';
+import DialogTitle from '@mui/material/DialogTitle';
+import { DialogContentText } from '@mui/material';
 
 const P = new Pokedex();
 
@@ -28,6 +32,7 @@ function App(props) {
     const [selectedBall, setSelectedBall] = React.useState('');
     const [pokemonList, setPokemonList] = React.useState(props.pokemonListManager.pokemonList);
     const [windowDimensions, setWindowDimensions] = React.useState(getWindowDimensions());
+    const [aboutOpen, setAboutOpen] = React.useState(false);
 
 
     const onGenericError = (error, info) => {
@@ -124,9 +129,23 @@ function App(props) {
         return results;
     }, [_filterOptions, debouncedSetFilteredOptions]);
 
+
+    const handleAboutClick = () => {
+        setAboutOpen(true);
+    }
+
+    const handleAboutClose = () => {
+        setAboutOpen(false);
+    }
+
     console.log("Selected Pokemon = " + selectedPokemon);
     return (
         <div>
+            <NavBar onAboutClick={handleAboutClick} />
+            <Dialog onClose={handleAboutClose} open={aboutOpen}>
+                <DialogTitle>About</DialogTitle>
+                <DialogContentText>Hello</DialogContentText>
+            </Dialog>
             <ErrorBoundary onError={onGenericError}>
                 <Autocomplete
                     autoComplete
