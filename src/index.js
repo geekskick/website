@@ -14,6 +14,7 @@ import ImageListItem from '@mui/material/ImageListItem';
 import Autocomplete, { createFilterOptions } from '@mui/material/Autocomplete';
 import TextField from '@mui/material/TextField';
 import { debounce } from "lodash"
+import calculateCaptureRate from './calculations'
 
 const P = new Pokedex();
 
@@ -62,7 +63,7 @@ function PokemonImages(props) {
 
 function App(props) {
 
-    const [selectedMon, setSelectedMon] = React.useState('');
+    const [selectedPokemon, setSelectedPokemon] = React.useState('');
     const [captureRate, setCaptureRate] = React.useState(0.0);
     const [selectedGeneration, setSelectedGeneration] = React.useState('');
     const [possibleGenerations, setPossibleGenerations] = React.useState('');
@@ -79,6 +80,7 @@ function App(props) {
 
     const onSelectBall = (ball) => {
         console.log(`onSelectBall::ball = ${ball}`);
+        setSelectedBall(ball);
         NotificationManager.info(`Selected ${ball.target.value}`);
     }
 
@@ -90,13 +92,13 @@ function App(props) {
             console.log(`onSelect::prom = ${prom}`);
             setSelectedGeneration(prom.generation.name);
             setCaptureRate(prom.capture_rate);
-            setCaptureProbability(calculateCaptureRate(prom.generation.name));
+            setCaptureProbability(calculateCaptureRate(prom.generation.name, prom.capture_rate));
         }
         catch (error) {
             console.log("onSelect::error = ", error);
             NotificationManager.error(`Unable to get the details of pokemon species ${mon}`);
             setSelectedGeneration(null);
-            setSelectedMon(null);
+            setSelectedPokemon(null);
             setCaptureRate(null);
             setCaptureProbability(null);
         }
@@ -106,49 +108,9 @@ function App(props) {
         console.log(`Selected = ${mon.target.value}`);
         NotificationManager.info(`Selected ${mon.target.value}`);
         setSelectedGeneration(mon.target.value);
-        setCaptureProbability(calculateCaptureRate(mon.target.value));
+        setCaptureProbability(calculateCaptureRate(mon.target.value, captureRate));
     }
 
-    const calculateGenIF = () => {
-        const hp_max = 100;
-        const hp_current = 50;
-        // assume pokeball
-        const ball = 12;
-        return (hp_max * 255 * 4) / (hp_current * ball);
-    }
-
-    const calculateGenICaptureRate = () => {
-        // https://bulbapedia.bulbagarden.net/wiki/Catch_rate
-        // TODO: Get user status ailment
-        const status_ailent = 0;
-
-        // TODO: Get user pokeball used
-        const ball_mod = 255;
-        const p0 = status_ailent / (ball_mod + 1);
-
-        // TODO: Calculate this
-        const f = calculateGenIF();
-        console.log(`GenIF() = ${f}`);
-        const p1 = ((captureRate + 1) / (ball_mod + 1)) * ((f + 1) / 256);
-        console.log(`p0 = ${p0}, p1 = ${p1}`);
-        return p0 + p1;
-    }
-
-    const calculateCaptureRate = (generation_name) => {
-        try {
-            const rate_calculators = {
-                "generation-i": calculateGenICaptureRate
-            }
-            console.log(`Selected generation = ${generation_name}`);
-            const rc = rate_calculators[generation_name]();
-            console.log(`Rate calculated as ${rc}`);
-            return rc;
-        }
-        catch (error) {
-            console.log(error)
-            NotificationManager.error(`${generation_name} is not a valid generation name`, "Calculation Error");
-        }
-    }
 
     const onCaptureGaugeError = (error) => {
         console.log(error);
@@ -205,7 +167,7 @@ function App(props) {
         return results;
     }, [_filterOptions, debouncedSetFilteredOptions]);
 
-    console.log("Selected Pokemon = " + selectedMon);
+    console.log("Selected Pokemon = " + selectedPokemon);
     return (
         <div>
             <ErrorBoundary onError={onGenericError}>
@@ -243,7 +205,7 @@ function App(props) {
                 <hr className="rule" />
                 <CaptureGuage
                     classname="capture-gauge"
-                    mon={selectedMon}
+                    mon={selectedPokemon}
                     rate={captureRate}
                     onError={onCaptureGaugeError} />
                 <hr className="rule" />
