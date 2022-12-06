@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect } from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import { CaptureGuage } from './capture_gauge';
@@ -11,6 +11,9 @@ import { ErrorBoundary } from './error_boundary';
 import PokemonListManager from './pokemon_list_manager';
 import ImageList from '@mui/material/ImageList';
 import ImageListItem from '@mui/material/ImageListItem';
+import Autocomplete, { createFilterOptions } from '@mui/material/Autocomplete';
+import TextField from '@mui/material/TextField';
+import { debounce } from "lodash"
 
 const P = new Pokedex();
 
@@ -81,9 +84,9 @@ function App(props) {
 
     const onSelectPokemon = async (mon) => {
         console.log(`onSelect::mon = ${mon}`);
-        NotificationManager.info(`Selected ${mon.target.value}`);
+        NotificationManager.info(`Selected ${mon}`);
         try {
-            const prom = await props.api.getPokemonSpeciesByName(mon.target.value);
+            const prom = await props.api.getPokemonSpeciesByName(mon);
             console.log(`onSelect::prom = ${prom}`);
             setSelectedGeneration(prom.generation.name);
             setCaptureRate(prom.capture_rate);
@@ -91,7 +94,7 @@ function App(props) {
         }
         catch (error) {
             console.log("onSelect::error = ", error);
-            NotificationManager.error(`Unable to get the details of pokemon species ${mon.target.value}`);
+            NotificationManager.error(`Unable to get the details of pokemon species ${mon}`);
             setSelectedGeneration(null);
             setSelectedMon(null);
             setCaptureRate(null);
@@ -160,7 +163,7 @@ function App(props) {
         const url = pokemonList[idx].url;
         const response = await fetch(url);
         const json = await response.json();
-        console.log("Response from " + url + " was ", json);
+        //console.log("Response from " + url + " was " + json);
         return json.sprites.front_default;
     }
 
@@ -179,22 +182,64 @@ function App(props) {
     const rows = width / sprite_width;
     console.log("With a width of ", width, " and a sprite dimension of ", sprite_width, " I can fit ", rows, " in");
 
+    const _filterOptions = createFilterOptions();
+    const debouncedSetFilteredOptions = React.useRef(
+        debounce(criteria => {
+            setFilteredOptions(criteria);
+        }, 300)
+    ).current;
+
+    useEffect(() => {
+        return () => {
+            debouncedSetFilteredOptions.cancel();
+        };
+    }, [debouncedSetFilteredOptions]);
+    const [filteredOptions, setFilteredOptions] = React.useState([]);
+    const filterOptions = React.useCallback((options, state) => {
+        console.log(options);
+        console.log(state);
+        const results = _filterOptions(options, state);
+        // This callback gets called loads when the user has focus on the autocomplete box
+        // so deboucing is needed here to prevent it all locking up
+        debouncedSetFilteredOptions(results.map(option => option.id));
+        return results;
+    }, [_filterOptions, debouncedSetFilteredOptions]);
+
+    console.log("Selected Pokemon = " + selectedMon);
     return (
         <div>
             <ErrorBoundary onError={onGenericError}>
+                <Autocomplete
+                    autoComplete
+                    id="combo-box-demo"
+                    options={pokemonList.map(pokemon => {
+                        return { label: pokemon.name, id: pokemon.name }
+                    })}
+                    filterOptions={filterOptions}
+                    onChange={((event, newValue) => {
+                        debouncedSetFilteredOptions([newValue.id]);
+                        onSelectPokemon(newValue.id);
+                    })}
+
+
+                    renderInput={(params) => <TextField {...params} label="Type to Select Pokemon" />}
+                />
+                <hr className="rule" />
+                <PokemonImages pokemonList={pokemonList.filter(pokemon => {
+                    const listExists = filteredOptions.length > 0;
+                    if (!listExists) {
+                        // If there's no filter list then we want to show the lot
+                        return true;
+                    }
+                    return filteredOptions.includes(pokemon.name);
+
+                })} dim={sprite_width} cols={rows} />
+                <hr className="rule" />
                 <LabelledDropdown
                     className="ball-selector"
                     options={["Pokeball", "Greatball"]}
                     onChange={onSelectBall}
                     placeholder="Select a Ball Type" />
-                <hr className="rule" />
-                <LabelledDropdown
-                    classname="pokemon-selector"
-                    options={pokemonList.map((pokemon => { return pokemon.name }))}
-                    onChange={onSelectPokemon}
-                    placeholder="Select a Pokemon" />
-                <hr className="rule" />
-                <PokemonImages pokemonList={pokemonList} dim={sprite_width} cols={rows} />
                 <hr className="rule" />
                 <CaptureGuage
                     classname="capture-gauge"

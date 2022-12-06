@@ -19,7 +19,8 @@
     "react-notifications": "*",
     "react-scripts": "5.0.1",
     "ts-jest": "^29.0.3",
-    "web-vitals": "^2.1.4"
+    "web-vitals": "^2.1.4",
+    "lodash": "*"
   },
   "scripts": {
     "start": "react-scripts start",
