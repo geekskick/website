@@ -1,6 +1,7 @@
 
 import ImageList from '@mui/material/ImageList';
 import ImageListItem from '@mui/material/ImageListItem';
+import Styles from './index.css'
 
 export default function PokemonImages(props) {
 
@@ -9,7 +10,7 @@ export default function PokemonImages(props) {
     return (
         <ImageList cols={props.cols} rowHeight={props.dim}>
             {props.pokemonList.map(pokemon => {
-                return (<ImageListItem key={pokemon.name}>
+                return (<ImageListItem className={Styles.SpriteTile} key={pokemon.name}>
                     <img
                         src={`${pokemon.sprite}?w=${props.dim}&h=${props.dim}&fit=crop&auto=format`}
                         srcSet={`${pokemon.sprite}?w=${props.dim}&h=${props.dim}&fit=crop&auto=format&dpr=2 2x`}

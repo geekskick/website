@@ -29,3 +29,8 @@
 .probability {
     color: #ff4444;
 }
+
+.SpriteTile {
+    border-radius: 3px;
+    border-color: black;
+}
