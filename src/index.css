@@ -30,7 +30,10 @@
     color: #ff4444;
 }
 
-.SpriteTile {
+.MuiImageListItem-root {
     border-radius: 3px;
+    border-width: 3px;
     border-color: black;
+    border-style: solid;
+    background-color: green;
 }
