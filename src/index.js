@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import { CaptureGuage } from './capture_gauge';
 import Pokedex from 'pokedex-promise-v2';
-import LabelledDropdown from './dropdown';
+import LabelledDropdown from './labelled_dropdown';
 import 'react-dropdown/style.css';
 import { NotificationContainer, NotificationManager } from 'react-notifications';
 import 'react-notifications/lib/notifications.css';

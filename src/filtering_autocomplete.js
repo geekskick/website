@@ -2,6 +2,8 @@ import Autocomplete, { createFilterOptions } from "@mui/material/Autocomplete";
 import TextField from "@mui/material/TextField";
 import { debounce } from "lodash"
 import React from "react";
+import _ from "lodash";
+
 
 export default function FilteringAutocomplete(props) {
 
@@ -31,6 +33,7 @@ export default function FilteringAutocomplete(props) {
 
     return (<Autocomplete
         autoComplete
+        isOptionEqualToValue={_.isEqual}
         options={props.optionsSuperSet}
         filterOptions={filterOptions}
         onChange={((event, newValue) => {
