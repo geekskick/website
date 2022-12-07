@@ -11,7 +11,7 @@ export default function PokemonImages(props) {
 
     return (
 
-        <ImageList cols={props.cols} rows={3} rowHeight={props.dim}>
+        <ImageList cols={props.cols} rows={props.rows} rowHeight={props.dim}>
             {props.pokemonList.map(pokemon => {
                 const shinyClass = pokemon.sprite?.shiny === true ? "shiny-sprite" : ""
                 return (

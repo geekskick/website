@@ -32,7 +32,11 @@ function App(props) {
     const [filteredPokemonOptions, setFilteredPokemonOptions] = React.useState([]);
     const [filteredBallOptions, setFilteredBallOptions] = React.useState([]);
     const [ballList, setBallList] = React.useState([]);
+    const shinyIdx = React.useRef(getRandomInt(pokemonList.length));
 
+    function handleWindowResize() {
+        setWindowDimensions(getWindowDimensions());
+    }
 
     const getBallList = async () => {
         const _ballList = [];
@@ -46,9 +50,6 @@ function App(props) {
             })
         });
         setBallList(_ballList);
-    }
-    if (ballList.length === 0) {
-        getBallList();
     }
 
 
@@ -123,16 +124,9 @@ function App(props) {
         }
     }
 
-    const shinyIdx = React.useRef(getRandomInt(pokemonList.length));
     const setRandomPokemonToShiny = () => {
         pokemonList[shinyIdx.current].shiny = true;
     }
-    ensurePokemonListHasData();
-    setRandomPokemonToShiny();
-    const width = windowDimensions.width;
-    const sprite_width = Math.max(0.2 * width, 164);
-    const rows = width / sprite_width;
-    console.log("With a width of ", width, " and a sprite dimension of ", sprite_width, " I can fit ", rows, " in");
 
 
     const handleAboutClick = () => {
@@ -157,6 +151,23 @@ function App(props) {
         }
     }
 
+    const calculateSpriteWidth = (screenWidth) => {
+        return Math.max(0.2 * screenWidth, 164);
+    }
+
+    if (ballList.length === 0) {
+        getBallList();
+    }
+
+    ensurePokemonListHasData();
+    setRandomPokemonToShiny();
+
+    // TODO Remove all this shit and make the image dimensions as a percentage of the screen using css or something like that?
+    const screenWidth = windowDimensions.width;
+    const spriteWidth = calculateSpriteWidth(screenWidth);
+    const rows = screenWidth / spriteWidth;
+
+    console.log("With a width of ", screenWidth, " and a sprite dimension of ", spriteWidth, " I can fit ", rows, " in");
     console.log("Selected Pokemon = " + selectedPokemon);
     console.log("Ball list = ", ballList);
     console.log("Pokemonlist = ", pokemonList);
@@ -182,7 +193,11 @@ function App(props) {
                         return true;
                     }
                     return filteredPokemonOptions.includes(pokemon.name);
-                }).map(pokemon => massagePokemonToFitIntoThePokemonImageList(pokemon))} dim={sprite_width} cols={rows} />
+                }).map(pokemon => massagePokemonToFitIntoThePokemonImageList(pokemon))}
+                    dim={spriteWidth}
+                    cols={rows}
+                    rows={3}
+                />
                 <hr className="rule" />
                 <FilteringAutocomplete
                     optionsSuperSet={ballList.map(ball => {
@@ -202,7 +217,11 @@ function App(props) {
                     }
                     return filteredBallOptions.includes(ball.name);
 
-                })} dim={sprite_width} cols={rows} />
+                })}
+                    dim={spriteWidth}
+                    cols={rows}
+                    rows={3}
+                />
                 <hr className="rule" />
                 <CaptureGuage
                     classname="capture-gauge"
