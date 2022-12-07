@@ -10,7 +10,7 @@ import 'react-notifications/lib/notifications.css';
 import { ErrorBoundary } from './error_boundary';
 import PokemonListManager from './pokemon_list_manager';
 import calculateCaptureRate from './calculations'
-import PokemonImages from './pokemon_images'
+import SpriteGallery from './sprite_gallery'
 import getWindowDimensions from './window_dimensions';
 import NavBar from './navbar';
 import AboutDialog from './about_dialog';
@@ -186,7 +186,7 @@ function App(props) {
                     label="Type to Select Pokemon"
                 />
                 <hr className="rule" />
-                <PokemonImages pokemonList={pokemonList.filter(pokemon => {
+                <SpriteGallery spriteList={pokemonList.filter(pokemon => {
                     const listExists = filteredPokemonOptions.length > 0;
                     if (!listExists) {
                         // If there's no filter list then we want to show the lot
@@ -194,8 +194,8 @@ function App(props) {
                     }
                     return filteredPokemonOptions.includes(pokemon.name);
                 }).map(pokemon => massagePokemonToFitIntoThePokemonImageList(pokemon))}
-                    dim={spriteWidth}
-                    cols={rows}
+                    dimension={spriteWidth}
+                    columns={rows}
                     rows={3}
                 />
                 <hr className="rule" />
@@ -209,7 +209,7 @@ function App(props) {
                     label="Type to Select Pokeball"
                 />
                 <hr className="rule" />
-                <PokemonImages pokemonList={ballList.filter(ball => {
+                <SpriteGallery spriteList={ballList.filter(ball => {
                     const listExists = filteredBallOptions.length > 0;
                     if (!listExists) {
                         // If there's no filter list then we want to show the lot
@@ -218,8 +218,8 @@ function App(props) {
                     return filteredBallOptions.includes(ball.name);
 
                 })}
-                    dim={spriteWidth}
-                    cols={rows}
+                    dimension={spriteWidth}
+                    columns={rows}
                     rows={3}
                 />
                 <hr className="rule" />
