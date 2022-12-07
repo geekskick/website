@@ -42,8 +42,7 @@ function App(props) {
             const specificBalls = await (await fetch(element.url)).json();
             specificBalls.items.forEach(async element => {
                 const ball = await (await fetch(element.url)).json();
-                console.log("Setting ballList with", ball);
-                _ballList.push({ name: ball.name, sprite: ball.sprites.default });
+                _ballList.push({ name: ball.name, sprite: { url: ball.sprites.default } });
             })
         });
         setBallList(_ballList);
@@ -67,6 +66,7 @@ function App(props) {
         console.log(`onSelect::mon = ${mon}`);
         NotificationManager.info(`Selected ${mon}`);
         try {
+            // now that I have all this upfront I can remove this fetch
             const prom = await props.api.getPokemonSpeciesByName(mon);
             console.log(`onSelect::prom = ${prom}`);
             setSelectedGeneration(prom.generation.name);
@@ -90,7 +90,6 @@ function App(props) {
         setCaptureProbability(calculateCaptureRate(mon.target.value, captureRate));
     }
 
-
     const onCaptureGaugeError = (error) => {
         console.log(error);
         NotificationManager.error(`Error in the capture gauge: ${error}`);
@@ -100,30 +99,40 @@ function App(props) {
         console.log(`New status = ${status}`);
     }
 
-    const getPokemonSprite = async (idx) => {
+    const getPokemonData = async (idx) => {
         const url = pokemonList[idx].url;
         const response = await fetch(url);
-        const json = await response.json();
-        //console.log("Response from " + url + " was " + json);
-        return json.sprites.front_default;
+        return await response.json();
     }
 
-    const ensurePokemonListHasSprites = () => {
-        if (!props.pokemonListManager.hasSprites) {
+    const getPokemonSpeciesData = async (idx) => {
+        const url = pokemonList[idx].data?.species.url;
+        const response = await fetch(url);
+        return await response.json();
+    }
+
+    const ensurePokemonListHasData = () => {
+        if (!props.pokemonListManager.hasData) {
             console.log("Loading sprite urls");
             pokemonList.map(async (pokemon, idx) => {
-                pokemon.sprite = await getPokemonSprite(idx);
+                pokemon.data = await getPokemonData(idx);
+                pokemon.species = await getPokemonSpeciesData(idx);
+                pokemon.shiny = false;
             });
-            props.pokemonListManager.hasSprites = true;
+            props.pokemonListManager.hasData = true;
         }
     }
 
-    ensurePokemonListHasSprites();
+    const shinyIdx = React.useRef(getRandomInt(pokemonList.length));
+    const setRandomPokemonToShiny = () => {
+        pokemonList[shinyIdx.current].shiny = true;
+    }
+    ensurePokemonListHasData();
+    setRandomPokemonToShiny();
     const width = windowDimensions.width;
     const sprite_width = Math.max(0.2 * width, 164);
     const rows = width / sprite_width;
     console.log("With a width of ", width, " and a sprite dimension of ", sprite_width, " I can fit ", rows, " in");
-
 
 
     const handleAboutClick = () => {
@@ -134,8 +143,23 @@ function App(props) {
         setAboutOpen(false);
     }
 
+    const massagePokemonToFitIntoThePokemonImageList = (pokemon) => {
+        return {
+            name: pokemon.name,
+            sprite: {
+                url: pokemon.shiny ? pokemon.data?.sprites.front_shiny : pokemon.data?.sprites.front_default,
+                shiny: pokemon.shiny
+            },
+            id: pokemon.data?.id,
+            tooltip: pokemon.species?.flavor_text_entries.filter(entry => {
+                return entry.language.name === "en"
+            })[0].flavor_text.replace('\f', '\n')
+        }
+    }
+
     console.log("Selected Pokemon = " + selectedPokemon);
     console.log("Ball list = ", ballList);
+    console.log("Pokemonlist = ", pokemonList);
     return (
         <div>
             <NavBar onAboutClick={handleAboutClick} />
@@ -158,8 +182,7 @@ function App(props) {
                         return true;
                     }
                     return filteredPokemonOptions.includes(pokemon.name);
-
-                })} dim={sprite_width} cols={rows} />
+                }).map(pokemon => massagePokemonToFitIntoThePokemonImageList(pokemon))} dim={sprite_width} cols={rows} />
                 <hr className="rule" />
                 <FilteringAutocomplete
                     optionsSuperSet={ballList.map(ball => {

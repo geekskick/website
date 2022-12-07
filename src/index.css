@@ -38,6 +38,15 @@
     background-color: green;
 }
 
+.shiny-sprite {
+    color: goldenrod;
+    mask: linear-gradient(-60deg, #000 30%, #0005, #000 70%) right/300% 100%;
+}
+
+
+.MuiImageListItemBar-root {
+    background-color: transparent !important;
+}
 
 .MuiAppBar-root {
     color: green;
