@@ -12,16 +12,16 @@ import Tooltip from '@mui/material/Tooltip';
  * @param {Number} props.columns The number of columns
  * @param {Number} props.rows The number of rows
  * @param {Number} props.dimension The number of pixels tall, and wide, for each tile
- * @param {Array.<{sprite: {shiny: Boolean, url: String}, id: String, name: String, tooltip: String}>} props.spriteList The sprite to display
+ * @param {Array.<{sprite: {shiny: Boolean, url: String}, id: String, name: String, tooltip: String}>} props.superSetSpriteList The sprite to display
  */
-export default function SpriteGallery(props) {
+export default function FilteringSpriteGallery(props) {
 
     console.log("PokemonImages rendering: ", props);
     // TODO: Get this to shrink when the window gets too small
     return (
 
         <ImageList cols={props.columns} rows={props.rows} rowHeight={props.dimension}>
-            {props.spriteList.map(spriteListItem => {
+            {props.superSetSpriteList.map(spriteListItem => {
                 const shinyClass = spriteListItem.sprite?.shiny === true ? "shiny-sprite" : ""
 
                 let subtitle;

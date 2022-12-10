@@ -1,6 +1,20 @@
 {
-    "balls":[
-        {"name": "pokeball",
-         "multiplier": 1}
-    ]
+    "poke-ball": {
+        "generation-i": {
+            "ballMod": 255,
+            "fBallMod": 12
+        }
+    },
+    "great-ball": {
+        "generation-i": {
+            "ballMod": 200,
+            "fBallMod": 8
+        }
+    },
+    "ultra-ball": {
+        "generation-i": {
+            "ballMod": 150,
+            "fBallMod": 12
+        }
+    }
 }
