@@ -226,6 +226,10 @@ function App(props) {
             <hr className="rule" />
             <AboutDialog open={aboutOpen} handleAboutClose={handleAboutClose} />
             <ErrorBoundary onError={onGenericError}>
+                {/* According to the docs the Stack is better for this, but it doesn't seem as easy to get the 
+                    Dropdowns to actually fill the screen evenly, so for now specify using the xs property of the Grid item 
+                    That things are going to take up 4 of the 12 available columns - aka be 1/3 of the screen each
+                */}
                 <Grid container spacing={2}>
                     <Grid item xs={4}>
                         <FilteringAutocomplete
@@ -239,14 +243,14 @@ function App(props) {
                         />
                     </Grid>
                     <Grid item xs={4}>
-                        <Autocomplete
-                            autoComplete
-                            isOptionEqualToValue={_.isEqual}
+                        <LabelledDropdown
                             options={props.generations}
-                            onChange={(_, newValue) => {
-                                onSelectGenerations(newValue.id);
+                            onChange={(event) => {
+                                console.log(event);
+                                onSelectGenerations(event.target.value);
                             }}
-                            renderInput={(params) => <TextField {...params} label={"Select a Generation"} />}
+                            placeholder="Select a Generation"
+                            label="Select a Generation"
                         />
                     </Grid>
                     <Grid item xs={4}>

@@ -4,6 +4,11 @@ import InputLabel from '@mui/material/InputLabel'
 import MenuItem from '@mui/material/MenuItem'
 import React from 'react'
 
+/**
+ * 
+ * @param {*} props 
+ * @returns 
+ */
 export default function LabelledDropdown(props) {
     // TODO: figure out how to make the default selected value optional
     // https://reactjs.org/docs/uncontrolled-components.html
@@ -11,13 +16,9 @@ export default function LabelledDropdown(props) {
     return (
         <div>
             <FormControl fullWidth>
-                <InputLabel id="demo-simple-select-label">{props.placeholder}</InputLabel>
+                <InputLabel>{props.placeholder}</InputLabel>
                 <Select
-                    defaultValue={props.defaultValue}
-                    labelId="demo-simple-select-label"
-                    id="demo-simple-select"
                     label={props.label}
-                    value={props.options[0]}
                     onChange={props.onChange}
                 >
                     {
