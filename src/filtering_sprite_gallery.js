@@ -32,8 +32,8 @@ export default function FilteringSpriteGallery(props) {
                     <Tooltip title={spriteListItem.tooltip}>
                         <ImageListItem className={shinyClass} key={spriteListItem.name}>
                             <img
-                                src={`${spriteListItem.sprite?.url}?w=${props.dimension}&h=${props.dimension}&fit=crop&auto=format`}
-                                srcSet={`${spriteListItem.sprite?.url}?w=${props.dimension}&h=${props.dimension}&fit=crop&auto=format&dpr=2 2x`}
+                                src={`${spriteListItem.sprite?.url}?fit=crop&auto=format`}
+                                srcSet={`${spriteListItem.sprite?.url}?fit=crop&auto=format&dpr=2 2x`}
                                 alt={spriteListItem.name}
                                 loading="lazy"
                             />
