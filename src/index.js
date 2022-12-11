@@ -16,50 +16,31 @@ import AboutDialog from './about_dialog';
 import FilteringAutocomplete from './filtering_autocomplete';
 import Balls from './data/balls.json'
 import Grid from '@mui/material/Grid'
-
+import LinearProgress from '@mui/material/LinearProgress';
 import Autocomplete, { createFilterOptions } from "@mui/material/Autocomplete";
 import TextField from "@mui/material/TextField";
+import Typography from '@mui/material/Typography';
 import _ from "lodash";
-const P = new Pokedex();
+
 
 function App(props) {
-
+    console.log("App props = ", props);
     const [selectedPokemon, setSelectedPokemon] = React.useState('');
     const [captureRate, setCaptureRate] = React.useState(0.0);
     const [selectedGeneration, setSelectedGeneration] = React.useState('');
     const [captureProbability, setCaptureProbability] = React.useState(0.0);
     const [selectedBall, setSelectedBall] = React.useState('');
-    const [pokemonList, setPokemonList] = React.useState(props.pokemonListManager.pokemonList);
     const [windowDimensions, setWindowDimensions] = React.useState(getWindowDimensions());
     const [aboutOpen, setAboutOpen] = React.useState(false);
     const [filteredPokemonOptions, setFilteredPokemonOptions] = React.useState([]);
     const [filteredBallOptions, setFilteredBallOptions] = React.useState([]);
-    const [ballList, setBallList] = React.useState([]);
-    const shinyIdx = React.useRef(getRandomInt(pokemonList.length));
+    // 1151 here is the max number of pokemon, I need to pass this into the function via props
+    const shinyIdx = React.useRef(getRandomInt(1151));
     const [results, setResults] = React.useState({});
 
     function handleWindowResize() {
         setWindowDimensions(getWindowDimensions());
     }
-
-    const getBallList = async () => {
-        const _ballList = [];
-        console.log("Getting the ball list");
-        const balls = await props.api.getItemPocketByName("pokeballs");
-        await balls.categories.forEach(async element => {
-            const specificBalls = await (await fetch(element.url)).json();
-            specificBalls.items.forEach(async element => {
-                const ball = await (await fetch(element.url)).json();
-                _ballList.push({
-                    name: ball.name,
-                    sprite: { url: ball.sprites.default },
-                    calculationData: Balls[ball.name] // Supplement the catch rate into the list from my static data too
-                });
-            })
-        });
-        setBallList(_ballList);
-    }
-
 
     const onGenericError = (error, info) => {
         NotificationManager.error(error + info);
@@ -71,78 +52,20 @@ function App(props) {
         NotificationManager.info(`Selected ${ball.target.value}`);
     }
 
-    const onSelectPokemon = async (mon) => {
+    const onSelectPokemon = (mon) => {
         console.log(`onSelect::mon = ${mon}`);
-        NotificationManager.info(`Selected ${mon}`);
-        try {
-            // now that I have all this upfront I can remove this fetch
-            const prom = await props.api.getPokemonSpeciesByName(mon);
-            console.log(`onSelect::prom = ${prom}`);
-            setSelectedGeneration(prom.generation.name);
-            setCaptureRate(prom.capture_rate);
-        }
-        catch (error) {
-            console.log("onSelect::error = ", error);
-            NotificationManager.error(`Unable to get the details of pokemon species ${mon}`);
-            setSelectedGeneration(null);
-            setSelectedPokemon(null);
-            setCaptureRate(null);
-        }
+        setSelectedPokemon(mon.target.value);
+        NotificationManager.info(`Selected ${mon.target.value}`);
     }
 
     const onSelectGenerations = (mon) => {
         console.log(`Selected = ${mon.target.value}`);
-        NotificationManager.info(`Selected ${mon.target.value}`);
         setSelectedGeneration(mon.target.value);
+        NotificationManager.info(`Selected ${mon.target.value}`);
     }
 
     const onStatusChange = (status) => {
         Notification.info(`New status = ${status}`);
-    }
-
-    /**
-     * The pokemon data is really important so we need to get it.
-     * First though we need to make sure that the pokemon has a .url attrbitute
-     * so that we know where to get this from. 
-     * @param {Number} idx The index into the pokemonList to use to find the url
-     * @returns 
-     */
-    const getPokemonData = async (idx) => {
-        const url = pokemonList[idx].url;
-        const response = await fetch(url);
-        return await response.json();
-    }
-
-    /**
-     * The specied data is really important so we need to get it.
-     * First though we need to make sure that the pokemon has a .data.species.url atributes
-     * so that we know where to get this from. We need to make sure that `getPokemonData`
-     * is called, and fulfilled first.
-     * @param {Number} idx The index into the pokemonList to use to find the url
-     * @returns 
-     */
-    const getPokemonSpeciesData = async (idx) => {
-        const url = pokemonList[idx].data?.species.url;
-        const response = await fetch(url);
-        return await response.json();
-    }
-
-    /**
-     * The pokemon has a heap of data associated with it, so 
-     * here I use the pokemon name to get the details. I store all of 
-     * this data alongside the pokemon name in it's .data and .species 
-     * attributes. This additionally sets all pokemon to non shiny
-     */
-    const ensurePokemonListHasData = () => {
-        if (!props.pokemonListManager.hasData) {
-            console.log("Loading sprite urls");
-            pokemonList.map(async (pokemon, idx) => {
-                pokemon.data = await getPokemonData(idx);
-                pokemon.species = await getPokemonSpeciesData(idx);
-                pokemon.shiny = false;
-            });
-            props.pokemonListManager.hasData = true;
-        }
     }
 
     /**
@@ -152,7 +75,9 @@ function App(props) {
      * or not and simply sets it to true
      */
     const setRandomPokemonToShiny = () => {
-        pokemonList[shinyIdx.current].shiny = true;
+        if (props.pokemonList.length >= shinyIdx.current) {
+            props.pokemonList[shinyIdx.current].shiny = true;
+        }
     }
 
 
@@ -204,11 +129,6 @@ function App(props) {
         return Math.max(0.2 * screenWidth, 164);
     }
 
-    if (ballList.length === 0) {
-        getBallList();
-    }
-
-    ensurePokemonListHasData();
     setRandomPokemonToShiny();
 
     // TODO Remove all this shit and make the image dimensions as a percentage of the screen using css or something like that?
@@ -218,76 +138,126 @@ function App(props) {
 
     console.log("With a width of ", screenWidth, " and a sprite dimension of ", spriteWidth, " I can fit ", rows, " in");
     console.log("Selected Pokemon = " + selectedPokemon);
-    console.log("Ball list = ", ballList);
-    console.log("Pokemonlist = ", pokemonList);
-    return (
-        <div>
-            <NavBar onAboutClick={handleAboutClick} />
-            <hr className="rule" />
-            <AboutDialog open={aboutOpen} handleAboutClose={handleAboutClose} />
-            <ErrorBoundary onError={onGenericError}>
-                {/* According to the docs the Stack is better for this, but it doesn't seem as easy to get the 
+    console.log("Ball list = ", props.ballList);
+    console.log("Pokemonlist = ", props.pokemonList);
+
+    const mainData = (() => {
+        if (props.dataLoading) {
+            return <div>
+                <LinearProgress variant="determinate" value={props.percentageLoaded * 100} />
+            </div>
+        }
+        else {
+            return (
+                <ErrorBoundary onError={onGenericError}>
+                    {/* According to the docs the Stack is better for this, but it doesn't seem as easy to get the 
                     Dropdowns to actually fill the screen evenly, so for now specify using the xs property of the Grid item 
                     That things are going to take up 4 of the 12 available columns - aka be 1/3 of the screen each
                 */}
-                <Grid container spacing={2}>
-                    <Grid item xs={4}>
-                        <FilteringAutocomplete
-                            optionsSuperSet={pokemonList.map(pokemon => {
-                                return { label: pokemon.name, id: pokemon.name }
-                            })}
-                            filteredOptions={filteredPokemonOptions}
-                            onSelect={onSelectPokemon}
-                            onNewFilteredList={(list) => { setFilteredPokemonOptions(list) }}
-                            label="Type to Select Pokemon"
-                        />
+                    <Grid container spacing={2}>
+                        <Grid item xs={4}>
+                            <LabelledDropdown
+                                options={props.pokemonList.map(pokemon => pokemon.name)}
+                                onChange={onSelectPokemon}
+                                label="Select a Pokemon"
+                                placeholder="Select a Pokemon"
+                                value={selectedPokemon}
+                            />
+                        </Grid>
+                        <Grid item xs={4}>
+                            <LabelledDropdown
+                                options={props.generations}
+                                onChange={(event) => {
+                                    console.log(event);
+                                    onSelectGenerations(event.target.value);
+                                }}
+                                placeholder="Select a Generation"
+                                label="Select a Generation"
+                                value={selectedGeneration}
+                            />
+                        </Grid>
+                        <Grid item xs={4}>
+                            <Autocomplete
+                                autoComplete
+                                isOptionEqualToValue={_.isEqual}
+                                options={props.statusOptions}
+                                onChange={(_, newValue) => {
+                                    onStatusChange(newValue.id);
+                                }}
+                                renderInput={(params) => <TextField {...params} label={"Select a Status Ailment"} />}
+                            />
+                        </Grid>
                     </Grid>
-                    <Grid item xs={4}>
-                        <LabelledDropdown
-                            options={props.generations}
-                            onChange={(event) => {
-                                console.log(event);
-                                onSelectGenerations(event.target.value);
-                            }}
-                            placeholder="Select a Generation"
-                            label="Select a Generation"
-                        />
-                    </Grid>
-                    <Grid item xs={4}>
-                        <Autocomplete
-                            autoComplete
-                            isOptionEqualToValue={_.isEqual}
-                            options={props.statusOptions}
-                            onChange={(_, newValue) => {
-                                onStatusChange(newValue.id);
-                            }}
-                            renderInput={(params) => <TextField {...params} label={"Select a Status Ailment"} />}
-                        />
-                    </Grid>
-                </Grid>
-                <hr className="rule" />
-                <FilteringSpriteGallery
-                    superSetSpriteList={pokemonList.filter(pokemon => {
-                        const listExists = filteredPokemonOptions.length > 0;
-                        if (!listExists) {
-                            // If there's no filter list then we want to show the lot
-                            return true;
-                        }
-                        return filteredPokemonOptions.includes(pokemon.name);
-                    }).map(pokemon => massagePokemonToFitIntoThePokemonImageList(pokemon))}
-                    dimension={spriteWidth}
-                    columns={rows}
-                    rows={3}
-                />
-                <hr className="rule" />
-                <hr className="rule" />
-                <h1 className="probability">{captureProbability}</h1>
-            </ErrorBoundary>
+                    <hr className="rule" />
+                    {/*<FilteringSpriteGallery
+                        superSetSpriteList={props.pokemonList.filter(pokemon => {
+                            const listExists = filteredPokemonOptions.length > 0;
+                            if (!listExists) {
+                                // If there's no filter list then we want to show the lot
+                                return true;
+                            }
+                            return filteredPokemonOptions.includes(pokemon.name);
+                        }).map(pokemon => massagePokemonToFitIntoThePokemonImageList(pokemon))}
+                        dimension={spriteWidth}
+                        columns={rows}
+                        rows={3}
+                    />*/}
+                    <hr className="rule" />
+                    <hr className="rule" />
+                    <h1 className="probability">{captureProbability}</h1>
+                </ErrorBoundary>);
+        }
+    })();
+
+    return (
+        <div>
+            <NavBar onAboutClick={handleAboutClick} />
+            <AboutDialog open={aboutOpen} handleAboutClose={handleAboutClose} />
+            <hr className="rule" />
+            {mainData}
             <NotificationContainer />
         </div >)
 }
 
+function AppView() {
+    const api = React.useRef(new Pokedex());
+    const pokemonListManager = React.useRef(new PokemonListManager(api.current));
+    const [generations, setGenerations] = React.useState([]);
+    const [statusOptions, setStatusOptions] = React.useState([]);
+    const pokemonList = React.useRef([]);
+    const [ballList, setBallList] = React.useState([]);
+    const [dataLoading, setDataLoading] = React.useState(true);
+    const [percentageLoaded, setPercentageLoaded] = React.useState(0.0);
 
+    React.useEffect(() => {
+        if (!pokemonListManager.current.allInformationGathered()) {
+            pokemonListManager.current.getNextPage().then((newPage) => {
+                console.log("Next page of pokemon is ", newPage);
+                newPage.forEach(async pokemonOverview => {
+                    const pokemonDetail = await (await fetch(pokemonOverview.url)).json();
+                    const newPokemon = { name: pokemonOverview.name, detail: pokemonDetail };
+                    pokemonList.current.push(newPokemon);
+                });
+                const progress = pokemonListManager.current.getPercentProgress();
+                console.log("Page loaded, full ist = ", pokemonList);
+                console.log("Progress = ", progress);
+                setPercentageLoaded(progress);
+            })
+        }
+        else {
+            setDataLoading(false);
+        }
+    }, [percentageLoaded]);
+
+    return <App
+        pokemonList={pokemonList.current}
+        generations={generations}
+        statusOptions={statusOptions}
+        ballList={ballList}
+        dataLoading={dataLoading}
+        percentageLoaded={percentageLoaded}
+    />
+}
 
 function getRandomInt(max) {
     return Math.floor(Math.random() * max);
@@ -303,10 +273,7 @@ async function getGenerationsList(api) {
 const root = ReactDOM.createRoot(document.getElementById("root"));
 (async () => {
     try {
-        const generations = await getGenerationsList(P);
-        const plm = new PokemonListManager(P);
-        await plm.getNextPage();
-        root.render(<App api={P} pokemonListManager={plm} generations={generations} statusOptions={[]} />);
+        root.render(<AppView />);
     } catch (error) {
         console.log("Error = ", error);
         NotificationManager.error("Unable to get either the pokemon list, or the generation list. Try refreshing the page");

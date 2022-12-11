@@ -20,6 +20,7 @@ export default function LabelledDropdown(props) {
                 <Select
                     label={props.label}
                     onChange={props.onChange}
+                    value={props.value}
                 >
                     {
                         props.options.map(option => {

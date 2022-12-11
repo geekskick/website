@@ -5,6 +5,20 @@ export default class PokemonListManager {
         this._nextPage = 0;
         this.pokemonList = [];
         this._api = api;
+        this.totalSize = 0;
+        this._totalPages = 0;
+    }
+
+    getPercentProgress() {
+        if (this._nextPage === null) {
+            return 1;
+        }
+        else if (this._nextPage === 0) {
+            return 0;
+        }
+        else {
+            return (this._nextPage) / (this._totalPages);
+        }
     }
 
     async getNextPage() {
@@ -16,6 +30,9 @@ export default class PokemonListManager {
             'offset': this._pageSize * this._nextPage
         });
 
+        this.totalSize = response.count;
+        this._totalPages = response.count / this._pageSize;
+
         console.log(response);
         this.pokemonList = this.pokemonList.concat(response.results);
         this._nextPage += 1;
@@ -24,7 +41,7 @@ export default class PokemonListManager {
         if (response.next == null) {
             this._nextPage = null;
         }
-        return this.pokemonList;
+        return response.results;
     }
 
     allInformationGathered() {
