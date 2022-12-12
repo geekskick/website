@@ -12,10 +12,13 @@ import Grid from '@mui/material/Grid'
 import LinearProgress from '@mui/material/LinearProgress';
 import TextField from "@mui/material/TextField";
 import Autocomplete from '@mui/material/Autocomplete';
-import _ from "lodash";
 import { SnackbarProvider, useSnackbar } from 'notistack';
 import Button from '@mui/material/Button'
+import Typography from '@mui/material/Typography';
 
+function DismissButton(props) {
+    return (<Button onClick={() => props.handleDismiss(props.key)}>Dismiss</Button>)
+}
 
 function App(props) {
     console.log("App props = ", props);
@@ -33,7 +36,7 @@ function App(props) {
             {
                 key: Math.random(),
                 variant: 'error',
-                action: key => { return <Button onClick={() => closeSnackbar(key)}>Dismiss</Button> }
+                action: key => { return <DismissButton handleDismiss={closeSnackbar} key={key} /> }
             });
     };
 
@@ -53,19 +56,18 @@ function App(props) {
     }
 
     const onSelectPokemon = (mon) => {
-        console.log(`onSelect::mon = ${mon}`);
         setSelectedPokemon(mon);
         info(`Selected ${mon}`);
     }
 
-    const onSelectGenerations = (mon) => {
-        console.log(`Selected = ${mon.target.value}`);
-        setSelectedGeneration(mon.target.value);
-        info(`Selected ${mon.target.value}`);
+    const onSelectGenerations = (gen) => {
+        setSelectedGeneration(gen);
+        info(`Selected ${gen}`);
     }
 
     const onStatusChange = (status) => {
-        info(`New status = ${status}`);
+        info(`Selected ${status}`);
+        setSelectedStatusAilment(status);
     }
 
     /**
@@ -84,6 +86,17 @@ function App(props) {
         setAboutOpen(false);
     }
 
+    const probabilityData = (() => {
+        if (captureProbability.possible) {
+            return <div>
+                <Typography>{captureProbability.probability}</Typography>
+            </div>;
+        }
+        else {
+            return <div></div>;
+        }
+    })();
+
     const mainData = (() => {
         if (props.dataLoading) {
             return <div>
@@ -100,27 +113,26 @@ function App(props) {
                     <Grid container spacing={2}>
                         <Grid item xs={4}>
                             <Autocomplete
-                                autoComplete
-                                options={props.pokemonList.map(pokemon => pokemon.name)}
+                                options={props.pokemonList.map(pokemon => { return { label: pokemon.name } })}
+                                isOptionEqualToValue={(left, right) => { return left.label === right }}
                                 onChange={(event, value, reason) => {
                                     console.log(event, value, reason);
                                     if (reason === "selectOption") {
-                                        onSelectPokemon(value);
+                                        onSelectPokemon(value.label);
                                     }
                                 }}
-                                isOptionEqualToValue={(left, right) => { return left.name === right.name; }}
                                 value={selectedPokemon}
                                 renderInput={(params) => <TextField {...params} label="Select a Pokemon" />}
                             />
                         </Grid>
                         <Grid item xs={4}>
                             <Autocomplete
-                                autoComplete
-                                options={props.generations}
+                                options={props.generations.map(gen => { return { label: gen.name } })}
+                                isOptionEqualToValue={(left, right) => { return left.label === right }}
                                 onChange={(event, value, reason) => {
                                     console.log(event, value, reason);
                                     if (reason === "selectOption") {
-                                        onSelectGenerations(value);
+                                        onSelectGenerations(value.label);
                                     }
                                 }}
                                 value={selectedGeneration}
@@ -129,12 +141,14 @@ function App(props) {
                         </Grid>
                         <Grid item xs={4}>
                             <Autocomplete
-                                autoComplete
-                                options={props.statusOptions}
+                                options={props.statusOptions.map(option => { return { label: option.name } })}
+                                isOptionEqualToValue={(left, right) => {
+                                    return left.label === right
+                                }}
                                 onChange={(event, value, reason) => {
                                     console.log(event, value, reason);
                                     if (reason === "selectOption") {
-                                        onStatusChange(value);
+                                        onStatusChange(value.label);
                                     }
                                 }}
                                 value={selectedStatusAilment}
@@ -143,7 +157,7 @@ function App(props) {
                         </Grid>
                     </Grid>
                     <hr className="rule" />
-                    <h1 className="probability">{captureProbability.probability}</h1>
+                    {probabilityData}
                 </ErrorBoundary>);
         }
     })();
@@ -160,14 +174,33 @@ function App(props) {
 function AppView() {
     const api = React.useRef(new Pokedex());
     const pokemonListManager = React.useRef(new PokemonListManager(api.current));
-    const [generations, setGenerations] = React.useState([]);
-    const [statusOptions, setStatusOptions] = React.useState([]);
+    const generations = React.useRef([]);
+    const statusOptions = React.useRef([]);
     const pokemonList = React.useRef([]);
-    const [ballList, setBallList] = React.useState([]);
+    const ballList = React.useRef([]);
     const [dataLoading, setDataLoading] = React.useState(true);
     const [percentageLoaded, setPercentageLoaded] = React.useState(0.0);
+    const ballsLoading = React.useRef(true);
+    const ailmentsLoading = React.useRef(true);
 
     React.useEffect(() => {
+
+        if (ballsLoading.current) {
+            api.current.getGenerationsList().then(generationsResults => {
+                console.log("Generations = ", generationsResults);
+                generations.current = generationsResults.results;
+                ballsLoading.current = false;
+            });
+        }
+
+        if (ailmentsLoading.current) {
+            api.current.getMoveAilmentsList().then(ailments => {
+                console.log("Ailments = ", ailments);
+                statusOptions.current = ailments.results;
+                ailmentsLoading.current = false;
+            });
+        }
+
         if (!pokemonListManager.current.allInformationGathered()) {
             pokemonListManager.current.getNextPage().then((newPage) => {
                 console.log("Next page of pokemon is ", newPage);
@@ -180,33 +213,27 @@ function AppView() {
                 console.log("Page loaded, full ist = ", pokemonList);
                 console.log("Progress = ", progress);
                 setPercentageLoaded(progress);
+
+                if (pokemonListManager.current.allInformationGathered() && !ballsLoading.current && !ailmentsLoading.current) {
+                    setDataLoading(false);
+                }
             })
         }
-        else {
-            setDataLoading(false);
-        }
+
     }, [percentageLoaded]);
 
+    console.log(generations);
     return (
         <SnackbarProvider maxSnack={3}>
             <App
                 pokemonList={pokemonList.current}
-                generations={generations}
-                statusOptions={statusOptions}
-                ballList={ballList}
+                generations={generations.current}
+                statusOptions={statusOptions.current}
+                ballList={ballList.current}
                 dataLoading={dataLoading}
                 percentageLoaded={percentageLoaded}
             />
         </SnackbarProvider>);
-}
-
-function getRandomInt(max) {
-    return Math.floor(Math.random() * max);
-}
-
-async function getGenerationsList(api) {
-    const prom = await api.getGenerationsList();
-    return prom.results.map(p => p.name);
 }
 
 // ========================================
