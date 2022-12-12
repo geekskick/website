@@ -113,7 +113,7 @@ function App(props) {
                     <Grid container spacing={2}>
                         <Grid item xs={4}>
                             <Autocomplete
-                                options={props.pokemonList.map(pokemon => { return { label: pokemon.name } })}
+                                options={props.pokemonList.map(pokemon => { return { label: `#${pokemon.detail.id} ${pokemon.name}` } })}
                                 isOptionEqualToValue={(left, right) => { return left.label === right }}
                                 onChange={(event, value, reason) => {
                                     console.log(event, value, reason);
@@ -182,6 +182,7 @@ function AppView() {
     const [percentageLoaded, setPercentageLoaded] = React.useState(0.0);
     const ballsLoading = React.useRef(true);
     const ailmentsLoading = React.useRef(true);
+    const speciesDataLoading = React.useRef(true);
 
     React.useEffect(() => {
 
@@ -191,6 +192,10 @@ function AppView() {
                 generations.current = generationsResults.results;
                 ballsLoading.current = false;
             });
+
+            api.current.getPokemonSpeciesList().then(species => {
+                console.log("Species: ", species);
+            })
         }
 
         if (ailmentsLoading.current) {
@@ -202,22 +207,20 @@ function AppView() {
         }
 
         if (!pokemonListManager.current.allInformationGathered()) {
-            pokemonListManager.current.getNextPage().then((newPage) => {
-                console.log("Next page of pokemon is ", newPage);
-                newPage.forEach(async pokemonOverview => {
-                    const pokemonDetail = await (await fetch(pokemonOverview.url)).json();
-                    const newPokemon = { name: pokemonOverview.name, detail: pokemonDetail };
-                    pokemonList.current.push(newPokemon);
-                });
-                const progress = pokemonListManager.current.getPercentProgress();
-                console.log("Page loaded, full ist = ", pokemonList);
-                console.log("Progress = ", progress);
-                setPercentageLoaded(progress);
-
-                if (pokemonListManager.current.allInformationGathered() && !ballsLoading.current && !ailmentsLoading.current) {
-                    setDataLoading(false);
-                }
-            })
+            api.current.getPokemonSpeciesList().then(speciesList => {
+                const totalSpecies = speciesList.length;
+                speciesList.results.forEach(species => {
+                    api.current.getPokemonSpeciesByName(species.name).then(speciesDetail => {
+                        pokemonList.current.push({ name: species.name, detail: speciesDetail });
+                        const thisSpecies = speciesDetail.id;
+                        setPercentageLoaded(thisSpecies / totalSpecies);
+                    });
+                })
+                speciesDataLoading.current = false;
+            });
+        }
+        if (!speciesDataLoading.current && !ballsLoading.current && !ailmentsLoading.current) {
+            setDataLoading(false);
         }
 
     }, [percentageLoaded]);
