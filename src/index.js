@@ -3,8 +3,6 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import Pokedex from 'pokedex-promise-v2';
 import 'react-dropdown/style.css';
-import { NotificationContainer, NotificationManager } from 'react-notifications';
-import 'react-notifications/lib/notifications.css';
 import { ErrorBoundary } from './error_boundary';
 import PokemonListManager from './pokemon_list_manager';
 import NavBar from './navbar';
@@ -15,41 +13,59 @@ import LinearProgress from '@mui/material/LinearProgress';
 import TextField from "@mui/material/TextField";
 import Autocomplete from '@mui/material/Autocomplete';
 import _ from "lodash";
+import { SnackbarProvider, useSnackbar } from 'notistack';
+import Button from '@mui/material/Button'
 
 
 function App(props) {
     console.log("App props = ", props);
     const [selectedPokemon, setSelectedPokemon] = React.useState('');
     const [selectedGeneration, setSelectedGeneration] = React.useState('');
-    const [selectedBall, setSelectedBall] = React.useState('');
     const [aboutOpen, setAboutOpen] = React.useState(false);
     const [selectedStatusAilment, setSelectedStatusAilment] = React.useState('');
     const [captureProbability, setCaptureProbability] = React.useState({ possible: false, probability: 0.0 });
+    const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
-    const onGenericError = (error, info) => {
-        NotificationManager.error(error + info);
+    const error = (message) => {
+        console.log("errro: ", message);
+        enqueueSnackbar(
+            message,
+            {
+                key: Math.random(),
+                variant: 'error',
+                action: key => { return <Button onClick={() => closeSnackbar(key)}>Dismiss</Button> }
+            });
+    };
+
+    const info = (message) => {
+        console.log("info: ", message);
+        enqueueSnackbar(
+            message,
+            {
+                key: Math.random(),
+                variant: 'info',
+                action: key => { return <Button onClick={() => closeSnackbar(key)}>Dismiss</Button> }
+            });
     }
 
-    const onSelectBall = (ball) => {
-        console.log(`onSelectBall::ball = ${ball}`);
-        setSelectedBall(ball);
-        NotificationManager.info(`Selected ${ball.target.value}`);
+    const onGenericError = (error, info) => {
+        error(error + info);
     }
 
     const onSelectPokemon = (mon) => {
         console.log(`onSelect::mon = ${mon}`);
         setSelectedPokemon(mon);
-        NotificationManager.info(`Selected ${mon}`);
+        info(`Selected ${mon}`);
     }
 
     const onSelectGenerations = (mon) => {
         console.log(`Selected = ${mon.target.value}`);
         setSelectedGeneration(mon.target.value);
-        NotificationManager.info(`Selected ${mon.target.value}`);
+        info(`Selected ${mon.target.value}`);
     }
 
     const onStatusChange = (status) => {
-        Notification.info(`New status = ${status}`);
+        info(`New status = ${status}`);
     }
 
     /**
@@ -138,7 +154,6 @@ function App(props) {
             <AboutDialog open={aboutOpen} handleAboutClose={handleAboutClose} />
             <hr className="rule" />
             {mainData}
-            <NotificationContainer />
         </div >)
 }
 
@@ -172,14 +187,17 @@ function AppView() {
         }
     }, [percentageLoaded]);
 
-    return <App
-        pokemonList={pokemonList.current}
-        generations={generations}
-        statusOptions={statusOptions}
-        ballList={ballList}
-        dataLoading={dataLoading}
-        percentageLoaded={percentageLoaded}
-    />
+    return (
+        <SnackbarProvider maxSnack={3}>
+            <App
+                pokemonList={pokemonList.current}
+                generations={generations}
+                statusOptions={statusOptions}
+                ballList={ballList}
+                dataLoading={dataLoading}
+                percentageLoaded={percentageLoaded}
+            />
+        </SnackbarProvider>);
 }
 
 function getRandomInt(max) {
