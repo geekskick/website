@@ -8,13 +8,39 @@ import Typography from '@mui/material/Typography';
 import { CardHeader } from '@mui/material';
 import { getOrUseCachedPokemonData, getOrUseCachedSpeciesData } from './get_or_use_cached';
 
+
+
+
 export default function ResultCard(props) {
+
+    const [pokemonDetails, setPokemonDetails] = React.useState();
+    const [speciesDetails, setSpeciesDetails] = React.useState();
+
+    const pokemonSpeciesLoader = async (pokemon, callback) => {
+        const species = await props.api.getPokemonSpeciesByName(pokemon.split("_")[0]);
+        console.log("Details for ", pokemon, species);
+        callback(pokemon, species);
+
+    }
+
+    const pokemonDetailsLoader = async (pokemon, callback) => {
+        const species = await props.api.getPokemonByName(pokemon.split("_")[0]);
+        console.log("Details for ", pokemon, species);
+        callback(pokemon, species);
+    }
+
+    React.useEffect(() => {
+        console.log("ResultCard::useEffect");
+        getOrUseCachedPokemonData(props.selectedPokemon, pokemonDetailsLoader, (data) => {
+            console.log("Got ", data);
+            setPokemonDetails(data);
+        });
+        getOrUseCachedSpeciesData(props.selectedPokemon, pokemonSpeciesLoader, (data) => { setSpeciesDetails(data) });
+    }, [props.selectedPokemon]);
+
     console.log("ResultCard props = ", props);
-    const speciesData = getOrUseCachedSpeciesData(props.selectedPokemon, props.pokemonSpeciesCacheHandler);
-    const pokemonData = getOrUseCachedPokemonData(props.selectedPokemon, props.pokemonDetailsCacheHandler);
-    const sprite = "hello";
-    console.log(speciesData);
-    console.log(pokemonData);
+    console.log("SpeciesData = ", speciesDetails);
+    console.log("PokemonData = ", pokemonDetails);
     return (<Card sx={{ maxWidth: 400 }}>
         <CardHeader
             title={props.selectedPokemon}
@@ -22,7 +48,7 @@ export default function ResultCard(props) {
         <CardMedia
             component="img"
             height="150"
-            image={pokemonData.sprites.front_default}
+            image={pokemonDetails?.sprites?.front_default}
             alt={props.selectedPokemon}
         />
         <CardContent>

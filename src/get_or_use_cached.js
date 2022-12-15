@@ -1,7 +1,8 @@
-function getOrUseCached(key, getter) {
+async function getOrUseCached(key, getter) {
     let cachedValue = localStorage.getItem(key);
     if (!cachedValue) {
-        getter(key, storeInCache);
+        await getter(key, storeInCache);
+        console.log("used getter");
         cachedValue = localStorage.getItem(key);
     }
     const parsedItem = JSON.parse(cachedValue);
@@ -9,12 +10,18 @@ function getOrUseCached(key, getter) {
     return parsedItem;
 }
 
-export function getOrUseCachedSpeciesData(key, getter) {
-    return getOrUseCached(`${key}_species`, getter);
+export function getOrUseCachedSpeciesData(key, getter, setter) {
+    getOrUseCached(`${key}_species`, getter).then(value => {
+        console.log("Calling ", setter, value);
+        setter(value);
+    });
 }
 
-export function getOrUseCachedPokemonData(key, getter) {
-    return getOrUseCached(`${key}_detail`, getter);
+export function getOrUseCachedPokemonData(key, getter, setter) {
+    getOrUseCached(`${key}_detail`, getter).then(value => {
+        console.log("value = ", value);
+        setter(value);
+    })
 }
 
 function storeInCache(key, value) {

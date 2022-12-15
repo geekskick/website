@@ -105,8 +105,7 @@ function App(props) {
                     selectedPokemon={selectedPokemon}
                     selectedGeneration={selectedGeneration}
                     selectedAilment={selectedAilment}
-                    pokemonDetailsCacheHandler={props.pokemonDetailsCacheHandler}
-                    pokemonSpeciesCacheHandler={props.pokemonSpeciesCacheHandler}
+                    api={props.api}
                 />
             );
         }
@@ -213,20 +212,6 @@ function AppView() {
         dataRequests.current.push(data);
     }
 
-    const pokemonSpeciesLoader = (pokemon, callback) => {
-        api.current.getPokemonSpeciesByName(pokemon.split("_")[0]).then(species => {
-            console.log("Details for ", pokemon, species);
-            callback(pokemon, species);
-        })
-
-    }
-
-    const pokemonDetailsLoader = (pokemon, callback) => {
-        api.current.getPokemonByName(pokemon.split("_")[0]).then(species => {
-            console.log("Details for ", pokemon, species);
-            callback(pokemon, species);
-        })
-    }
 
     React.useEffect(() => {
         console.log("useEffect");
@@ -269,8 +254,7 @@ function AppView() {
                 pokemonNames={pokemonNames}
                 generations={generations}
                 ailments={ailments}
-                pokemonDetailsCacheHandler={pokemonDetailsLoader}
-                pokemonSpeciesCacheHandler={pokemonSpeciesLoader}
+                api={api.current}
             />
         </SnackbarProvider>);
 }
