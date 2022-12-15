@@ -38,17 +38,32 @@ export default function ResultCard(props) {
         getOrUseCachedSpeciesData(props.selectedPokemon, pokemonSpeciesLoader, (data) => { setSpeciesDetails(data) });
     }, [props.selectedPokemon]);
 
+    let sprite;
+    let generationSprites;
+    if (pokemonDetails) {
+        generationSprites = Object.entries(pokemonDetails?.sprites.versions[props.selectedGeneration]);
+    }
+    if (generationSprites) {
+        sprite = generationSprites[0][1].front_default;
+        if (!sprite) {
+            console.log("There are NO generation sprites for this (" + props.selectedPokemon + "," + props.selectedGeneration + "), so using default");
+            sprite = pokemonDetails?.sprites.front_default;
+        }
+    }
     console.log("ResultCard props = ", props);
     console.log("SpeciesData = ", speciesDetails);
     console.log("PokemonData = ", pokemonDetails);
+    console.log("Generation sprites = ", generationSprites);
+    console.log("Selected sprite = ", sprite);
+
     return (<Card sx={{ maxWidth: 400 }}>
         <CardHeader
             title={props.selectedPokemon}
         />
         <CardMedia
             component="img"
-            height="150"
-            image={pokemonDetails?.sprites?.front_default}
+            height="200"
+            image={sprite}
             alt={props.selectedPokemon}
         />
         <CardContent>
