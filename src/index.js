@@ -4,17 +4,16 @@ import './index.css';
 import Pokedex from 'pokedex-promise-v2';
 import 'react-dropdown/style.css';
 import { ErrorBoundary } from './error_boundary';
-import PokemonListManager from './pokemon_list_manager';
 import NavBar from './navbar';
 import AboutDialog from './about_dialog';
 import Balls from './data/balls.json'
 import Grid from '@mui/material/Grid'
-import LinearProgress from '@mui/material/LinearProgress';
 import TextField from "@mui/material/TextField";
 import Autocomplete from '@mui/material/Autocomplete';
 import { SnackbarProvider, useSnackbar } from 'notistack';
 import Button from '@mui/material/Button'
 import Typography from '@mui/material/Typography';
+import ResultCard from './result_card';
 
 function DismissButton(props) {
     return (<Button onClick={() => props.handleDismiss(props.key)}>Dismiss</Button>)
@@ -25,7 +24,7 @@ function App(props) {
     const [selectedPokemon, setSelectedPokemon] = React.useState('');
     const [selectedGeneration, setSelectedGeneration] = React.useState('');
     const [aboutOpen, setAboutOpen] = React.useState(false);
-    const [selectedStatusAilment, setSelectedStatusAilment] = React.useState('');
+    const [selectedAilment, setSelectedAilment] = React.useState('');
     const [captureProbability, setCaptureProbability] = React.useState({ possible: false, probability: 0.0 });
     const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
@@ -67,7 +66,7 @@ function App(props) {
 
     const onStatusChange = (status) => {
         info(`Selected ${status}`);
-        setSelectedStatusAilment(status);
+        setSelectedAilment(status);
     }
 
     /**
@@ -86,6 +85,8 @@ function App(props) {
         setAboutOpen(false);
     }
 
+    const allDataGathered = selectedGeneration !== '' && selectedPokemon !== '' && selectedAilment !== '';
+
     const probabilityData = (() => {
         if (captureProbability.possible) {
             return <div>
@@ -97,69 +98,79 @@ function App(props) {
         }
     })();
 
-    const mainData = (() => {
-        if (props.dataLoading) {
-            return <div>
-                <LinearProgress variant="determinate" value={props.percentageLoaded * 100} />
-            </div>
+    const resultCard = (() => {
+        if (allDataGathered) {
+            return (
+                <ResultCard
+                    selectedPokemon={selectedPokemon}
+                    selectedGeneration={selectedGeneration}
+                    selectedAilment={selectedAilment}
+                />
+            );
         }
         else {
-            return (
-                <ErrorBoundary onError={onGenericError}>
-                    {/* According to the docs the Stack is better for this, but it doesn't seem as easy to get the 
+            return <div></div>
+        }
+    })();
+
+    const mainData = (() => {
+        return (
+            <ErrorBoundary onError={onGenericError}>
+                {/* According to the docs the Stack is better for this, but it doesn't seem as easy to get the 
                     Dropdowns to actually fill the screen evenly, so for now specify using the xs property of the Grid item 
                     That things are going to take up 4 of the 12 available columns - aka be 1/3 of the screen each
                 */}
-                    <Grid container spacing={2}>
-                        <Grid item xs={4}>
-                            <Autocomplete
-                                options={props.pokemonList.map(pokemon => { return { label: `#${pokemon.detail.id} ${pokemon.name}` } })}
-                                isOptionEqualToValue={(left, right) => { return left.label === right }}
-                                onChange={(event, value, reason) => {
-                                    console.log(event, value, reason);
-                                    if (reason === "selectOption") {
-                                        onSelectPokemon(value.label);
-                                    }
-                                }}
-                                value={selectedPokemon}
-                                renderInput={(params) => <TextField {...params} label="Select a Pokemon" />}
-                            />
-                        </Grid>
-                        <Grid item xs={4}>
-                            <Autocomplete
-                                options={props.generations.map(gen => { return { label: gen.name } })}
-                                isOptionEqualToValue={(left, right) => { return left.label === right }}
-                                onChange={(event, value, reason) => {
-                                    console.log(event, value, reason);
-                                    if (reason === "selectOption") {
-                                        onSelectGenerations(value.label);
-                                    }
-                                }}
-                                value={selectedGeneration}
-                                renderInput={(params) => <TextField {...params} label="Select a Generation" />}
-                            />
-                        </Grid>
-                        <Grid item xs={4}>
-                            <Autocomplete
-                                options={props.statusOptions.map(option => { return { label: option.name } })}
-                                isOptionEqualToValue={(left, right) => {
-                                    return left.label === right
-                                }}
-                                onChange={(event, value, reason) => {
-                                    console.log(event, value, reason);
-                                    if (reason === "selectOption") {
-                                        onStatusChange(value.label);
-                                    }
-                                }}
-                                value={selectedStatusAilment}
-                                renderInput={(params) => <TextField {...params} label="Select a Status Ailment" />}
-                            />
-                        </Grid>
+                <Grid container spacing={2}>
+                    <Grid item xs={4}>
+                        <Autocomplete
+                            options={props.pokemonNames.map(key => { return { label: key } })}
+                            isOptionEqualToValue={(left, right) => { return left.label === right.label }}
+                            onChange={(event, value, reason) => {
+                                console.log(event, value, reason);
+                                if (reason === "selectOption") {
+                                    onSelectPokemon(value.label);
+                                }
+                            }}
+                            value={{ label: selectedPokemon }}
+                            renderInput={(params) => <TextField {...params} label="Select a Pokemon" />}
+                        />
                     </Grid>
-                    <hr className="rule" />
-                    {probabilityData}
-                </ErrorBoundary>);
-        }
+                    <Grid item xs={4}>
+                        <Autocomplete
+                            options={props.generations.map(gen => { return { label: gen } })}
+                            isOptionEqualToValue={(left, right) => { return left.label === right.label }}
+                            onChange={(event, value, reason) => {
+                                console.log(event, value, reason);
+                                if (reason === "selectOption") {
+                                    onSelectGenerations(value.label);
+                                }
+                            }}
+                            value={{ label: selectedGeneration }}
+                            renderInput={(params) => <TextField {...params} label="Select a Generation" />}
+                        />
+                    </Grid>
+                    <Grid item xs={4}>
+                        <Autocomplete
+                            options={props.ailments.map(option => { return { label: option } })}
+                            isOptionEqualToValue={(left, right) => {
+                                return left.label === right.label
+                            }}
+                            onChange={(event, value, reason) => {
+                                console.log(event, value, reason);
+                                if (reason === "selectOption") {
+                                    onStatusChange(value.label);
+                                }
+                            }}
+                            value={{ label: selectedAilment }}
+                            renderInput={(params) => <TextField {...params} label="Select a Status Ailment" />}
+                        />
+                    </Grid>
+                </Grid>
+                <hr className="rule" />
+                {probabilityData}
+                <hr className="rule" />
+                {resultCard}
+            </ErrorBoundary>);
     })();
 
     return (
@@ -172,69 +183,75 @@ function App(props) {
 }
 
 function AppView() {
+    class DataToLoad {
+        static Generations = new DataToLoad('Generations');
+        static PokemonNames = new DataToLoad('PokemonNames');
+        static Ailments = new DataToLoad('Ailments');
+
+        constructor(name) {
+            this._name = name;
+        }
+
+        toString() {
+            return `DataToLoad.${this._name}`;
+        }
+    };
+
     const api = React.useRef(new Pokedex());
-    const pokemonListManager = React.useRef(new PokemonListManager(api.current));
-    const generations = React.useRef([]);
-    const statusOptions = React.useRef([]);
-    const pokemonList = React.useRef([]);
-    const ballList = React.useRef([]);
-    const [dataLoading, setDataLoading] = React.useState(true);
-    const [percentageLoaded, setPercentageLoaded] = React.useState(0.0);
-    const ballsLoading = React.useRef(true);
-    const ailmentsLoading = React.useRef(true);
-    const speciesDataLoading = React.useRef(true);
+    const [generations, setGenerations] = React.useState([]);
+    const [ailments, setAilments] = React.useState([]);
+    const [pokemonNames, setPokemonNames] = React.useState([]);
+    const dataRequests = React.useRef([]);
+
+    const isLoading = (data) => {
+        return dataRequests.current.some(item => data._name === item._name);
+    }
+
+    const startedLoading = (data) => {
+        dataRequests.current.push(data);
+    }
 
     React.useEffect(() => {
-
-        if (ballsLoading.current) {
+        console.log("useEffect");
+        if (!isLoading(DataToLoad.Generations)) {
+            startedLoading(DataToLoad.Generations);
+            console.log("Requesting Generations");
             api.current.getGenerationsList().then(generationsResults => {
-                console.log("Generations = ", generationsResults);
-                generations.current = generationsResults.results;
-                ballsLoading.current = false;
+                console.log("generationsResults = ", generationsResults);
+                setGenerations(generationsResults.results.map(gen => gen.name));
             });
 
-            api.current.getPokemonSpeciesList().then(species => {
-                console.log("Species: ", species);
-            })
         }
 
-        if (ailmentsLoading.current) {
-            api.current.getMoveAilmentsList().then(ailments => {
-                console.log("Ailments = ", ailments);
-                statusOptions.current = ailments.results;
-                ailmentsLoading.current = false;
+        if (!isLoading(DataToLoad.Ailments)) {
+            startedLoading(DataToLoad.Ailments);
+            console.log("Requesting Ailments");
+            api.current.getMoveAilmentsList().then(ailmentsList => {
+                console.log("ailments = ", ailmentsList);
+                setAilments(ailmentsList.results.map(a => a.name));
             });
         }
 
-        if (!pokemonListManager.current.allInformationGathered()) {
+        if (!isLoading(DataToLoad.PokemonNames)) {
+            startedLoading(DataToLoad.PokemonNames);
+            console.log("Requesting PokemonNames");
             api.current.getPokemonSpeciesList().then(speciesList => {
-                const totalSpecies = speciesList.length;
-                speciesList.results.forEach(species => {
-                    api.current.getPokemonSpeciesByName(species.name).then(speciesDetail => {
-                        pokemonList.current.push({ name: species.name, detail: speciesDetail });
-                        const thisSpecies = speciesDetail.id;
-                        setPercentageLoaded(thisSpecies / totalSpecies);
-                    });
-                })
-                speciesDataLoading.current = false;
+                console.log("speciesList = ", speciesList);
+                setPokemonNames(speciesList.results.map(species => species.name));
             });
         }
-        if (!speciesDataLoading.current && !ballsLoading.current && !ailmentsLoading.current) {
-            setDataLoading(false);
-        }
 
-    }, [percentageLoaded]);
+    }, [DataToLoad.Generations, DataToLoad.Ailments, DataToLoad.PokemonNames]);
 
-    console.log(generations);
+    console.log("pokemonNames = ", pokemonNames);
+    console.log("generations = ", generations);
+    console.log("ailments = ", ailments);
     return (
         <SnackbarProvider maxSnack={3}>
             <App
-                pokemonList={pokemonList.current}
-                generations={generations.current}
-                statusOptions={statusOptions.current}
-                ballList={ballList.current}
-                dataLoading={dataLoading}
-                percentageLoaded={percentageLoaded}
+                pokemonNames={pokemonNames}
+                generations={generations}
+                ailments={ailments}
             />
         </SnackbarProvider>);
 }
