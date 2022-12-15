@@ -17,16 +17,28 @@ export default function ResultCard(props) {
     const [speciesDetails, setSpeciesDetails] = React.useState();
 
     const pokemonSpeciesLoader = async (pokemon, callback) => {
-        const species = await props.api.getPokemonSpeciesByName(pokemon.split("_")[0]);
-        console.log("Details for ", pokemon, species);
-        callback(pokemon, species);
+        try {
+            const species = await props.api.getPokemonSpeciesByName(pokemon.split("_")[0]);
+            console.log("Details for ", pokemon, species);
+            callback(pokemon, species);
+        }
+        catch (error) {
+            console.log(error);
+            callback(pokemon, null);
+        }
 
     }
 
     const pokemonDetailsLoader = async (pokemon, callback) => {
-        const species = await props.api.getPokemonByName(pokemon.split("_")[0]);
-        console.log("Details for ", pokemon, species);
-        callback(pokemon, species);
+        try {
+            const species = await props.api.getPokemonByName(pokemon.split("_")[0]);
+            console.log("Details for ", pokemon, species);
+            callback(pokemon, species);
+        }
+        catch (error) {
+            console.log(error);
+            callback(pokemon, null);
+        }
     }
 
     React.useEffect(() => {
@@ -50,26 +62,36 @@ export default function ResultCard(props) {
             sprite = pokemonDetails?.sprites.front_default;
         }
     }
+    if (!sprite) {
+        sprite = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png"
+    }
+
     console.log("ResultCard props = ", props);
     console.log("SpeciesData = ", speciesDetails);
     console.log("PokemonData = ", pokemonDetails);
     console.log("Generation sprites = ", generationSprites);
     console.log("Selected sprite = ", sprite);
 
-    return (<Card sx={{ maxWidth: 400 }}>
+    return (<Card sx={{
+        width: '100', display: 'flex'
+    }} >
         <CardHeader
             title={props.selectedPokemon}
         />
         <CardMedia
             component="img"
-            height="200"
+            height={100}
             image={sprite}
             alt={props.selectedPokemon}
+            sx={{ width: 100 }}
+
         />
-        <CardContent>
-            <Typography>{props.selectedPokemon}</Typography>
-            <Typography>{props.selectedGeneration}</Typography>
-            <Typography>{props.selectedAilment}</Typography>
-        </CardContent>
-    </Card>);
+        <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+            <CardContent sx={{ flex: '1 0 auto' }}>
+                <Typography>{props.selectedPokemon}</Typography>
+                <Typography>{props.selectedGeneration}</Typography>
+                <Typography>{props.selectedAilment}</Typography>
+            </CardContent>
+        </Box>
+    </Card >);
 }
