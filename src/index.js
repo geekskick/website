@@ -50,8 +50,8 @@ function App(props) {
             });
     }
 
-    const onGenericError = (error, info) => {
-        error(error + info);
+    const onGenericError = (errorM, info) => {
+        error(errorM + info);
     }
 
     const onSelectPokemon = (mon) => {
@@ -105,6 +105,8 @@ function App(props) {
                     selectedPokemon={selectedPokemon}
                     selectedGeneration={selectedGeneration}
                     selectedAilment={selectedAilment}
+                    pokemonDetailsCacheHandler={props.pokemonDetailsCacheHandler}
+                    pokemonSpeciesCacheHandler={props.pokemonSpeciesCacheHandler}
                 />
             );
         }
@@ -211,6 +213,21 @@ function AppView() {
         dataRequests.current.push(data);
     }
 
+    const pokemonSpeciesLoader = (pokemon, callback) => {
+        api.current.getPokemonSpeciesByName(pokemon.split("_")[0]).then(species => {
+            console.log("Details for ", pokemon, species);
+            callback(pokemon, species);
+        })
+
+    }
+
+    const pokemonDetailsLoader = (pokemon, callback) => {
+        api.current.getPokemonByName(pokemon.split("_")[0]).then(species => {
+            console.log("Details for ", pokemon, species);
+            callback(pokemon, species);
+        })
+    }
+
     React.useEffect(() => {
         console.log("useEffect");
         if (!isLoading(DataToLoad.Generations)) {
@@ -252,6 +269,8 @@ function AppView() {
                 pokemonNames={pokemonNames}
                 generations={generations}
                 ailments={ailments}
+                pokemonDetailsCacheHandler={pokemonDetailsLoader}
+                pokemonSpeciesCacheHandler={pokemonSpeciesLoader}
             />
         </SnackbarProvider>);
 }
