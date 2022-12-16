@@ -5,8 +5,6 @@ import CardMedia from '@mui/material/CardMedia';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
 import { CardHeader, Tooltip } from '@mui/material';
-import Paper from "@mui/material/Paper"
-import Grid from "@mui/material/Grid"
 import CONFIGURATION from './config.js';
 function BallOptions(props) {
 
