@@ -64,12 +64,11 @@ export default function App(props) {
                     p: 3
                 }}>
                 <Toolbar />
-                {APPS[selectedApp](
-                    {
-                        info: info,
-                        error: onGenericError
-                    })
-                }
+                <{APPS[selectedApp]}
+                    info={info}
+                    error={onGenericError}
+                />
+
             </Box>
         </Box >)
 }
