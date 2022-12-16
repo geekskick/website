@@ -1,13 +1,13 @@
 import React from 'react';
 import './index.css';
-import NavBar from './navbar';
+import NavBar from './components/navbar';
 import { useSnackbar } from 'notistack';
 import Button from '@mui/material/Button'
-import DismissButton from './dismiss_button';
+import DismissButton from './components/dismiss_button';
 import Box from '@mui/material/Box'
 import Toolbar from '@mui/material/Toolbar';
 import CssBaseline from '@mui/material/CssBaseline';
-import Sidebar from './sidebar.js'
+import Sidebar from './components/sidebar'
 import APPS from './available_apps'
 
 const drawerWidth = 240;

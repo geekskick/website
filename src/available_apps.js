@@ -1,4 +1,4 @@
-import CanICatchItApp from './can_i_catch_it_app'
+import CanICatchItApp from './apps/can_i_catch_it/app'
 const APPS = {
     "Can I Catch It?": CanICatchItApp
 };

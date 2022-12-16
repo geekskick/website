@@ -1,7 +1,6 @@
 import React from 'react';
-import './index.css';
 import Pokedex from 'pokedex-promise-v2';
-import ErrorBoundary from './error_boundary';
+import ErrorBoundary from './../../components/error_boundary';
 import Grid from '@mui/material/Grid'
 import TextField from "@mui/material/TextField";
 import Autocomplete from '@mui/material/Autocomplete';
