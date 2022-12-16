@@ -3,7 +3,7 @@ import React from 'react';
 import Divider from '@mui/material/Divider';
 import AboutDialog from './about_dialog';
 import Drawer from '@mui/material/Drawer'
-
+import AppsIcon from '@mui/icons-material/Apps';
 import Toolbar from '@mui/material/Toolbar';
 import { List, ListItemButton, ListItemText, ListItemIcon } from '@mui/material';
 import InfoIcon from '@mui/icons-material/Info';
@@ -27,6 +27,23 @@ export default function Sidebar(props) {
         setAboutOpen(false);
     }
 
+    const appOptions = [];
+
+    props.apps.forEach(appName => {
+        appOptions.push(
+            <ListItemButton key={appName} onClick={() => {
+                console.log("CLicked ", appName);
+                props.onAppSelect(appName);
+            }}>
+                <ListItemIcon>
+                    <AppsIcon />
+                </ListItemIcon>
+                <ListItemText primary={appName} />
+            </ListItemButton>);
+    });
+
+    console.log("AppPptions = ", appOptions);
+
     return (<Drawer
         sx={{
             width: props.width,
@@ -49,6 +66,9 @@ export default function Sidebar(props) {
             </ListItemButton>
         </List>
         <Divider />
+        <List>
+            {appOptions}
+        </List>
         <AboutDialog open={aboutOpen} handleAboutClose={handleAboutClose} />
     </Drawer>);
 }
