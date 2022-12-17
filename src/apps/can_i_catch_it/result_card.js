@@ -4,7 +4,8 @@ import Card from '@mui/material/Card';
 import CardMedia from '@mui/material/CardMedia';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
-import { CardHeader, Tooltip } from '@mui/material';
+import CardHeader from '@mui/material/CardHeader';
+import Tooltip from '@mui/material/Tooltip';
 import CONFIGURATION from './config.js';
 import calculateCaptureProbability from './calculations.js';
 function BallOptions(props) {
