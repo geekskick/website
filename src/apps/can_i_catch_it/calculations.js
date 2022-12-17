@@ -1,7 +1,10 @@
-const calculateGenIF = (ballName) => {
+const calculateGenIF = (ballName, pokemonHpStat, pokemonLevel) => {
     // TODO: Assume hp levels
-    const hpMax = 100;
-    const hpCurrent = 100;
+    console.log(`calculateGenIF(${ballName}, ${pokemonHpStat}, ${pokemonLevel})`);
+    const hpMax = calculateHpMax(pokemonHpStat, pokemonLevel);
+    const hpCurrent = hpMax;
+    console.log(`hpMax = ${hpMax}`);
+    console.log(`hpCurrent = ${hpCurrent}`);
 
     let ball = 12;
     if (ballName === "great-ball") {
@@ -22,13 +25,26 @@ function getGenIBallMod(ballName) {
         return 150;
     }
 }
-
+function calculateHpMax(pokemonHpStat, pokemonLevel) {
+    console.log(`calculateHpMax(${pokemonHpStat}, ${pokemonLevel})`);
+    // https://pokemon.neoseeker.com/wiki/HP#HP
+    // Gen i and ii calculation:
+    // (((IV + Base + (√EV / 8) + 50) * Level) / 50) + 10
+    // e.g. raticate stat = 55, lvl 50.. ignore IV and EV gives:
+    // (((IV + Base + (√EV / 8) + 50) * Level) / 50) + 10
+    // (((Base + 50) * Level) / 50) + 10
+    // (((55+50) * 50)/50) + 10
+    // (((105  ) * 50)/50) + 10
+    // ( 5250         /50) + 10
+    // 105                 + 10 = 115
+    return (((pokemonHpStat + 50) * pokemonLevel) / 50) + 10;
+}
 function getGenIIBallMod(ballName) {
     console.log("The ball is", ballName);
-    if (ballName === "poke-ball" || ballName === 'safari-ball' || ballName === 'park-ball') {
+    if (ballName === "poke-ball" || ballName === 'park-ball') {
         return 1;
     }
-    else if (ballName === 'great-ball' || ballName === 'sport-ball') {
+    else if (ballName === 'great-ball' || ballName === 'sport-ball' || ballName === 'safari-ball') {
         return 1.5;
     }
     else if (ballName === 'ultra-ball') {
@@ -40,7 +56,7 @@ function getGenIIBallMod(ballName) {
     throw `${ballName} is an unsupported ball type`;
 }
 
-function calculateGenICaptureProbability(captureRate, ballName) {
+function calculateGenICaptureProbability(captureRate, ballName, pokemonHpStat, pokemonLevel) {
     // https://bulbapedia.bulbagarden.net/wiki/Catch_rate
     // TODO: Get user status ailment
     const statusAilent = 0;
@@ -49,7 +65,7 @@ function calculateGenICaptureProbability(captureRate, ballName) {
     const p0 = statusAilent / (ballMod + 1);
 
     // TODO: Calculate this
-    const f = calculateGenIF(ballName);
+    const f = calculateGenIF(ballName, pokemonHpStat, pokemonLevel);
     console.log(`GenIF() = ${f}`);
     console.log(`(${captureRate} + 1) / (${ballMod} + 1)) * ((${f}+ 1) / 256)`)
     const p1 = ((captureRate + 1) / (ballMod + 1)) * ((f + 1) / 256);
@@ -64,13 +80,17 @@ function calculateRateModified(pokemonCaptureRate, ballModifier) {
     return Math.max(1, rateModified);
 }
 
-function calculateModifiedCatchRate(pokemonCaptureRate, ballModifier) {
+function calculateModifiedCatchRate(pokemonCaptureRate, ballModifier, pokemonHpStat, pokemonLevel) {
     console.log(`capture rate = ${pokemonCaptureRate}, ballModifier = ${ballModifier}`)
     const minimum = 1.0;
     const maximum = 255;
     // TODO: Use actual values here
-    const hpMax = 100;
-    const hpCurrent = 100;
+    const hpMax = calculateHpMax(pokemonHpStat, pokemonLevel);
+    const hpCurrent = hpMax;
+
+    console.log(`hpMax = ${hpMax}`);
+    console.log(`hpCurrent = ${hpCurrent}`);
+
     let hpMaxTimes3 = hpMax * 3;
     let hpCurrentTimes2 = hpCurrent * 2;
     console.log("hpCurrent * 2 = ", hpCurrentTimes2);
@@ -102,9 +122,9 @@ function calculateModifiedCatchRate(pokemonCaptureRate, ballModifier) {
 
 
 
-function calculateGenIICaptureProbability(captureRate, ballName) {
+function calculateGenIICaptureProbability(captureRate, ballName, pokemonHpStat, pokemonLevel) {
     // TODO: Use a real ball modifer these are just pokeballs rn
-    const a = calculateModifiedCatchRate(captureRate, getGenIIBallMod(ballName));
+    const a = calculateModifiedCatchRate(captureRate, getGenIIBallMod(ballName), pokemonHpStat, pokemonLevel);
     const randomMax = 255;
     // if random <= a it's caught. 
     // therefore the probability is a/randomMax
@@ -113,7 +133,7 @@ function calculateGenIICaptureProbability(captureRate, ballName) {
     return a / randomMax;
 }
 
-export default function calculateCaptureProbability(generationName, captureRate, ballName) {
+export default function calculateCaptureProbability(generationName, captureRate, ballName, pokemonHpStat, pokemonLevel) {
     if (ballName === "master-ball") {
         return 1;
     }
@@ -122,7 +142,7 @@ export default function calculateCaptureProbability(generationName, captureRate,
         "generation-ii": calculateGenIICaptureProbability
     }
     console.log(`Selected generation = ${generationName}`);
-    const rc = rateCalculators[generationName](captureRate, ballName);
+    const rc = rateCalculators[generationName](captureRate, ballName, pokemonHpStat, pokemonLevel);
     console.log(`Rate calculated as ${rc}`);
     return rc;
 

@@ -37,6 +37,9 @@ function BallOptions(props) {
 
     console.log("Rendering the BallOptions");
     console.log("specied details = ", speciesDetails);
+    const hpStat = props.pokemonDetails?.stats.filter(stat => stat.stat?.name == "hp")[0].base_stat;
+    console.log(`${props.selectedPokemon} has a base hp stat of ${hpStat}`);
+    const level = 50;
     return (
         <div>
 
@@ -46,7 +49,7 @@ function BallOptions(props) {
                     // https://stackoverflow.com/questions/51940157/how-to-align-horizontal-icon-and-text-in-mui
                     let probability;
                     try {
-                        probability = calculateCaptureProbability(props.selectedGeneration, speciesDetails?.capture_rate, ball);
+                        probability = calculateCaptureProbability(props.selectedGeneration, speciesDetails?.capture_rate, ball, hpStat, 50);
                         probability = Math.ceil(1.0 / probability);
                     }
                     catch (error) {
@@ -144,7 +147,7 @@ export default function ResultCard(props) {
         </Tooltip>
         <Box sx={{ display: 'flex', flexDirection: 'column' }}>
             <CardContent sx={{ flex: '1 0 auto' }}>
-                <BallOptions selectedGeneration={props.selectedGeneration} selectedPokemon={props.selectedPokemon} api={props.api} />
+                <BallOptions selectedGeneration={props.selectedGeneration} selectedPokemon={props.selectedPokemon} api={props.api} pokemonDetails={pokemonDetails} />
             </CardContent>
         </Box>
     </Card >);
