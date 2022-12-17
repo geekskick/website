@@ -43,35 +43,45 @@ function BallOptions(props) {
                 ballList.map(ball => {
                     // Make the icon and the text on the same line - pulled from here:
                     // https://stackoverflow.com/questions/51940157/how-to-align-horizontal-icon-and-text-in-mui
-                    const probability = calculateCaptureProbability(props.selectedGeneration, speciesDetails?.capture_rate, ball);
+                    let probability;
+                    try {
+                        probability = calculateCaptureProbability(props.selectedGeneration, speciesDetails?.capture_rate, ball);
+                        probability = Math.ceil(1.0 / probability);
+                    }
+                    catch (error) {
+                        console.log(error);
+                        probability = `Unable to calculate using ${props.selectedGeneration}`
+                    }
                     return (
-                        <Box
-                            sx={{
-                                display: 'flex',
-                                justifyContent: 'space-between',
-                                alignItems: 'center',
-                                p: 1,
-                                m: 1,
-                                bgcolor: 'background.paper',
-                            }}>
-                            <Box sx={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                flexWrap: 'wrap',
-                            }}>
-                                <Box
-                                    component="img"
-                                    // TODO: Use the actual sprite URL
-                                    src={CONFIGURATION.DEFAULT_SPRITE_URL}
-                                />
-                                <Typography>Using {ball} you'll need this many: </Typography>
-                            </Box>
-                            <Box>
-                                <Tooltip title={speciesDetails?.name}>
-                                    <Typography>{Math.ceil(1.0 / probability)}</Typography>
-                                </Tooltip>
-                            </Box>
-                        </Box >);
+                        <Tooltip title={`${props.selectedPokemon} has a base capture rate of ${speciesDetails?.capture_rate} `}>
+                            <Box
+                                sx={{
+                                    display: 'flex',
+                                    justifyContent: 'space-between',
+                                    alignItems: 'center',
+                                    p: 1,
+                                    m: 1,
+                                    bgcolor: 'background.paper',
+                                }}>
+                                <Box sx={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    flexWrap: 'wrap',
+                                }}>
+                                    <Box
+                                        component="img"
+                                        // TODO: Use the actual sprite URL
+                                        src={CONFIGURATION.DEFAULT_SPRITE_URL}
+                                    />
+                                    <Typography>Using {ball} you'll need this many: </Typography>
+                                </Box>
+                                <Box>
+                                    <Tooltip title={speciesDetails?.name}>
+                                        <Typography>{probability}</Typography>
+                                    </Tooltip>
+                                </Box>
+                            </Box >
+                        </Tooltip>);
                 })
             }
         </div >);
@@ -102,7 +112,7 @@ export default function ResultCard(props) {
     }
     if (generationSprites) {
         sprite = generationSprites[0][1].front_default;
-        tooltip = `${props.selectedGeneration} ${props.selectedPokemon}`
+        tooltip = `${props.selectedGeneration} ${props.selectedPokemon} `
         if (!sprite) {
             console.log("There are NO generation sprites for this (" + props.selectedPokemon + "," + props.selectedGeneration + "), so using default");
             sprite = pokemonDetails?.sprites.front_default;
