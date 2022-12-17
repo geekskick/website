@@ -5,8 +5,9 @@ import CardMedia from '@mui/material/CardMedia';
 import CardContent from '@mui/material/CardContent';
 import CardHeader from '@mui/material/CardHeader';
 import Tooltip from '@mui/material/Tooltip';
+import { Typography } from '@mui/material';
 import HPSlider from './hp_slider';
-import Slider from '@mui/material/Slider';
+import InputSlider from './level_slider';
 import CONFIGURATION from './config.js';
 import BallOptions from './ball_options'
 
@@ -17,8 +18,8 @@ export default function ResultCard(props) {
     const [level, setLevel] = React.useState(50);
     const [hp, setHp] = React.useState(1.0);
 
-    const levelChangeHandler = (event, value) => {
-        console.log("ResultCard::levelChangeHandler", event, value);
+    const levelChangeHandler = (value) => {
+        console.log("ResultCard::levelChangeHandler", value);
         setLevel(value);
     };
 
@@ -67,17 +68,21 @@ export default function ResultCard(props) {
         alignItems: 'center',
         justifyContent: 'space-evenly'
     }} >
-        <CardHeader
-            title={props.selectedPokemon}
-        />
-        <Box>
+
+        <Box sx={{
+            //width: '100',
+            //display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center'
+        }}>
+            <Typography variant="h3">{props.selectedPokemon}</Typography>
             <Tooltip title={tooltip}>
                 <CardMedia
                     component="img"
-                    height={100}
+                    //height={100}
                     image={sprite}
                     alt={props.selectedPokemon}
-                    sx={{ width: 100 }}
+                //sx={{ width: 100 }}
                 />
             </Tooltip>
             <Tooltip title={"Select a HP level"}>
@@ -88,15 +93,10 @@ export default function ResultCard(props) {
                     onChangeCommitted={hpChangeHandler}
                 />
             </Tooltip>
-            <Tooltip title={"Select a the Pokemon's level"}>
-                <Slider
-                    defaultValue={level}
-                    step={1}
-                    min={1}
-                    max={100}
-                    onChangeCommitted={levelChangeHandler}
-                />
-            </Tooltip>
+            <InputSlider
+                value={level}
+                onChange={levelChangeHandler}
+            />
         </Box>
         <Box sx={{ display: 'flex', flexDirection: 'column' }}>
             <CardContent sx={{ flex: '1 0 auto' }}>
