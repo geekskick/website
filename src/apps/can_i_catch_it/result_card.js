@@ -6,6 +6,7 @@ import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
 import CardHeader from '@mui/material/CardHeader';
 import Tooltip from '@mui/material/Tooltip';
+import Slider from '@mui/material/Slider';
 import CONFIGURATION from './config.js';
 import calculateCaptureProbability from './calculations.js';
 function BallOptions(props) {
@@ -35,11 +36,9 @@ function BallOptions(props) {
         });
     }, [props.selectedPokemon]);
 
-    console.log("Rendering the BallOptions");
-    console.log("specied details = ", speciesDetails);
-    const hpStat = props.pokemonDetails?.stats.filter(stat => stat.stat?.name == "hp")[0].base_stat;
+    console.log("speciedDetails = ", speciesDetails);
+    const hpStat = props.pokemonDetails?.stats.filter(stat => stat.stat?.name === "hp")[0].base_stat;
     console.log(`${props.selectedPokemon} has a base hp stat of ${hpStat}`);
-    const level = 50;
     return (
         <div>
 
@@ -49,7 +48,7 @@ function BallOptions(props) {
                     // https://stackoverflow.com/questions/51940157/how-to-align-horizontal-icon-and-text-in-mui
                     let probability;
                     try {
-                        probability = calculateCaptureProbability(props.selectedGeneration, speciesDetails?.capture_rate, ball, hpStat, 50);
+                        probability = calculateCaptureProbability(props.selectedGeneration, speciesDetails?.capture_rate, ball, hpStat, props.pokemonLevel, props.hp);
                         probability = Math.ceil(1.0 / probability);
                     }
                     catch (error) {
@@ -95,6 +94,20 @@ export default function ResultCard(props) {
 
     console.log("Result card props = ", props);
     const [pokemonDetails, setPokemonDetails] = React.useState();
+    const [level, setLevel] = React.useState(50);
+    const [hp, setHp] = React.useState(1);
+
+    const levelChangeHandler = (event, value) => {
+        console.log("ResultCard::levelChangeHandler", event, value);
+        setLevel(value);
+    };
+
+    const hpChangeHandler = (event, value) => {
+        console.log("ResultCard::hpChangeHandler", event, value);
+        const percent = value / 100.0;
+        console.log("percent = ", percent);
+        setHp(percent);
+    }
 
     React.useEffect(() => {
         console.log("ResultCard::useEffect");
@@ -110,7 +123,7 @@ export default function ResultCard(props) {
 
     let sprite;
     let generationSprites;
-    let tooltip;
+    let tooltip = "tooltip";
     if (pokemonDetails) {
         generationSprites = Object.entries(pokemonDetails?.sprites.versions[props.selectedGeneration]);
     }
@@ -137,17 +150,38 @@ export default function ResultCard(props) {
             title={props.selectedPokemon}
         />
         <Tooltip title={tooltip}>
-            <CardMedia
-                component="img"
-                height={100}
-                image={sprite}
-                alt={props.selectedPokemon}
-                sx={{ width: 100 }}
-            />
+            <Box>
+                <CardMedia
+                    component="img"
+                    height={100}
+                    image={sprite}
+                    alt={props.selectedPokemon}
+                    sx={{ width: 100 }}
+                />
+                <Slider
+                    defaultValue={hp}
+                    min={1}
+                    max={100}
+                    onChangeCommitted={hpChangeHandler}
+                />
+                <Slider
+                    defaultValue={level}
+                    step={1}
+                    min={1}
+                    max={100}
+                    onChangeCommitted={levelChangeHandler}
+                />
+            </Box>
         </Tooltip>
         <Box sx={{ display: 'flex', flexDirection: 'column' }}>
             <CardContent sx={{ flex: '1 0 auto' }}>
-                <BallOptions selectedGeneration={props.selectedGeneration} selectedPokemon={props.selectedPokemon} api={props.api} pokemonDetails={pokemonDetails} />
+                <BallOptions
+                    selectedGeneration={props.selectedGeneration}
+                    selectedPokemon={props.selectedPokemon}
+                    api={props.api}
+                    pokemonLevel={level}
+                    hp={hp}
+                    pokemonDetails={pokemonDetails} />
             </CardContent>
         </Box>
     </Card >);
