@@ -6,10 +6,11 @@ import Drawer from '@mui/material/Drawer'
 import Button from '@mui/material/Button'
 import AppsIcon from '@mui/icons-material/Apps';
 import Toolbar from '@mui/material/Toolbar';
-import { List, ListItemButton, ListItemText, ListItemIcon } from '@mui/material';
+import { List, ListItemButton, ListItemText, ListItemIcon, Tooltip, Box } from '@mui/material';
 import InfoIcon from '@mui/icons-material/Info';
 import Config from '../config'
 import GitHubIcon from '@mui/icons-material/GitHub';
+import BugReportIcon from '@mui/icons-material/BugReport';
 
 export default function Sidebar(props) {
     const [aboutOpen, setAboutOpen] = React.useState(false);
@@ -74,9 +75,21 @@ export default function Sidebar(props) {
         </List>
         <Divider />
         <List>
-            <Button href={Config.GITHUB_URL}>
-                <GitHubIcon />
-            </Button>
+            <Box sx={{
+                justifyContent: 'space-evenly',
+                align: 'center'
+            }}>
+                <Tooltip title="View the source">
+                    <Button href={Config.GITHUB_URL}>
+                        <GitHubIcon />
+                    </Button>
+                </Tooltip>
+                <Tooltip title="Report a bug">
+                    <Button href={Config.GITHUB_URL}>
+                        <BugReportIcon />
+                    </Button>
+                </Tooltip>
+            </Box>
         </List>
 
         <AboutDialog open={aboutOpen} handleAboutClose={handleAboutClose} />
