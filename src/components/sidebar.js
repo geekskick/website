@@ -3,10 +3,13 @@ import React from 'react';
 import Divider from '@mui/material/Divider';
 import AboutDialog from './about_dialog';
 import Drawer from '@mui/material/Drawer'
+import Button from '@mui/material/Button'
 import AppsIcon from '@mui/icons-material/Apps';
 import Toolbar from '@mui/material/Toolbar';
 import { List, ListItemButton, ListItemText, ListItemIcon } from '@mui/material';
 import InfoIcon from '@mui/icons-material/Info';
+import Config from '../config'
+import GitHubIcon from '@mui/icons-material/GitHub';
 
 export default function Sidebar(props) {
     const [aboutOpen, setAboutOpen] = React.useState(false);
@@ -69,6 +72,13 @@ export default function Sidebar(props) {
         <List>
             {appOptions}
         </List>
+        <Divider />
+        <List>
+            <Button href={Config.GITHUB_URL}>
+                <GitHubIcon />
+            </Button>
+        </List>
+
         <AboutDialog open={aboutOpen} handleAboutClose={handleAboutClose} />
     </Drawer>);
 }
