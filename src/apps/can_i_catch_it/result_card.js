@@ -6,6 +6,7 @@ import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
 import { CardHeader, Tooltip } from '@mui/material';
 import CONFIGURATION from './config.js';
+import calculateCaptureProbability from './calculations.js';
 function BallOptions(props) {
 
     const [ballList, setBallList] = React.useState([]);
@@ -42,6 +43,7 @@ function BallOptions(props) {
                 ballList.map(ball => {
                     // Make the icon and the text on the same line - pulled from here:
                     // https://stackoverflow.com/questions/51940157/how-to-align-horizontal-icon-and-text-in-mui
+                    const probability = calculateCaptureProbability(props.selectedGeneration, speciesDetails?.capture_rate, ball);
                     return (
                         <Box
                             sx={{
@@ -50,9 +52,7 @@ function BallOptions(props) {
                                 alignItems: 'center',
                                 p: 1,
                                 m: 1,
-                                border: 'solid',
                                 bgcolor: 'background.paper',
-                                borderRadius: 1,
                             }}>
                             <Box sx={{
                                 display: 'flex',
@@ -61,13 +61,14 @@ function BallOptions(props) {
                             }}>
                                 <Box
                                     component="img"
+                                    // TODO: Use the actual sprite URL
                                     src={CONFIGURATION.DEFAULT_SPRITE_URL}
                                 />
-                                <Typography>{ball}</Typography>
+                                <Typography>Using {ball} you'll need this many: </Typography>
                             </Box>
                             <Box>
                                 <Tooltip title={speciesDetails?.name}>
-                                    <Typography>{speciesDetails?.capture_rate}</Typography>
+                                    <Typography>{Math.ceil(1.0 / probability)}</Typography>
                                 </Tooltip>
                             </Box>
                         </Box >);
