@@ -1,4 +1,4 @@
 export default
     {
-        GITHUB_URL: "https://www.google.com"
+        GITHUB_URL: "https://github.com/geekskick/website"
     };
