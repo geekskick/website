@@ -8,7 +8,7 @@ import Box from '@mui/material/Box'
 import Toolbar from '@mui/material/Toolbar';
 import CssBaseline from '@mui/material/CssBaseline';
 import Sidebar from './components/sidebar'
-import APPS from './available_apps'
+import AppFactory from './available_apps'
 
 const drawerWidth = 240;
 
@@ -17,7 +17,7 @@ export default function App(props) {
 
 
     const { enqueueSnackbar, closeSnackbar } = useSnackbar();
-    const [selectedApp, setSelectedApp] = React.useState(Object.keys(APPS)[0]);
+    const [selectedApp, setSelectedApp] = React.useState(AppFactory.getAvailableApps()[0]);
 
     const error = (message) => {
         console.log("errro: ", message);
@@ -55,7 +55,7 @@ export default function App(props) {
         <Box sx={{ display: 'flex' }}>
             <CssBaseline />
             <NavBar title={selectedApp} width={`calc(100% - ${drawerWidth}px)`} />
-            <Sidebar width={drawerWidth} apps={Object.keys(APPS)} onAppSelect={onAppSelect} />
+            <Sidebar width={drawerWidth} apps={AppFactory.getAvailableApps()} onAppSelect={onAppSelect} />
             <Box
                 component="main"
                 sx={{
@@ -64,10 +64,7 @@ export default function App(props) {
                     p: 3
                 }}>
                 <Toolbar />
-                <{APPS[selectedApp]}
-                    info={info}
-                    error={onGenericError}
-                />
+                {AppFactory.create(selectedApp, info, error)}
 
             </Box>
         </Box >)
