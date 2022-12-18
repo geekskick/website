@@ -5,7 +5,7 @@ import CardMedia from '@mui/material/CardMedia';
 import CardContent from '@mui/material/CardContent';
 import CardHeader from '@mui/material/CardHeader';
 import Stack from '@mui/material/Stack';
-import { Typography, Paper } from '@mui/material';
+import { Typography, Paper, Tooltip } from '@mui/material';
 import HPSlider from './hp_slider';
 import InputSlider from './level_slider';
 import CONFIGURATION from './config.js';
@@ -97,17 +97,21 @@ export default function ResultCard(props) {
                         <Typography variant="h3">{props.selectedPokemon}</Typography>
                     </Item>
                     <Item>
-                        <Box
-                            component="img"
-                            //height={100}
-                            src={sprite}
-                            alt={props.selectedPokemon}
-                            sx={{
-                                width: '150px',
-                                justifyContent: 'center',
-                                alignItems: 'center'
-                            }}
-                        />
+                        <Tooltip title={tooltip}>
+                            <Box
+                                component="img"
+                                //height={100}
+                                src={sprite}
+                                alt={props.selectedPokemon}
+                                sx={{
+                                    width: '200px',
+                                    height: '200px',
+                                    justifyContent: 'center',
+                                    alignItems: 'center',
+                                    objectFit: 'contain'
+                                }}
+                            />
+                        </Tooltip>
                     </Item>
                     <Item>
                         <HPSlider
