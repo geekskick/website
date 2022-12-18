@@ -4,12 +4,21 @@ import Card from '@mui/material/Card';
 import CardMedia from '@mui/material/CardMedia';
 import CardContent from '@mui/material/CardContent';
 import CardHeader from '@mui/material/CardHeader';
-import Tooltip from '@mui/material/Tooltip';
-import { Typography } from '@mui/material';
+import Stack from '@mui/material/Stack';
+import { Typography, Paper } from '@mui/material';
 import HPSlider from './hp_slider';
 import InputSlider from './level_slider';
 import CONFIGURATION from './config.js';
 import BallOptions from './ball_options'
+import { styled } from '@mui/material/styles';
+const Item = styled(Box)(({ theme }) => ({
+    padding: theme.spacing(1),
+    textAlign: 'center',
+    borderColor: 'pink',
+    width: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
+}));
 
 export default function ResultCard(props) {
 
@@ -68,36 +77,58 @@ export default function ResultCard(props) {
         alignItems: 'center',
         justifyContent: 'space-evenly'
     }} >
+        <Stack
+            direction="row"
+            spacing={2}
+            sx={{
+                alignItems: 'center',
+                justifyContent: 'space-evenly',
+                width: '90%'
+            }}>
+            <Item>
+                <Stack
+                    spacing={2}
+                    sx={{
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        borderColor: 'lightcoral',
+                    }}>
+                    <Item>
+                        <Typography variant="h3">{props.selectedPokemon}</Typography>
+                    </Item>
+                    <Item>
+                        <Box
+                            component="img"
+                            //height={100}
+                            src={sprite}
+                            alt={props.selectedPokemon}
+                            sx={{
+                                width: '150px',
+                                justifyContent: 'center',
+                                alignItems: 'center'
+                            }}
+                        />
+                    </Item>
+                    <Item>
+                        <HPSlider
+                            valueLabelDisplay='auto'
+                            valueLabelFormat={(x) => `${x}% HP`}
+                            defaultValue={hp * 100}
+                            min={1}
+                            max={100}
+                            onChangeCommitted={hpChangeHandler}
+                        />
+                    </Item>
+                    <Item>
+                        <InputSlider
+                            value={level}
+                            onChange={levelChangeHandler}
+                        />
+                    </Item>
 
-        <Box sx={{
-            //width: '100',
-            //display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center'
-        }}>
-            <Typography variant="h3">{props.selectedPokemon}</Typography>
-            <CardMedia
-                component="img"
-                //height={100}
-                image={sprite}
-                alt={props.selectedPokemon}
-            //sx={{ width: 100 }}
-            />
-            <HPSlider
-                valueLabelDisplay='auto'
-                valueLabelFormat={(x) => `${x}% HP`}
-                defaultValue={hp * 100}
-                min={1}
-                max={100}
-                onChangeCommitted={hpChangeHandler}
-            />
-            <InputSlider
-                value={level}
-                onChange={levelChangeHandler}
-            />
-        </Box>
-        <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-            <CardContent sx={{ flex: '1 0 auto' }}>
+                </Stack>
+            </Item>
+            <Item>
                 <BallOptions
                     selectedGeneration={props.selectedGeneration}
                     selectedPokemon={props.selectedPokemon}
@@ -105,7 +136,7 @@ export default function ResultCard(props) {
                     pokemonLevel={level}
                     hp={hp}
                     pokemonDetails={pokemonDetails} />
-            </CardContent>
-        </Box>
+            </Item>
+        </Stack >
     </Card >);
 }

@@ -10,10 +10,25 @@ import Tooltip from '@mui/material/Tooltip';
 import HPSlider from './hp_slider';
 import Slider from '@mui/material/Slider';
 import CONFIGURATION from './config.js';
-
-
-
+import { styled } from '@mui/material/styles';
+import Stack from '@mui/material/Stack';
+import { Paper } from '@mui/material';
 import calculateCaptureProbability from './calculations.js';
+
+const Item = styled(Box)(({ theme }) => ({
+    backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
+    ...theme.typography.body2,
+    padding: 0,// theme.spacing(1),
+    margin: 0,
+    color: theme.palette.text.secondary,
+    border: 'none',
+    borderColor: 'pink',
+    width: '100%',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    display: 'flex',
+}));
+
 
 
 export default function BallOptions(props) {
@@ -47,7 +62,14 @@ export default function BallOptions(props) {
     const hpStat = props.pokemonDetails?.stats.filter(stat => stat.stat?.name === "hp")[0].base_stat;
     console.log(`${props.selectedPokemon} has a base hp stat of ${hpStat}`);
     return (
-        <div>
+        <Stack
+            spacing={2}
+            sx={{
+                alignItems: 'center',
+                justifyContent: 'space-evenly',
+                //border: 'solid',
+                width: '100%'
+            }} >
 
             {
                 ballList.map(ball => {
@@ -63,36 +85,21 @@ export default function BallOptions(props) {
                         probability = `Unable to calculate using ${props.selectedGeneration}`
                     }
                     return (
-                        <Tooltip title={`${props.selectedPokemon} has a base capture rate of ${speciesDetails?.capture_rate} `}>
-                            <Box
-                                sx={{
-                                    display: 'flex',
-                                    justifyContent: 'space-between',
-                                    alignItems: 'center',
-                                    p: 1,
-                                    m: 1,
-                                    bgcolor: 'background.paper',
-                                }}>
-                                <Box sx={{
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    flexWrap: 'wrap',
-                                }}>
-                                    <Box
-                                        component="img"
-                                        // TODO: Use the actual sprite URL
-                                        src={CONFIGURATION.DEFAULT_SPRITE_URL}
-                                    />
-                                    <Typography>Using {ball} you'll need this many: </Typography>
-                                </Box>
-                                <Box>
-                                    <Tooltip title={speciesDetails?.name}>
-                                        <Typography>{probability}</Typography>
-                                    </Tooltip>
-                                </Box>
-                            </Box >
-                        </Tooltip>);
+                        <Item>
+                            <Box sx={{
+                                display: 'flex',
+                                alignItems: 'center',
+                            }}>
+                                <Box
+                                    component="img"
+                                    // TODO: Use the actual sprite URL
+                                    src={CONFIGURATION.DEFAULT_SPRITE_URL}
+                                />
+                                <Typography>Using {ball} you'll need this many: </Typography>
+                            </Box>
+                            <Typography>{probability}</Typography>
+                        </Item>);
                 })
             }
-        </div >);
+        </Stack >);
 }
