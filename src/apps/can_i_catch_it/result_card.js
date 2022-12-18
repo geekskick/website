@@ -87,6 +87,8 @@ export default function ResultCard(props) {
             </Tooltip>
             <Tooltip title={"Select a HP level"}>
                 <HPSlider
+                    valueLabelDisplay='auto'
+                    valueLabelFormat={(x) => `${x}%`}
                     defaultValue={hp * 100}
                     min={1}
                     max={100}

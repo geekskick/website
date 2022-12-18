@@ -2,14 +2,43 @@ import * as React from 'react';
 import { styled } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
-import Typography from '@mui/material/Typography';
 import Slider from '@mui/material/Slider';
 import MuiInput from '@mui/material/Input';
-import VolumeUp from '@mui/icons-material/VolumeUp';
 
-const Input = styled(MuiInput)`
-  width: 42px;
-`;
+const LevelSlider = styled(Slider)(({ theme }) => ({
+    height: 2,
+    padding: '15px 0',
+    // The dragger
+    '& .MuiSlider-thumb': {
+        backgroundColor: 'blue',
+        //margin: '-18px 0 0',
+        borderRadius: '50%',
+        background: 'white',
+        cursor: 'pointer',
+        border: 0,
+    },
+    '& .MuiSlider-track': {
+        //opacity: 1,
+        backgroundColor: 'darkgrey',
+        border: 'solid',
+        borderColor: 'black',
+        height: '10px',
+        borderRadius: 0
+    },
+    '& .MuiSlider-rail': {
+        border: 'solid',
+        opacity: 1,
+        //width: '10px',
+        height: '10px',
+        backgroundColor: 'white',
+        borderColor: 'black',
+        borderRadius: 0
+    }
+}));
+
+const Input = styled(MuiInput)(({ theme }) => ({
+    width: '50px'
+}));
 
 export default function InputSlider(props) {
 
@@ -29,10 +58,12 @@ export default function InputSlider(props) {
         <Box >
             <Grid container spacing={2} alignItems="center">
                 <Grid item xs>
-                    <Slider
+                    <LevelSlider
                         value={props.value}
                         onChange={handleSliderChange}
                         aria-labelledby="input-slider"
+                        valueLabelDisplay='auto'
+                        valueLabelFormat={(x) => `Level ${x}`}
                     />
                 </Grid>
                 <Grid item>
