@@ -111,7 +111,7 @@ export default function ResultCard(props) {
                     </Item>
                     <Item>
                         <HPSlider
-                            valueLabelDisplay='auto'
+                            valueLabelDisplay='on'
                             valueLabelFormat={(x) => `${x}% HP`}
                             defaultValue={hp * 100}
                             min={1}

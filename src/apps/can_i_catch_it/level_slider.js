@@ -62,8 +62,8 @@ export default function InputSlider(props) {
                         value={props.value}
                         onChange={handleSliderChange}
                         aria-labelledby="input-slider"
-                        valueLabelDisplay='auto'
-                        valueLabelFormat={(x) => `Level ${x}`}
+                        valueLabelDisplay='on'
+                        valueLabelFormat={(x) => `Pokemon is at Level ${x}`}
                     />
                 </Grid>
                 <Grid item>
@@ -75,8 +75,7 @@ export default function InputSlider(props) {
                             step: 1,
                             min: { min },
                             max: { max },
-                            type: 'number',
-                            'aria-labelledby': 'input-slider',
+                            type: 'number'
                         }}
                     />
                 </Grid>
