@@ -70,7 +70,7 @@ export default function ResultCard(props) {
         sprite = CONFIGURATION.DEFAULT_SPRITE_URL;
         tooltip = `There are no sprite available for ${props.selectedPokemon}, so this is a default one`
     }
-
+    // TODO: What about if the thing isn't catchable?
     return (<Card sx={{
         width: '100',
         display: 'flex',
