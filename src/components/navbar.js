@@ -10,7 +10,8 @@ export default function NavBar(props) {
             sx={{
                 width: props.width,
                 ml: `${props.width}px`,
-                justifyContent: 'space-between'
+                justifyContent: 'space-between',
+                backgroundColor: 'green'
             }}>
             <Toolbar>
                 <Typography variant="h6">

@@ -1,7 +1,7 @@
 import React from 'react';
 import Pokedex from 'pokedex-promise-v2';
 import ErrorBoundary from './../../components/error_boundary';
-import Grid from '@mui/material/Grid'
+import Stack from '@mui/material/Stack'
 import TextField from "@mui/material/TextField";
 import Autocomplete from '@mui/material/Autocomplete';
 import ResultCard from './result_card';
@@ -63,37 +63,42 @@ export default function CanICatchItApp(props) {
                     Dropdowns to actually fill the screen evenly, so for now specify using the xs property of the Grid item 
                     That things are going to take up 4 of the 12 available columns - aka be 1/3 of the screen each
                 */}
-        <Grid container spacing={2}>
-            <Grid item xs={6}>
-                <Autocomplete
-                    options={pokemonNames.map(key => { return { label: key } })}
-                    isOptionEqualToValue={(left, right) => { return left.label === right.label }}
-                    onChange={(event, value, reason) => {
-                        console.log(event, value, reason);
-                        if (reason === "selectOption") {
-                            onSelectPokemon(value.label);
-                        }
-                    }}
-                    value={{ label: selectedPokemon }}
-                    renderInput={(params) => <TextField {...params} label="Select a Pokemon" />}
-                />
-            </Grid>
-            <Grid item xs={6}>
-                <Autocomplete
-                    options={generations.map(gen => { return { label: gen } })}
-                    isOptionEqualToValue={(left, right) => { return left.label === right.label }}
-                    onChange={(event, value, reason) => {
-                        console.log(event, value, reason);
-                        if (reason === "selectOption") {
-                            onSelectGenerations(value.label);
-                        }
-                    }}
-                    value={{ label: selectedGeneration }}
-                    renderInput={(params) => <TextField {...params} label="Select a Generation" />}
-                />
-            </Grid>
-        </Grid>
-        <hr className="rule" />
+        <Stack direction="row" spacing={2} sx={{
+            width: '100%',
+            alignItems: 'center',
+            justifyContent: 'space-between'
+        }}>
+            <Autocomplete
+                sx={{
+                    width: '100%'
+                }}
+                options={pokemonNames.map(key => { return { label: key } })}
+                isOptionEqualToValue={(left, right) => { return left.label === right.label }}
+                onChange={(event, value, reason) => {
+                    console.log(event, value, reason);
+                    if (reason === "selectOption") {
+                        onSelectPokemon(value.label);
+                    }
+                }}
+                value={{ label: selectedPokemon }}
+                renderInput={(params) => <TextField {...params} label="Select a Pokemon" />}
+            />
+            <Autocomplete
+                sx={{
+                    width: '100%'
+                }}
+                options={generations.map(gen => { return { label: gen } })}
+                isOptionEqualToValue={(left, right) => { return left.label === right.label }}
+                onChange={(event, value, reason) => {
+                    console.log(event, value, reason);
+                    if (reason === "selectOption") {
+                        onSelectGenerations(value.label);
+                    }
+                }}
+                value={{ label: selectedGeneration }}
+                renderInput={(params) => <TextField {...params} label="Select a Generation" />}
+            />
+        </Stack>
         {resultCard}
     </ErrorBoundary>);
 }
