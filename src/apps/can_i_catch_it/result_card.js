@@ -76,25 +76,21 @@ export default function ResultCard(props) {
             justifyContent: 'center'
         }}>
             <Typography variant="h3">{props.selectedPokemon}</Typography>
-            <Tooltip title={tooltip}>
-                <CardMedia
-                    component="img"
-                    //height={100}
-                    image={sprite}
-                    alt={props.selectedPokemon}
-                //sx={{ width: 100 }}
-                />
-            </Tooltip>
-            <Tooltip title={"Select a HP level"}>
-                <HPSlider
-                    valueLabelDisplay='auto'
-                    valueLabelFormat={(x) => `${x}%`}
-                    defaultValue={hp * 100}
-                    min={1}
-                    max={100}
-                    onChangeCommitted={hpChangeHandler}
-                />
-            </Tooltip>
+            <CardMedia
+                component="img"
+                //height={100}
+                image={sprite}
+                alt={props.selectedPokemon}
+            //sx={{ width: 100 }}
+            />
+            <HPSlider
+                valueLabelDisplay='auto'
+                valueLabelFormat={(x) => `${x}% HP`}
+                defaultValue={hp * 100}
+                min={1}
+                max={100}
+                onChangeCommitted={hpChangeHandler}
+            />
             <InputSlider
                 value={level}
                 onChange={levelChangeHandler}
