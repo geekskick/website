@@ -2,7 +2,7 @@ import * as React from 'react';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
-import { Typography, Tooltip } from '@mui/material';
+import { Typography, Tooltip, CircularProgress } from '@mui/material';
 import HPSlider from './hp_slider';
 import InputSlider from './level_slider';
 import CONFIGURATION from './config.js';
@@ -39,20 +39,19 @@ export default function ResultCard(props) {
 
     React.useEffect(() => {
         console.log("ResultCard::useEffect");
-
         props.api.getPokemonByName(props.selectedPokemon).then(pokemon => {
-            console.log("fetchedPokemon = ", pokemon);
+            console.log("ResultCard::fetchedPokemon = ", pokemon);
             setPokemonDetails(pokemon);
         }).catch(err => {
-            console.log("fetchedPokemon::error =", err);
+            console.log("ResultCard::fetchedPokemon::error =", err);
             setPokemonDetails(null);
         });
 
         props.api.getPokemonSpeciesByName(props.selectedPokemon).then(pokemon => {
-            console.log("fetchedSpecies = ", pokemon);
+            console.log("ResultCard::fetchedSpecies = ", pokemon);
             setSpeciesDetails(pokemon);
         }).catch(err => {
-            console.log("fetchedSpecies::error =", err);
+            console.log("ResultCard::fetchedSpecies::error =", err);
             setSpeciesDetails(null);
         });
 
@@ -80,6 +79,30 @@ export default function ResultCard(props) {
         sprite = CONFIGURATION.DEFAULT_SPRITE_URL;
         tooltip = `There are no sprite available for ${props.selectedPokemon}, so this is a default one`
     }
+
+    const spriteDisplay = (() => {
+        console.log(`ResultCard::${pokemonDetails?.species.name} === ${speciesDetails?.name}`);
+        if (!(pokemonDetails?.species.name === speciesDetails?.name)) {
+            return <CircularProgress />
+        }
+        else {
+            return (<Tooltip title={tooltip}>
+                <Box
+                    component="img"
+                    //height={100}
+                    src={sprite}
+                    alt={props.selectedPokemon}
+                    sx={{
+                        width: '200px',
+                        height: '200px',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        objectFit: 'contain'
+                    }}
+                />
+            </Tooltip>);
+        }
+    })();
     // TODO: What about if the thing isn't catchable?
     return (<Card sx={{
         width: '100',
@@ -104,24 +127,10 @@ export default function ResultCard(props) {
                         borderColor: 'lightcoral',
                     }}>
                     <Item>
-                        <Typography variant="h3">{props.selectedPokemon}</Typography>
+                        <Typography variant="h3">{pokemonDetails?.name}</Typography>
                     </Item>
                     <Item>
-                        <Tooltip title={tooltip}>
-                            <Box
-                                component="img"
-                                //height={100}
-                                src={sprite}
-                                alt={props.selectedPokemon}
-                                sx={{
-                                    width: '200px',
-                                    height: '200px',
-                                    justifyContent: 'center',
-                                    alignItems: 'center',
-                                    objectFit: 'contain'
-                                }}
-                            />
-                        </Tooltip>
+                        {spriteDisplay}
                     </Item>
                     <Item>
                         <HPSlider
@@ -145,7 +154,7 @@ export default function ResultCard(props) {
             <Item>
                 <BallOptions
                     selectedGeneration={props.selectedGeneration}
-                    selectedPokemon={props.selectedPokemon}
+                    selectedPokemon={pokemonDetails?.name}
                     speciesDetails={speciesDetails}
                     api={props.api}
                     pokemonLevel={level}
