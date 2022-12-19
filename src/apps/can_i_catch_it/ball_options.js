@@ -1,19 +1,12 @@
 
 import * as React from 'react';
 import Box from '@mui/material/Box';
-import Card from '@mui/material/Card';
-import CardMedia from '@mui/material/CardMedia';
-import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
-import CardHeader from '@mui/material/CardHeader';
-import Tooltip from '@mui/material/Tooltip';
-import HPSlider from './hp_slider';
-import Slider from '@mui/material/Slider';
 import CONFIGURATION from './config.js';
 import { styled } from '@mui/material/styles';
 import Stack from '@mui/material/Stack';
-import { Paper } from '@mui/material';
 import calculateCaptureProbability from './calculations.js';
+import Balls from './data/balls.json';
 
 const Item = styled(Box)(({ theme }) => ({
     backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
@@ -32,24 +25,7 @@ const Item = styled(Box)(({ theme }) => ({
 
 
 export default function BallOptions(props) {
-
-    const [ballList, setBallList] = React.useState([]);
-
-    React.useEffect(() => {
-        console.log("BallOptions::useEffect");
-
-        props.api.getItemCategoryByName('standard-balls').then(ballType => {
-            const balls = ballType.items.map(item => {
-                return item.name;
-            });
-            console.log(balls);
-            setBallList(balls);
-        }).catch(err => {
-            console.log(err);
-        });
-    }, [props.selectedPokemon]);
-
-    console.log("speciedDetails = ", props.speciesDetails);
+    console.log("BallOptions::props = ", props);
     const hpStat = props.pokemonDetails?.stats.filter(stat => stat.stat?.name === "hp")[0].base_stat;
     console.log(`${props.selectedPokemon} has a base hp stat of ${hpStat}`);
     return (
@@ -63,12 +39,22 @@ export default function BallOptions(props) {
             }} >
 
             {
-                ballList.map(ball => {
+                Object.entries(Balls).map(ball => {
+                    console.log("ball = ", ball)
                     // Make the icon and the text on the same line - pulled from here:
                     // https://stackoverflow.com/questions/51940157/how-to-align-horizontal-icon-and-text-in-mui
                     let probability;
                     try {
-                        probability = calculateCaptureProbability(props.selectedGeneration, props.speciesDetails.capture_rate, ball, hpStat, props.pokemonLevel, props.hp);
+                        if (ball[0] === "master-ball") {
+                            probability = 1.0;
+                        }
+                        else {
+                            probability = calculateCaptureProbability(props.selectedGeneration, props.speciesDetails?.capture_rate, ball[1].settings, hpStat, props.pokemonLevel, props.hp);
+                        }
+                        if (probability === NaN) {
+                            probability = 0.0;
+                        }
+                        console.log("Rounding probability up = ", probability);
                         probability = Math.ceil(1.0 / probability);
                     }
                     catch (error) {
@@ -84,9 +70,9 @@ export default function BallOptions(props) {
                                 <Box
                                     component="img"
                                     // TODO: Use the actual sprite URL
-                                    src={CONFIGURATION.DEFAULT_SPRITE_URL}
+                                    src={ball[1]?.sprite}
                                 />
-                                <Typography>Using {ball} you'll need this many: </Typography>
+                                <Typography>Using {ball[0]} you'll need this many: </Typography>
                             </Box>
                             <Typography>{probability}</Typography>
                         </Item>);

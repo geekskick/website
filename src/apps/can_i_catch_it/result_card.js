@@ -1,11 +1,8 @@
 import * as React from 'react';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
-import CardMedia from '@mui/material/CardMedia';
-import CardContent from '@mui/material/CardContent';
-import CardHeader from '@mui/material/CardHeader';
 import Stack from '@mui/material/Stack';
-import { Typography, Paper, Tooltip } from '@mui/material';
+import { Typography, Tooltip } from '@mui/material';
 import HPSlider from './hp_slider';
 import InputSlider from './level_slider';
 import CONFIGURATION from './config.js';
@@ -44,17 +41,18 @@ export default function ResultCard(props) {
         console.log("ResultCard::useEffect");
 
         props.api.getPokemonByName(props.selectedPokemon).then(pokemon => {
+            console.log("fetchedPokemon = ", pokemon);
             setPokemonDetails(pokemon);
         }).catch(err => {
-            console.log(err);
+            console.log("fetchedPokemon::error =", err);
             setPokemonDetails(null);
         });
 
         props.api.getPokemonSpeciesByName(props.selectedPokemon).then(pokemon => {
-            console.log(pokemon);
+            console.log("fetchedSpecies = ", pokemon);
             setSpeciesDetails(pokemon);
         }).catch(err => {
-            console.log(err);
+            console.log("fetchedSpecies::error =", err);
             setSpeciesDetails(null);
         });
 
@@ -63,8 +61,11 @@ export default function ResultCard(props) {
     let sprite;
     let generationSprites;
     let tooltip = "tooltip";
+    console.log("ResultCard::pokemonDetails = ", pokemonDetails);
+    console.log("ResultCard::speciesDetails = ", speciesDetails);
     if (pokemonDetails) {
         generationSprites = Object.entries(pokemonDetails?.sprites.versions[props.selectedGeneration]);
+        console.log("ResultCard::generationSprites = ", generationSprites);
     }
     if (generationSprites) {
         sprite = generationSprites[0][1].front_default;

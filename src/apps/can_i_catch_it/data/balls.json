@@ -1,0 +1,41 @@
+{
+    "poke-ball": {
+        "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png",
+        "settings": {
+            "generation-i": {
+                "ballMod": 255,
+                "fBallMod": 12
+            },
+            "generation-ii": {
+                "ballMod": 1
+            }
+        }
+    },
+    "great-ball": {
+        "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/great-ball.png",
+        "settings": {
+            "generation-i": {
+                "ballMod": 200,
+                "fBallMod": 8
+            },
+            "generation-ii": {
+                "ballMod": 1.5
+            }
+        }
+    },
+    "ultra-ball": {
+        "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/ultra-ball.png",
+        "settings": {
+            "generation-i": {
+                "ballMod": 150,
+                "fBallMod": 12
+            },
+            "generation-ii": {
+                "ballMod": 2
+            }
+        }
+    },
+    "master-ball": {
+        "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/master-ball.png"
+    }
+}
