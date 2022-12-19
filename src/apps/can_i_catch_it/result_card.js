@@ -45,6 +45,7 @@ export default function ResultCard(props) {
         }).catch(err => {
             console.log("ResultCard::fetchedPokemon::error =", err);
             setPokemonDetails(null);
+            props.onError(`Failed to get the details for ${props.selectedPokemon}: ${err}`);
         });
 
         props.api.getPokemonSpeciesByName(props.selectedPokemon).then(pokemon => {
@@ -52,6 +53,7 @@ export default function ResultCard(props) {
             setSpeciesDetails(pokemon);
         }).catch(err => {
             console.log("ResultCard::fetchedSpecies::error =", err);
+            props.onError(`Failed to get the species details for ${props.selectedPokemon}: ${err}`);
             setSpeciesDetails(null);
         });
 

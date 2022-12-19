@@ -20,7 +20,7 @@ export default function App(props) {
     const [selectedApp, setSelectedApp] = React.useState(AppFactory.getAvailableApps()[0]);
 
     const error = (message) => {
-        console.log("errro: ", message);
+        console.log("error: ", message);
         enqueueSnackbar(
             message,
             {
@@ -42,7 +42,8 @@ export default function App(props) {
     }
 
     const onGenericError = (errorM, info) => {
-        error(errorM + info);
+        console.log(`App::onGenericError(${errorM}, ${info})`)
+        error(errorM);
     }
 
     const onAppSelect = (name) => {

@@ -31,6 +31,7 @@ export default function CanICatchItApp(props) {
                 <ResultCard
                     selectedPokemon={selectedPokemon}
                     selectedGeneration={selectedGeneration}
+                    onError={props.error}
                     api={api.current}
                 />
             );
