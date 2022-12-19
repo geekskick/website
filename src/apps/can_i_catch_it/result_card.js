@@ -24,6 +24,7 @@ export default function ResultCard(props) {
 
     console.log("Result card props = ", props);
     const [pokemonDetails, setPokemonDetails] = React.useState();
+    const [speciesDetails, setSpeciesDetails] = React.useState();
     const [level, setLevel] = React.useState(50);
     const [hp, setHp] = React.useState(1.0);
 
@@ -47,6 +48,14 @@ export default function ResultCard(props) {
         }).catch(err => {
             console.log(err);
             setPokemonDetails(null);
+        });
+
+        props.api.getPokemonSpeciesByName(props.selectedPokemon).then(pokemon => {
+            console.log(pokemon);
+            setSpeciesDetails(pokemon);
+        }).catch(err => {
+            console.log(err);
+            setSpeciesDetails(null);
         });
 
     }, [props.selectedPokemon]);
@@ -136,6 +145,7 @@ export default function ResultCard(props) {
                 <BallOptions
                     selectedGeneration={props.selectedGeneration}
                     selectedPokemon={props.selectedPokemon}
+                    speciesDetails={speciesDetails}
                     api={props.api}
                     pokemonLevel={level}
                     hp={hp}

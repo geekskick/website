@@ -34,18 +34,9 @@ const Item = styled(Box)(({ theme }) => ({
 export default function BallOptions(props) {
 
     const [ballList, setBallList] = React.useState([]);
-    const [speciesDetails, setSpeciesDetails] = React.useState({});
 
     React.useEffect(() => {
         console.log("BallOptions::useEffect");
-        props.api.getPokemonSpeciesByName(props.selectedPokemon).then(pokemon => {
-            console.log(pokemon);
-            setSpeciesDetails(pokemon);
-        }).catch(err => {
-            console.log(err);
-            setSpeciesDetails(null);
-        });
-
 
         props.api.getItemCategoryByName('standard-balls').then(ballType => {
             const balls = ballType.items.map(item => {
@@ -58,7 +49,7 @@ export default function BallOptions(props) {
         });
     }, [props.selectedPokemon]);
 
-    console.log("speciedDetails = ", speciesDetails);
+    console.log("speciedDetails = ", props.speciesDetails);
     const hpStat = props.pokemonDetails?.stats.filter(stat => stat.stat?.name === "hp")[0].base_stat;
     console.log(`${props.selectedPokemon} has a base hp stat of ${hpStat}`);
     return (
@@ -77,7 +68,7 @@ export default function BallOptions(props) {
                     // https://stackoverflow.com/questions/51940157/how-to-align-horizontal-icon-and-text-in-mui
                     let probability;
                     try {
-                        probability = calculateCaptureProbability(props.selectedGeneration, speciesDetails?.capture_rate, ball, hpStat, props.pokemonLevel, props.hp);
+                        probability = calculateCaptureProbability(props.selectedGeneration, props.speciesDetails.capture_rate, ball, hpStat, props.pokemonLevel, props.hp);
                         probability = Math.ceil(1.0 / probability);
                     }
                     catch (error) {
