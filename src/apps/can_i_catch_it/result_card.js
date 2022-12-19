@@ -81,8 +81,9 @@ export default function ResultCard(props) {
     }
 
     const spriteDisplay = (() => {
-        console.log(`ResultCard::${pokemonDetails?.species.name} === ${speciesDetails?.name}`);
-        if (!(pokemonDetails?.species.name === speciesDetails?.name)) {
+        console.log(`ResultCard::${pokemonDetails?.species.name} === ${speciesDetails?.name} === ${props.selectedPokemon}`);
+        if (!(speciesDetails?.name === props.selectedPokemon &&
+            pokemonDetails?.species.name === props.selectedPokemon)) {
             return <CircularProgress />
         }
         else {
@@ -127,7 +128,7 @@ export default function ResultCard(props) {
                         borderColor: 'lightcoral',
                     }}>
                     <Item>
-                        <Typography variant="h3">{pokemonDetails?.name}</Typography>
+                        <Typography variant="h3">{props.selectedPokemon}</Typography>
                     </Item>
                     <Item>
                         {spriteDisplay}
