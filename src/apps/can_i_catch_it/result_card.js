@@ -86,7 +86,9 @@ export default function ResultCard(props) {
         console.log(`ResultCard::${pokemonDetails?.species.name} === ${speciesDetails?.name} === ${props.selectedPokemon}`);
         if (!(speciesDetails?.name === props.selectedPokemon &&
             pokemonDetails?.species.name === props.selectedPokemon)) {
-            return <CircularProgress />
+            return <CircularProgress sx={{
+                color: 'green',
+            }} />
         }
         else {
             return (<Tooltip title={tooltip}>
