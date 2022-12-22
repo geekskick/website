@@ -13,18 +13,6 @@ const calculateGenIF = (ballName, pokemonHpStat, pokemonLevel, hp) => {
     return (hpMax * 255 * 4) / (hpCurrent * ball);
 }
 
-function getGenIBallMod(ballName) {
-    //ballMod = 255 if using a Poké Ball, 200 if using a Great Ball, and 150 otherwise.
-    if (ballName === "great-ball") {
-        return 200;
-    }
-    else if (ballName === "poke-ball") {
-        return 255;
-    }
-    else {
-        return 150;
-    }
-}
 function calculateHpMax(pokemonHpStat, pokemonLevel) {
     console.log(`calculateHpMax(${pokemonHpStat}, ${pokemonLevel})`);
     // https://pokemon.neoseeker.com/wiki/HP#HP
@@ -38,22 +26,6 @@ function calculateHpMax(pokemonHpStat, pokemonLevel) {
     // ( 5250         /50) + 10
     // 105                 + 10 = 115
     return (((pokemonHpStat + 50) * pokemonLevel) / 50) + 10;
-}
-function getGenIIBallMod(ballName) {
-    console.log("The ball is", ballName);
-    if (ballName === "poke-ball" || ballName === 'park-ball') {
-        return 1;
-    }
-    else if (ballName === 'great-ball' || ballName === 'sport-ball' || ballName === 'safari-ball') {
-        return 1.5;
-    }
-    else if (ballName === 'ultra-ball') {
-        return 2;
-    }
-    else if (ballName === 'master-ball') {
-        return 255;
-    }
-    throw `${ballName} is an unsupported ball type`;
 }
 
 function calculateGenICaptureProbability(captureRate, ballSettings, pokemonHpStat, pokemonLevel, hp) {
@@ -149,6 +121,35 @@ function calculateGenIIICaptureProbability(captureRate, ballSettings, pokemonHpS
     return a / 255;
 }
 
+function calculateModifiedCatchRateGenV(captureRate, ballSettings, pokemonHpStat, pokemonLevel, hp) {
+    const hpMax = calculateHpMax(pokemonHpStat, pokemonLevel);
+    const hpCurrent = hpMax * hp;
+    const hpMaxTimes3 = 3 * hpMax;
+    const hpCurrentTimes2 = 2 * hpCurrent;
+    let top;
+    try {
+        top = (hpMaxTimes3 - hpCurrentTimes2) * 4096 * captureRate * ballSettings.ballMod;
+    }
+    catch (err) {
+        throw 'No ball modifier available'
+    }
+
+    const bottom = hpMaxTimes3;
+    const fraction = top / bottom;
+    // TODO: take into account status changes
+    return fraction * 1;
+}
+
+function calculateGenVCaptureProbability(captureRate, ballSettings, pokemonHpStat, pokemonLevel, hp) {
+    const a = calculateModifiedCatchRateGenV(captureRate, ballSettings, pokemonHpStat, pokemonLevel, hp);
+    if (a >= 1044480) {
+        return 1;
+    }
+    // TODO: what is this value?
+    return a / 4096;
+}
+
+
 export default function calculateCaptureProbability(generationName, captureRate, ballSettings, pokemonHpStat, pokemonLevel, hp) {
     console.log("calculateCaptureProbability", generationName, captureRate, ballSettings, pokemonHpStat, pokemonLevel, hp);
     if (ballSettings.name === "master-ball") {
@@ -158,11 +159,15 @@ export default function calculateCaptureProbability(generationName, captureRate,
         "generation-i": calculateGenICaptureProbability,
         "generation-ii": calculateGenIICaptureProbability,
         "generation-iii": calculateGenIIICaptureProbability,
-        "generation-iv": calculateGenIIICaptureProbability
+        "generation-iv": calculateGenIIICaptureProbability,
+        "generation-v": calculateGenVCaptureProbability
     }
     console.log(`Selected generation = ${generationName}`);
-    const rc = rateCalculators[generationName](captureRate, ballSettings[generationName], pokemonHpStat, pokemonLevel, hp);
-    console.log(`Rate calculated as ${rc}`);
-    return rc;
-
+    try {
+        const rc = rateCalculators[generationName](captureRate, ballSettings[generationName], pokemonHpStat, pokemonLevel, hp);
+        console.log(`Rate calculated as ${rc}`);
+        return rc;
+    } catch {
+        throw `No calculator available for ${generationName}`
+    }
 }

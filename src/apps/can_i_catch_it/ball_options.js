@@ -59,7 +59,7 @@ export default function BallOptions(props) {
                     }
                     catch (error) {
                         console.log(error);
-                        probability = `Unable to calculate using ${props.selectedGeneration}`
+                        probability = `${error}`
                     }
                     return (
                         <Item>

@@ -14,6 +14,9 @@
             },
             "generation-iv": {
                 "ballMod": 1
+            },
+            "generation-v": {
+                "ballMod": 1
             }
         }
     },
@@ -32,6 +35,9 @@
             },
             "generation-iv": {
                 "ballMod": 1.5
+            },
+            "generation-v": {
+                "ballMod": 1.5
             }
         }
     },
@@ -49,6 +55,9 @@
                 "ballMod": 2
             },
             "generation-iv": {
+                "ballMod": 2
+            },
+            "generation-v": {
                 "ballMod": 2
             }
         }
