@@ -123,7 +123,6 @@ function calculateModifiedCatchRate(pokemonCaptureRate, ballModifier, pokemonHpS
 
 
 function calculateGenIICaptureProbability(captureRate, ballSettings, pokemonHpStat, pokemonLevel, hp) {
-    // TODO: Use a real ball modifer these are just pokeballs rn
     const a = calculateModifiedCatchRate(captureRate, ballSettings.ballMod, pokemonHpStat, pokemonLevel, hp);
     const randomMax = 255;
     // if random <= a it's caught. 
@@ -133,6 +132,23 @@ function calculateGenIICaptureProbability(captureRate, ballSettings, pokemonHpSt
     return a / randomMax;
 }
 
+function calculateModifiedCatchRateGenIII(captureRate, ballSettings, pokemonHpStat, pokemonLevel, hp) {
+    const hpMax = calculateHpMax(pokemonHpStat, pokemonLevel);
+    const hpCurrent = hpMax * hp;
+    const hpMaxTimes3 = 3 * hpMax;
+    const hpCurrentTimes2 = 2 * hpCurrent;
+    const top = (hpMaxTimes3 - hpCurrentTimes2) * captureRate * ballSettings.ballMod;
+    const bottom = hpMaxTimes3;
+    const fraction = top / bottom;
+    // TODO: take into account status changes
+    return fraction * 1;
+}
+
+function calculateGenIIICaptureProbability(captureRate, ballSettings, pokemonHpStat, pokemonLevel, hp) {
+    const a = calculateModifiedCatchRateGenIII(captureRate, ballSettings, pokemonHpStat, pokemonLevel, hp);
+    return a / 255;
+}
+
 export default function calculateCaptureProbability(generationName, captureRate, ballSettings, pokemonHpStat, pokemonLevel, hp) {
     console.log("calculateCaptureProbability", generationName, captureRate, ballSettings, pokemonHpStat, pokemonLevel, hp);
     if (ballSettings.name === "master-ball") {
@@ -140,7 +156,9 @@ export default function calculateCaptureProbability(generationName, captureRate,
     }
     const rateCalculators = {
         "generation-i": calculateGenICaptureProbability,
-        "generation-ii": calculateGenIICaptureProbability
+        "generation-ii": calculateGenIICaptureProbability,
+        "generation-iii": calculateGenIIICaptureProbability,
+        "generation-iv": calculateGenIIICaptureProbability
     }
     console.log(`Selected generation = ${generationName}`);
     const rc = rateCalculators[generationName](captureRate, ballSettings[generationName], pokemonHpStat, pokemonLevel, hp);
