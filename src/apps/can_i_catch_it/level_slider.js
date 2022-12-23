@@ -41,11 +41,11 @@ const Input = styled(MuiInput)(({ theme }) => ({
 }));
 
 export default function InputSlider(props) {
-
+    const [value, setValue] = React.useState(props.value);
     const min = 1;
     const max = 100;
     const handleSliderChange = (event, newValue) => {
-        props.onChange(newValue);
+        setValue(newValue);
     };
 
     const handleInputChange = (event) => {
@@ -59,8 +59,9 @@ export default function InputSlider(props) {
             <Grid container spacing={2} alignItems="center">
                 <Grid item xs>
                     <LevelSlider
-                        value={props.value}
+                        value={value}
                         onChange={handleSliderChange}
+                        onChangeCommitted={props.onChangeCommitted}
                         aria-labelledby="input-slider"
                         valueLabelDisplay='on'
                         valueLabelFormat={(x) => `Pokemon is at Level ${x}`}
@@ -68,7 +69,7 @@ export default function InputSlider(props) {
                 </Grid>
                 <Grid item>
                     <Input
-                        value={props.value}
+                        value={value}
                         size="small"
                         onChange={handleInputChange}
                         inputProps={{

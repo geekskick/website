@@ -1,8 +1,10 @@
-const calculateGenIF = (ballName, pokemonHpStat, pokemonLevel, hp) => {
+const calculateGenIF = (ballName, pokemonHpStat, pokemonLevel, hp, hpMaxSetter, hpCurrentSetter) => {
     // TODO: Assume hp levels
     console.log(`calculateGenIF(${ballName}, ${pokemonHpStat}, ${pokemonLevel})`);
     const hpMax = calculateHpMax(pokemonHpStat, pokemonLevel);
+    hpMaxSetter(hpMax);
     const hpCurrent = hpMax * hp;
+    hpCurrentSetter(hpCurrent);
     console.log(`hpMax = ${hpMax}`);
     console.log(`hpCurrent = ${hpCurrent}`);
 
@@ -28,7 +30,7 @@ function calculateHpMax(pokemonHpStat, pokemonLevel) {
     return (((pokemonHpStat + 50) * pokemonLevel) / 50) + 10;
 }
 
-function calculateGenICaptureProbability(captureRate, ballSettings, pokemonHpStat, pokemonLevel, hp) {
+function calculateGenICaptureProbability(captureRate, ballSettings, pokemonHpStat, pokemonLevel, hp, hpMaxSetter, hpCurrentSetter) {
     // https://bulbapedia.bulbagarden.net/wiki/Catch_rate
     // TODO: Get user status ailment
     const statusAilent = 0;
@@ -37,7 +39,7 @@ function calculateGenICaptureProbability(captureRate, ballSettings, pokemonHpSta
     const p0 = statusAilent / (ballMod + 1);
 
     // TODO: Calculate this
-    const f = calculateGenIF(ballSettings.fBallMod, pokemonHpStat, pokemonLevel, hp);
+    const f = calculateGenIF(ballSettings.fBallMod, pokemonHpStat, pokemonLevel, hp, hpMaxSetter, hpCurrentSetter);
     console.log(`GenIF() = ${f}`);
     console.log(`(${captureRate} + 1) / (${ballMod} + 1)) * ((${f}+ 1) / 256)`)
     const p1 = ((captureRate + 1) / (ballMod + 1)) * ((f + 1) / 256);
@@ -150,8 +152,8 @@ function calculateGenVCaptureProbability(captureRate, ballSettings, pokemonHpSta
 }
 
 
-export default function calculateCaptureProbability(generationName, captureRate, ballSettings, pokemonHpStat, pokemonLevel, hp) {
-    console.log("calculateCaptureProbability", generationName, captureRate, ballSettings, pokemonHpStat, pokemonLevel, hp);
+export default function calculateCaptureProbability(generationName, captureRate, ballSettings, pokemonHpStat, pokemonLevel, hp, hpMaxSetter, hpCurrentSetter) {
+    console.log("calculateCaptureProbability", generationName, captureRate, ballSettings, pokemonHpStat, pokemonLevel, hp, hpMaxSetter, hpCurrentSetter);
     if (ballSettings.name === "master-ball") {
         return 1;
     }
@@ -164,7 +166,7 @@ export default function calculateCaptureProbability(generationName, captureRate,
     }
     console.log(`Selected generation = ${generationName}`);
     try {
-        const rc = rateCalculators[generationName](captureRate, ballSettings[generationName], pokemonHpStat, pokemonLevel, hp);
+        const rc = rateCalculators[generationName](captureRate, ballSettings[generationName], pokemonHpStat, pokemonLevel, hp, hpMaxSetter, hpCurrentSetter);
         console.log(`Rate calculated as ${rc}`);
         return rc;
     } catch {

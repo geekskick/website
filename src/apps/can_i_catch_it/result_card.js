@@ -26,8 +26,8 @@ export default function ResultCard(props) {
     const [level, setLevel] = React.useState(50);
     const [hp, setHp] = React.useState(1.0);
 
-    const levelChangeHandler = (value) => {
-        console.log("ResultCard::levelChangeHandler", value);
+    const levelChangeHandler = (event, value) => {
+        console.log("ResultCard::levelChangeHandler", event, value);
         setLevel(value);
     };
 
@@ -152,7 +152,7 @@ export default function ResultCard(props) {
                         <Item>
                             <InputSlider
                                 value={level}
-                                onChange={levelChangeHandler}
+                                onChangeCommitted={levelChangeHandler}
                             />
                         </Item>
 
