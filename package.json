@@ -21,6 +21,7 @@
     "react-dom": "^18.2.0",
     "react-dropdown": "*",
     "react-gauge-chart": "*",
+    "react-katex": "^3.0.1",
     "react-notifications": "*",
     "react-scripts": "5.0.1",
     "ts-jest": "^29.0.3",

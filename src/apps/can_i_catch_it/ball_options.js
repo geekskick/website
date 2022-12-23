@@ -13,6 +13,9 @@ import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import InfoIcon from '@mui/icons-material/Info';
+import 'katex/dist/katex.min.css';
+import { InlineMath, BlockMath } from 'react-katex';
+
 
 const Item = styled(Box)(({ theme }) => ({
     backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
@@ -30,8 +33,11 @@ const Item = styled(Box)(({ theme }) => ({
 
 function BallResultItem(props) {
     console.log("BallResultItem::props = ", props)
-    // Make the icon and the text on the same line - pulled from here:
-    // https://stackoverflow.com/questions/51940157/how-to-align-horizontal-icon-and-text-in-mui
+
+
+    const [hpMax, setHpMax] = React.useState(0);
+    const [hpCurrent, setHpCurrent] = React.useState(0);
+    const [ballMod, setBallMod] = React.useState(0);
     let probability;
     try {
         if (props.ball[0] === "master-ball") {
@@ -72,8 +78,11 @@ function BallResultItem(props) {
                         <Typography>Using {props.ball[0]} you'll need this many: </Typography><Typography>{probability}</Typography>
                     </Box>
                 </AccordionSummary>
-                <AccordionDetails>
-                    Hello
+                <AccordionDetails sx={{
+                    justifyContent: 'left'
+                }}>
+                    Bulbapedia defines the Generation I catch rate appropximation as:
+                    <BlockMath math={String.raw`\frac{\text{statusAilment}}{\text{ballMod} + 1} + \left(\frac{\text{catchRate} + 1}{\text{ballMod} + 1} \times \frac{f + 1}{256}\right)`} />
                 </AccordionDetails>
             </Accordion>
         </Item >);
@@ -84,9 +93,6 @@ export default function BallOptions(props) {
     const hpStat = props.pokemonDetails?.stats.filter(stat => stat.stat?.name === "hp")[0].base_stat;
     console.log(`${props.selectedPokemon} has a base hp stat of ${hpStat}`);
 
-    const [hpMax, setHpMax] = React.useState(0);
-    const [hpCurrent, setHpCurrent] = React.useState(0);
-    const [ballMod, setBallMod] = React.useState(0);
 
     return (
         <Stack
