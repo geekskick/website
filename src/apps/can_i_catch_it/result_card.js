@@ -2,7 +2,8 @@ import * as React from 'react';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
-import { Typography, Tooltip, CircularProgress } from '@mui/material';
+import { Typography, Tooltip, CircularProgress, IconButton } from '@mui/material';
+import InfoIcon from '@mui/icons-material/Info';
 import HPSlider from './hp_slider';
 import InputSlider from './level_slider';
 import CONFIGURATION from './config.js';
@@ -109,63 +110,67 @@ export default function ResultCard(props) {
         }
     })();
     // TODO: What about if the thing isn't catchable?
-    return (<Card sx={{
-        width: '100',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-evenly'
-    }} >
-        <Stack
-            direction="row"
-            spacing={2}
-            sx={{
-                alignItems: 'center',
-                justifyContent: 'space-evenly',
-                width: '90%'
-            }}>
-            <Item>
-                <Stack
-                    spacing={2}
-                    sx={{
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        borderColor: 'lightcoral',
-                    }}>
-                    <Item>
-                        <Typography variant="h3">{props.selectedPokemon}</Typography>
-                    </Item>
-                    <Item>
-                        {spriteDisplay}
-                    </Item>
-                    <Item>
-                        <HPSlider
-                            valueLabelDisplay='on'
-                            valueLabelFormat={(x) => `${x}% HP`}
-                            defaultValue={hp * 100}
-                            min={1}
-                            max={100}
-                            onChangeCommitted={hpChangeHandler}
-                        />
-                    </Item>
-                    <Item>
-                        <InputSlider
-                            value={level}
-                            onChange={levelChangeHandler}
-                        />
-                    </Item>
+    return (
+        <Card sx={{
+            width: '100',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-evenly'
+        }} >
+            <Stack
+                direction="row"
+                spacing={10}
+                sx={{
+                    alignItems: 'center',
+                    justifyContent: 'space-evenly',
+                    width: '100%'
+                }}>
+                <Item>
+                    <Stack
+                        sx={{
+                            spacing: 2,
+                            alignItems: 'space-evenly',
+                            justifyContent: 'center',
+                            borderColor: 'lightcoral',
+                        }}>
+                        <Item>
+                            <Typography variant="h3">{props.selectedPokemon}</Typography>
+                        </Item>
+                        <Item>
+                            {spriteDisplay}
+                        </Item>
+                        <Item>
+                            <HPSlider
+                                valueLabelDisplay='on'
+                                valueLabelFormat={(x) => `${x}% HP`}
+                                defaultValue={hp * 100}
+                                min={1}
+                                max={100}
+                                onChangeCommitted={hpChangeHandler}
+                            />
+                        </Item>
+                        <Item>
+                            <InputSlider
+                                value={level}
+                                onChange={levelChangeHandler}
+                            />
+                        </Item>
 
-                </Stack>
-            </Item>
-            <Item>
-                <BallOptions
-                    selectedGeneration={props.selectedGeneration}
-                    selectedPokemon={pokemonDetails?.name}
-                    speciesDetails={speciesDetails}
-                    api={props.api}
-                    pokemonLevel={level}
-                    hp={hp}
-                    pokemonDetails={pokemonDetails} />
-            </Item>
-        </Stack >
-    </Card >);
+                    </Stack>
+                </Item>
+                <Item>
+                    <BallOptions
+                        selectedGeneration={props.selectedGeneration}
+                        selectedPokemon={pokemonDetails?.name}
+                        speciesDetails={speciesDetails}
+                        api={props.api}
+                        pokemonLevel={level}
+                        hp={hp}
+                        pokemonDetails={pokemonDetails} />
+                </Item>
+            </Stack >
+
+        </Card >
+
+    );
 }
