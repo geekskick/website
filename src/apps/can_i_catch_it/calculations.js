@@ -27,7 +27,7 @@ function calculateHpMax(pokemonHpStat, pokemonLevel) {
     return (((pokemonHpStat + 50) * pokemonLevel) / 50) + 10;
 }
 
-function calculateGenICaptureProbability(captureRate, ballSettings, pokemonHpStat, pokemonLevel, hp, statusAilment, hpMaxSetter, hpCurrentSetter, ballFModSetter, ballModSetter, ailmentSetter, fSetter, p1Setter) {
+function calculateGenICaptureProbability(captureRate, ballSettings, pokemonHpStat, pokemonLevel, hp, statusAilment, hpMaxSetter, hpCurrentSetter, ballFModSetter, ballModSetter, ailmentSetter, fSetter, p1Setter, p0Setter) {
     // https://bulbapedia.bulbagarden.net/wiki/Catch_rate
     // TODO: Get user status ailment
     const statusAilent = 0;
@@ -36,6 +36,7 @@ function calculateGenICaptureProbability(captureRate, ballSettings, pokemonHpSta
     const ballMod = ballSettings.ballMod;
     ballModSetter(ballMod);
     const p0 = statusAilent / (ballMod + 1);
+    p0Setter(p0);
 
     const f = calculateGenIF(ballSettings.fBallMod, pokemonHpStat, pokemonLevel, hp, hpMaxSetter, hpCurrentSetter, ballFModSetter);
     fSetter(f);
@@ -152,8 +153,8 @@ function calculateGenVCaptureProbability(captureRate, ballSettings, pokemonHpSta
 }
 
 
-export default function calculateCaptureProbability(generationName, captureRate, ballSettings, pokemonHpStat, pokemonLevel, hp, statusAilment, hpMaxSetter, hpCurrentSetter, ballFModSetter, ballModSetter, ailmentSetter, fSetter, p1Setter) {
-    console.log("calculateCaptureProbability", generationName, captureRate, ballSettings, pokemonHpStat, pokemonLevel, hp, statusAilment, hpMaxSetter, hpCurrentSetter, ballFModSetter, ballModSetter, ailmentSetter, fSetter, p1Setter);
+export default function calculateCaptureProbability(generationName, captureRate, ballSettings, pokemonHpStat, pokemonLevel, hp, statusAilment, hpMaxSetter, hpCurrentSetter, ballFModSetter, ballModSetter, ailmentSetter, fSetter, p1Setter, p0Setter) {
+    console.log("calculateCaptureProbability", generationName, captureRate, ballSettings, pokemonHpStat, pokemonLevel, hp, statusAilment, hpMaxSetter, hpCurrentSetter, ballFModSetter, ballModSetter, ailmentSetter, fSetter, p1Setter, p0Setter);
     if (ballSettings.name === "master-ball") {
         return 1;
     }
@@ -166,7 +167,7 @@ export default function calculateCaptureProbability(generationName, captureRate,
     }
     console.log(`Selected generation = ${generationName}`);
     try {
-        const rc = rateCalculators[generationName](captureRate, ballSettings[generationName], pokemonHpStat, pokemonLevel, hp, statusAilment, hpMaxSetter, hpCurrentSetter, ballFModSetter, ballModSetter, ailmentSetter, fSetter, p1Setter);
+        const rc = rateCalculators[generationName](captureRate, ballSettings[generationName], pokemonHpStat, pokemonLevel, hp, statusAilment, hpMaxSetter, hpCurrentSetter, ballFModSetter, ballModSetter, ailmentSetter, fSetter, p1Setter, p0Setter);
         console.log(`Rate calculated as ${rc}`);
         return rc;
     } catch (error) {

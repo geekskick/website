@@ -82,6 +82,12 @@ function CalculationExplaination(props) {
         <BlockMath math={String.raw`{\color{forestgreen}\text{statusAilment}} =  \text{${props.statusAilmentName}} = ${props.statusAilment}`} />
         <BlockMath math={String.raw`{\color{orange}f} \approx \left\lfloor \frac{{\color{gold}\text{HP}_{\text{max}}} \times 255 \times 4}{\text{HP}_{\text{current}} \times {\color{red}\text{ball}}} \right\rfloor \approx \left\lfloor \frac{{\color{gold}${props.pokemonHpMax}} \times 255 \times 4}{${props.pokemonHpCurrent} \times {\color{red}${props.ballMod}}} \right\rfloor \approx ${props.f}`} />
         <BlockMath math={String.raw`{\color{red}p_{1}} = \frac{\text{catchRate} + 1}{{\color{fuchsia}\text{ballMod}} + 1} \times \frac{{\color{orange}f} + 1}{256} = \frac{${props.catchRate} + 1}{{\color{fuchsia}${props.ballMod}} + 1} \times \frac{{\color{orange}${props.f}} + 1}{256} = ${props.p1}`} />
+        <BlockMath math={String.raw`{\color{blue}p_{0}} = \frac{{\color{forestgreen}\text{statusAilment}}}{{\color{fuchsia}\text{ballMod}} + 1} = \frac{{\color{forestgreen}\text{${props.statusAilment}}}}{{\color{fuchsia}\text{${props.ballMod}}} + 1} = ${props.p0}`} />
+        <BlockMath math={String.raw`\text{CaptureProbability}\approx {\color{blue}p_{0}} + {\color{red}p_{1}} \approx {\color{blue}${props.p0}} + {\color{red}${props.p1}} \approx ${props.probability}`} />
+        <Divider sx={{ margin: 3 }}>SO FINALLY</Divider>
+        <BlockMath math={String.raw`\text{Number of ${props.ballName} needed}\approx \left\lceil\frac{1}{${props.probability}}\right\rceil \approx ${props.ballsNeeded}`} />
+
+
     </Box>);
 }
 function BallResultItem(props) {
@@ -96,6 +102,7 @@ function BallResultItem(props) {
     const [pokemonHpCurrent, setPokemonHpCurrent] = React.useState(0);
     const [f, setF] = React.useState(0);
     const [p1, setP1] = React.useState(0);
+    const [p0, setP0] = React.useState(0);
     const [calculationDialogOpen, setCalculationDialogOpen] = React.useState(false);
 
     React.useEffect(() => {
@@ -119,7 +126,8 @@ function BallResultItem(props) {
                     setBallMod,
                     setStatusAilment,
                     setF,
-                    setP1);
+                    setP1,
+                    setP0);
             }
             if (candidateProbability === NaN) {
                 candidateProbability = 0.0;
@@ -163,16 +171,19 @@ function BallResultItem(props) {
                     pokemonHpCurrent={Math.round(pokemonHpCurrent)}
                     pokemonHpMax={Math.round(pokemonHpMax)}
                     pokemonLevel={props.pokemonLevel}
-                    hpStat={Math.round(props.hpStat)}
-                    hp={Math.round(props.hp)}
+                    hpStat={props.hpStat.toPrecision(2)}
+                    hp={props.hp.toPrecision(2)}
                     ballName={props.ball[0]}
-                    ballFMod={Math.round(ballFMod)}
-                    ballMod={Math.round(ballMod)}
-                    statusAilment={Math.round(statusAilment)}
+                    ballFMod={ballFMod.toPrecision(2)}
+                    ballMod={ballMod}
+                    statusAilment={statusAilment.toPrecision(2)}
                     statusAilmentName={props.statusAilment}
                     f={Math.round(f)}
                     catchRate={props.captureRate}
-                    p1={p1.toPrecision(2)} />}
+                    p1={p1.toPrecision(2)}
+                    p0={p0.toPrecision(2)}
+                    probability={(1.0 / probability).toPrecision(2)}
+                    ballsNeeded={probability} />}
                 title={"Calculation Explaination"} />
         </Item >);
 }
