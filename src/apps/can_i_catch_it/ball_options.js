@@ -37,7 +37,7 @@ function BallResultItem(props) {
     console.log("BallResultItem::props = ", props)
 
     const [probability, setProbability] = React.useState(0);
-    const calculation = React.useRef(new GenICalculation(props));
+    const calculation = React.useRef();
     const [calculationDialogOpen, setCalculationDialogOpen] = React.useState(false);
 
     React.useEffect(() => {
@@ -88,7 +88,7 @@ function BallResultItem(props) {
                 handleAboutClose={() => {
                     setCalculationDialogOpen(false);
                 }}
-                text={calculation.current.getExplaination()}
+                text={calculation.current?.getExplaination()}
                 title={"Calculation Explaination"} />
         </Item >);
 }
