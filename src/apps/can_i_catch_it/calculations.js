@@ -81,6 +81,7 @@ function calculateModifiedCatchRate(pokemonCaptureRate, ballModifier, pokemonHpS
         hpCurrentTimes2 = Math.floor(hpCurrentTimes2 / 2);
         hpMaxTimes3 = Math.max(hpMaxTimes3, 1);
         hpCurrentTimes2 = Math.max(hpCurrentTimes2, 1);
+        valueCallbacks.setHalfHalf();
     }
     console.log("hpCurrent * 2 = ", hpCurrentTimes2);
     console.log("hpMax * 3 = ", hpMaxTimes3);

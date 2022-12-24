@@ -63,7 +63,7 @@ function BallResultItem(props) {
             candidateProbability = `${error}`
         }
         setProbability(candidateProbability);
-    }, [props.ball, props.selectedGeneration, props.captureRate, props.hpStat, props.hp, props.statusAilment]);
+    }, [props]);
 
 
     return (
