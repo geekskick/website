@@ -7,7 +7,7 @@ import { styled } from '@mui/material/styles';
 import Stack from '@mui/material/Stack';
 import calculateCaptureProbability from './calculations.js';
 import Balls from './data/balls.json';
-import { IconButton, Link } from '@mui/material';
+import { IconButton, Link, Divider } from '@mui/material';
 import Accordion from '@mui/material/Accordion';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
@@ -15,7 +15,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import InfoIcon from '@mui/icons-material/Info';
 import 'katex/dist/katex.min.css';
 import { InlineMath, BlockMath } from 'react-katex';
-
+import AboutDialog from '../../components/about_dialog.js';
 
 const Item = styled(Box)(({ theme }) => ({
     backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
@@ -31,15 +31,68 @@ const Item = styled(Box)(({ theme }) => ({
     display: 'flex',
 }));
 
+function CalculationExplaination(props) {
+    return (<Box>
+        <Link href="https://bulbapedia.bulbagarden.net/wiki/Catch_rate#Approximate_probability">Bulbapedia</Link> defines the Generation I catch rate appropximation as:
+        <BlockMath renderError={(error) => {
+            return <b>Fail: {error.name}</b>;
+        }} math={String.raw`\text{CaptureProbability}\approx {\color{blue}p_{0}} + {\color{red}p_{1}}`} />
+        Where:
+        <BlockMath renderError={(error) => {
+            return <b>Fail: {error.name}</b>;
+        }} math="{\color{blue}p_{0}} = \frac{{\color{forestgreen}\text{statusAilment}}}{{\color{fuchsia}\text{ballMod}} + 1}" />
+        and:
+        <BlockMath renderError={(error) => {
+            return <b>Fail: {error.name}</b>;
+        }} math="{\color{red}p_{1}} = \frac{\text{catchRate} + 1}{{\color{fuchsia}\text{ballMod}} + 1} \times \frac{{\color{orange}f} + 1}{256}" />
+        which can be combined as:
+        <BlockMath renderError={(error) => {
+            return <b>Fail: {error.name}</b>;
+        }} math={String.raw`\text{CaptureProbability} = \frac{{\color{forestgreen}\text{statusAilment}}}{{\color{fuchsia}\text{ballMod}} + 1} + \left(\frac{\text{catchRate} + 1}{{\color{fuchsia}\text{ballMod}} + 1} \times \frac{{\color{orange}f} + 1}{256}\right)`} />
+        and:
+        <BlockMath renderError={(error) => {
+            return <b>Fail: {error.name}</b>;
+        }} math={String.raw`{\color{orange}f} = \left\lfloor \frac{{\color{gold}\text{HP}_{\text{max}}} \times 255 \times 4}{\text{HP}_{\text{current}} \times {\color{red}\text{ball}}} \right\rfloor`} />
+        <Divider sx={{ margin: 3 }} >AND USING</Divider>
+        <BlockMath renderError={(error) => {
+            return <b>Fail: {error.name}</b>;
+        }} math={String.raw`{\color{red}\text{Ball}} = \begin{cases} 
+                                                                        8 & \text{if great-ball} \\
+                                                                        12 & \text{otherwise}
+                                                                        \end{cases}`} />
+        <BlockMath math={String.raw`{\color{fuchsia}\text{ballMod}} = \begin{cases}
+                                                                        255 & \text{if poke-ball} \\
+                                                                        200 & \text{if great-ball} \\
+                                                                        150 & \text{otherwise}
+                                                                    \end{cases}`} />
+        <BlockMath math={String.raw`{\color{forestgreen}\text{statusAilment}} =  \begin{cases}
+                                                                            12 &\text{if poison, burned, paralysed}  \\
+                                                                            25 &\text{if frozen, asleep} \\ 
+                                                                            0 &\text{otherwise}\\
+                                                                            \end{cases}`} />
+        According to <Link href={"https://pokemon.neoseeker.com/wiki/Statistic#HP"}>Neoseeker</Link> the formula for calculating <InlineMath math={String.raw`{\color{gold}\text{HP}_\text{max}}`} /> is:
+        <BlockMath math={String.raw`{\color{gold}\text{HP}_\text{max}} = \frac{(\text{IV} + \text{Base} + \frac{\sqrt{\text{EV}}}{8} + 50) \times \text{Level}}{50} + 10`} />
+        We ignore both IV and EV vales for simplicity.
+        <Divider sx={{ margin: 3 }} >THEREFORE</Divider>
+        Plugging in our values we get:
+        <BlockMath math={String.raw`{\color{gold}\text{HP}_\text{max}} = \frac{(0 + ${props.hpStat} + 0 + 50) \times ${props.pokemonLevel}}{50} + 10 \approx ${Math.round(props.pokemonHpMax)}`} />
+        <BlockMath math={String.raw`\text{HP}_\text{current} = {\color{gold}\text{HP}_\text{max}} \times \text{HP}_\text{ratio} = ${Math.round(props.pokemonHpMax)} \times ${props.hp} \approx ${Math.round(props.pokemonHpCurrent)}`} />
+        <BlockMath math={String.raw`{\color{red}\text{Ball}} = \text{${props.ballName}} = ${props.ballFMod}`} />
+        <BlockMath math={String.raw`{\color{fuchsia}\text{ballMod}} = \text{${props.ballName}} = ${props.ballMod}`} />
+        <BlockMath math={String.raw`{\color{forestgreen}\text{statusAilment}} =  \text{${props.statusAilmentName}} = ${props.statusAilment}`} />
+    </Box>);
+}
 function BallResultItem(props) {
     console.log("BallResultItem::props = ", props)
 
 
     const [pokemonHpMax, setPokemonHpMax] = React.useState(0);
-    const [hpCurrent, setHpCurrent] = React.useState(0);
+    const [ballFMod, setBallFMod] = React.useState(0);
     const [ballMod, setBallMod] = React.useState(0);
+    const [statusAilment, setStatusAilment] = React.useState(0);
     const [probability, setProbability] = React.useState(0);
     const [pokemonHpCurrent, setPokemonHpCurrent] = React.useState(0);
+    const [calculationDialogOpen, setCalculationDialogOpen] = React.useState(false);
 
     React.useEffect(() => {
         let candidateProbability;
@@ -55,8 +108,12 @@ function BallResultItem(props) {
                     props.hpStat,
                     props.pokemonLevel,
                     props.hp,
+                    props.statusAilment,
                     setPokemonHpMax,
-                    setPokemonHpCurrent);
+                    setPokemonHpCurrent,
+                    setBallFMod,
+                    setBallMod,
+                    setStatusAilment);
             }
             if (candidateProbability === NaN) {
                 candidateProbability = 0.0;
@@ -69,84 +126,45 @@ function BallResultItem(props) {
             candidateProbability = `${error}`
         }
         setProbability(candidateProbability);
-    }, [props.ball, props.selectedGeneration, props.captureRate, props.hpStat, props.hp]);
+    }, [props.ball, props.selectedGeneration, props.captureRate, props.hpStat, props.hp, props.statusAilment]);
+
 
     return (
         <Item>
-            <Accordion sx={{
+            <Box sx={{
+                display: 'flex',
                 width: '100%',
-                boxShadow: 'none'
+                alignItems: 'center',
+                justifyContent: 'space-between'
             }}>
-                <AccordionSummary
-                    expandIcon={<ExpandMoreIcon />}
-                >
-                    <Box sx={{
-                        display: 'flex',
-                        width: '100%',
-                        alignItems: 'center',
-                        justifyContent: 'space-between'
-                    }}>
-                        <Box
-                            component="img"
-                            src={props.ball[1]?.sprite}
-                        />
-                        <Typography>Using {props.ball[0]} you'll need this many: </Typography><Typography>{probability}</Typography>
-                    </Box>
-                </AccordionSummary>
-                <AccordionDetails sx={{
-                    justifyContent: 'left'
-                }}>
-                    <Typography sx={{
-                        textAlign: 'left',
-                        justifyContent: 'left'
-                    }}>
-                        Bulbapedia defines the Generation I catch rate appropximation as:
-                        <BlockMath renderError={(error) => {
-                            return <b>Fail: {error.name}</b>;
-                        }} math={String.raw`\approx {\color{blue}p_{0}} + {\color{red}p_{1}}`} />
-                        Where:
-                        <BlockMath renderError={(error) => {
-                            return <b>Fail: {error.name}</b>;
-                        }} math="{\color{blue}p_{0}} = \frac{{\color{forestgreen}\text{statusAilment}}}{{\color{fuchsia}\text{ballMod}} + 1}" />
-                        and:
-                        <BlockMath renderError={(error) => {
-                            return <b>Fail: {error.name}</b>;
-                        }} math="{\color{red}p_{1}} = \frac{\text{catchRate} + 1}{{\color{fuchsia}\text{ballMod}} + 1} \times \frac{{\color{orange}f} + 1}{256}" />
-                        which can be combined as:
-                        <BlockMath renderError={(error) => {
-                            return <b>Fail: {error.name}</b>;
-                        }} math={String.raw`\frac{{\color{forestgreen}\text{statusAilment}}}{{\color{fuchsia}\text{ballMod}} + 1} + \left(\frac{\text{catchRate} + 1}{{\color{fuchsia}\text{ballMod}} + 1} \times \frac{{\color{orange}f} + 1}{256}\right)`} />
-                        and:
-                        <BlockMath renderError={(error) => {
-                            return <b>Fail: {error.name}</b>;
-                        }} math={String.raw`{\color{orange}f} = \left\lfloor \frac{{\color{gold}\text{HP}_{\text{max}}} \times 255 \times 4}{\text{HP}_{\text{current}} \times {\color{red}\text{ball}}} \right\rfloor`} />
-                        The values within these are:
-                        <BlockMath renderError={(error) => {
-                            return <b>Fail: {error.name}</b>;
-                        }} math={String.raw`{\color{red}\text{Ball}} = \begin{cases} 
-                                                                        8 & \text{if great-ball} \\
-                                                                        12 & \text{otherwise}
-                                                                        \end{cases}`} />
-                        <BlockMath math={String.raw`{\color{fuchsia}\text{ballMod}} = \begin{cases}
-                                                                        255 & \text{if poke-ball} \\
-                                                                        200 & \text{if great-ball} \\
-                                                                        150 & \text{otherwise}
-                                                                    \end{cases}`} />
-                        <BlockMath math={String.raw`{\color{forestgreen}\text{statusAilment}} =  \begin{cases}
-                                                                            12 &\text{if poison, burned, paralysed}  \\
-                                                                            25 &\text{if frozen, asleep} \\ 
-                                                                            0 &\text{otherwise}\\
-                                                                            \end{cases}`} />
-                        According to <Link href={"https://pokemon.neoseeker.com/wiki/Statistic#HP"}>Neoseeker</Link> the formula for calculating <InlineMath math={String.raw`{\color{gold}\text{HP}_\text{max}}`} /> is:
-                        <BlockMath math={String.raw`{\color{gold}\text{HP}_\text{max}} = \frac{(\text{IV} + \text{Base} + \frac{\sqrt{\text{EV}}}{8} + 50) \times \text{Level}}{50} + 10`} />
-                        We ignore both IV and EV vales for simplicity.
-
-                        Plugging in our values we get:
-                        <BlockMath math={String.raw`{\color{gold}\text{HP}_\text{max}} = \frac{(0 + ${props.hpStat} + 0 + 50) \times ${props.pokemonLevel}}{50} + 10 \approx ${Math.round(pokemonHpMax)}`} />
-                        <BlockMath math={String.raw`\text{HP}_\text{current} = {\color{gold}\text{HP}_\text{max}} \times \text{HP}_\text{ratio} = ${Math.round(pokemonHpMax)} \times ${props.hp} \approx ${Math.round(pokemonHpCurrent)}`} />
-                    </Typography>
-                </AccordionDetails>
-            </Accordion>
+                <Box
+                    component="img"
+                    src={props.ball[1]?.sprite}
+                />
+                <Typography>Using {props.ball[0]} you'll need this many: </Typography><Typography>{probability}</Typography>
+            </Box>
+            <IconButton onClick={() => {
+                setCalculationDialogOpen(true);
+            }}>
+                <InfoIcon />
+            </IconButton>
+            <AboutDialog
+                open={calculationDialogOpen}
+                handleAboutClose={() => {
+                    setCalculationDialogOpen(false);
+                }}
+                text={<CalculationExplaination
+                    pokemonHpCurrent={pokemonHpCurrent}
+                    pokemonHpMax={pokemonHpMax}
+                    pokemonLevel={props.pokemonLevel}
+                    hpStat={props.hpStat}
+                    hp={props.hp}
+                    ballName={props.ball[0]}
+                    ballFMod={ballFMod}
+                    ballMod={ballMod}
+                    statusAilment={statusAilment}
+                    statusAilmentName={props.statusAilment} />}
+                title={"Calculation Explaination"} />
         </Item >);
 }
 
@@ -174,7 +192,8 @@ export default function BallOptions(props) {
                         captureRate={props.speciesDetails?.capture_rate}
                         pokemonLevel={props.pokemonLevel}
                         hp={props.hp}
-                        hpStat={hpStat} />
+                        hpStat={hpStat}
+                        statusAilment={"none"} />
                 })
             }
 
