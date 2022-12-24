@@ -58,16 +58,16 @@ function calculateRateModified(pokemonCaptureRate, ballModifier) {
     return Math.max(1, rateModified);
 }
 
-function calculateModifiedCatchRate(pokemonCaptureRate, ballModifier, pokemonHpStat, pokemonLevel, hp) {
-    console.log(`capture rate = ${pokemonCaptureRate}, ballModifier = ${ballModifier}`)
+function calculateModifiedCatchRate(pokemonCaptureRate, ballModifier, pokemonHpStat, pokemonLevel, hp, statusAilment, valueCallbacks) {
+    console.log(`capture rate = ${pokemonCaptureRate}, ballModifier = ${ballModifier}`);
     const minimum = 1.0;
     const maximum = 255;
     // TODO: Use actual values here
     const hpMax = calculateHpMax(pokemonHpStat, pokemonLevel);
+    valueCallbacks?.setHpMax(hpMax);
     const hpCurrent = hpMax * hp;
-
-    console.log(`hpMax = ${hpMax}`);
-    console.log(`hpCurrent = ${hpCurrent}`);
+    valueCallbacks?.setHpCurrent(hpCurrent);
+    valueCallbacks?.setBallModifier(ballModifier);
 
     let hpMaxTimes3 = hpMax * 3;
     let hpCurrentTimes2 = hpCurrent * 2;
@@ -100,8 +100,8 @@ function calculateModifiedCatchRate(pokemonCaptureRate, ballModifier, pokemonHpS
 
 
 
-function calculateGenIICaptureProbability(captureRate, ballSettings, pokemonHpStat, pokemonLevel, hp) {
-    const a = calculateModifiedCatchRate(captureRate, ballSettings.ballMod, pokemonHpStat, pokemonLevel, hp);
+export function calculateGenIICaptureProbability(captureRate, ballSettings, pokemonHpStat, pokemonLevel, hp, statusAilment, valueCallbacks) {
+    const a = calculateModifiedCatchRate(captureRate, ballSettings.ballMod, pokemonHpStat, pokemonLevel, hp, statusAilment, valueCallbacks);
     const randomMax = 255;
     // if random <= a it's caught. 
     // therefore the probability is a/randomMax
@@ -155,26 +155,3 @@ function calculateGenVCaptureProbability(captureRate, ballSettings, pokemonHpSta
     return a / 4096;
 }
 
-
-export function calculateCaptureProbability(generationName, captureRate, ballSettings, pokemonHpStat, pokemonLevel, hp, statusAilment, hpMaxSetter, hpCurrentSetter, ballFModSetter, ballModSetter, ailmentSetter, fSetter, p1Setter, p0Setter) {
-    console.log("calculateCaptureProbability", generationName, captureRate, ballSettings, pokemonHpStat, pokemonLevel, hp, statusAilment, hpMaxSetter, hpCurrentSetter, ballFModSetter, ballModSetter, ailmentSetter, fSetter, p1Setter, p0Setter);
-    if (ballSettings.name === "master-ball") {
-        return 1;
-    }
-    const rateCalculators = {
-        "generation-i": calculateGenICaptureProbability,
-        "generation-ii": calculateGenIICaptureProbability,
-        "generation-iii": calculateGenIIICaptureProbability,
-        "generation-iv": calculateGenIIICaptureProbability,
-        "generation-v": calculateGenVCaptureProbability
-    }
-    console.log(`Selected generation = ${generationName}`);
-    try {
-        const rc = rateCalculators[generationName](captureRate, ballSettings[generationName], pokemonHpStat, pokemonLevel, hp, statusAilment, hpMaxSetter, hpCurrentSetter, ballFModSetter, ballModSetter, ailmentSetter, fSetter, p1Setter, p0Setter);
-        console.log(`Rate calculated as ${rc}`);
-        return rc;
-    } catch (error) {
-        console.log(error);
-        throw `No calculator available for ${generationName}`
-    }
-}

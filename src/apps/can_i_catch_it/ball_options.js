@@ -17,6 +17,7 @@ import 'katex/dist/katex.min.css';
 import { InlineMath, BlockMath } from 'react-katex';
 import AboutDialog from '../../components/about_dialog.js';
 import GenICalculation from './gen_i_calculation'
+import GenIICalculation from './gen_ii_calculation'
 
 const Item = styled(Box)(({ theme }) => ({
     backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
@@ -39,6 +40,10 @@ function BallResultItem(props) {
     const [probability, setProbability] = React.useState(0);
     const calculation = React.useRef();
     const [calculationDialogOpen, setCalculationDialogOpen] = React.useState(false);
+    const rateCalculators = {
+        "generation-i": GenICalculation,
+        "generation-ii": GenIICalculation
+    };
 
     React.useEffect(() => {
         let candidateProbability;
@@ -47,7 +52,8 @@ function BallResultItem(props) {
                 candidateProbability = 1.0;
             }
             else {
-                calculation.current = new GenICalculation(props)
+
+                calculation.current = new rateCalculators[props.selectedGeneration](props);
                 candidateProbability = calculation.current.probability
             }
             if (candidateProbability === NaN) {
