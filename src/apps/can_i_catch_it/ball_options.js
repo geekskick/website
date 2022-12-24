@@ -75,11 +75,13 @@ function CalculationExplaination(props) {
         We ignore both IV and EV vales for simplicity.
         <Divider sx={{ margin: 3 }} >THEREFORE</Divider>
         Plugging in our values we get:
-        <BlockMath math={String.raw`{\color{gold}\text{HP}_\text{max}} = \frac{(0 + ${props.hpStat} + 0 + 50) \times ${props.pokemonLevel}}{50} + 10 \approx ${Math.round(props.pokemonHpMax)}`} />
-        <BlockMath math={String.raw`\text{HP}_\text{current} = {\color{gold}\text{HP}_\text{max}} \times \text{HP}_\text{ratio} = ${Math.round(props.pokemonHpMax)} \times ${props.hp} \approx ${Math.round(props.pokemonHpCurrent)}`} />
+        <BlockMath math={String.raw`{\color{gold}\text{HP}_\text{max}} = \frac{(0 + ${props.hpStat} + 0 + 50) \times ${props.pokemonLevel}}{50} + 10 \approx ${props.pokemonHpMax}`} />
+        <BlockMath math={String.raw`\text{HP}_\text{current} = {\color{gold}\text{HP}_\text{max}} \times \text{HP}_\text{ratio} = ${props.pokemonHpMax} \times ${props.hp} \approx ${props.pokemonHpCurrent}`} />
         <BlockMath math={String.raw`{\color{red}\text{Ball}} = \text{${props.ballName}} = ${props.ballFMod}`} />
         <BlockMath math={String.raw`{\color{fuchsia}\text{ballMod}} = \text{${props.ballName}} = ${props.ballMod}`} />
         <BlockMath math={String.raw`{\color{forestgreen}\text{statusAilment}} =  \text{${props.statusAilmentName}} = ${props.statusAilment}`} />
+        <BlockMath math={String.raw`{\color{orange}f} \approx \left\lfloor \frac{{\color{gold}\text{HP}_{\text{max}}} \times 255 \times 4}{\text{HP}_{\text{current}} \times {\color{red}\text{ball}}} \right\rfloor \approx \left\lfloor \frac{{\color{gold}${props.pokemonHpMax}} \times 255 \times 4}{${props.pokemonHpCurrent} \times {\color{red}${props.ballMod}}} \right\rfloor \approx ${props.f}`} />
+        <BlockMath math={String.raw`{\color{red}p_{1}} = \frac{\text{catchRate} + 1}{{\color{fuchsia}\text{ballMod}} + 1} \times \frac{{\color{orange}f} + 1}{256} = \frac{${props.catchRate} + 1}{{\color{fuchsia}${props.ballMod}} + 1} \times \frac{{\color{orange}${props.f}} + 1}{256} = ${props.p1}`} />
     </Box>);
 }
 function BallResultItem(props) {
@@ -92,6 +94,8 @@ function BallResultItem(props) {
     const [statusAilment, setStatusAilment] = React.useState(0);
     const [probability, setProbability] = React.useState(0);
     const [pokemonHpCurrent, setPokemonHpCurrent] = React.useState(0);
+    const [f, setF] = React.useState(0);
+    const [p1, setP1] = React.useState(0);
     const [calculationDialogOpen, setCalculationDialogOpen] = React.useState(false);
 
     React.useEffect(() => {
@@ -113,7 +117,9 @@ function BallResultItem(props) {
                     setPokemonHpCurrent,
                     setBallFMod,
                     setBallMod,
-                    setStatusAilment);
+                    setStatusAilment,
+                    setF,
+                    setP1);
             }
             if (candidateProbability === NaN) {
                 candidateProbability = 0.0;
@@ -154,16 +160,19 @@ function BallResultItem(props) {
                     setCalculationDialogOpen(false);
                 }}
                 text={<CalculationExplaination
-                    pokemonHpCurrent={pokemonHpCurrent}
-                    pokemonHpMax={pokemonHpMax}
+                    pokemonHpCurrent={Math.round(pokemonHpCurrent)}
+                    pokemonHpMax={Math.round(pokemonHpMax)}
                     pokemonLevel={props.pokemonLevel}
-                    hpStat={props.hpStat}
-                    hp={props.hp}
+                    hpStat={Math.round(props.hpStat)}
+                    hp={Math.round(props.hp)}
                     ballName={props.ball[0]}
-                    ballFMod={ballFMod}
-                    ballMod={ballMod}
-                    statusAilment={statusAilment}
-                    statusAilmentName={props.statusAilment} />}
+                    ballFMod={Math.round(ballFMod)}
+                    ballMod={Math.round(ballMod)}
+                    statusAilment={Math.round(statusAilment)}
+                    statusAilmentName={props.statusAilment}
+                    f={Math.round(f)}
+                    catchRate={props.captureRate}
+                    p1={p1.toPrecision(2)} />}
                 title={"Calculation Explaination"} />
         </Item >);
 }
