@@ -85,7 +85,7 @@ export default class GenICalculation {
                 <BlockMath math={String.raw`{\color{blue}p_{0}} = \frac{{\color{forestgreen}\text{statusAilment}}}{{\color{fuchsia}\text{ballMod}} + 1} = \frac{{\color{forestgreen}\text{${this.statusAilment}}}}{{\color{fuchsia}\text{${this.ballMod}}} + 1} = ${this.p0.toFixed(2)}`} />
                 <BlockMath math={String.raw`\text{CaptureProbability}\approx {\color{blue}p_{0}} + {\color{red}p_{1}} \approx {\color{blue}${this.p0.toFixed(2)}} + {\color{red}${this.p1.toFixed(2)}} \approx ${this.probability.toFixed(2)}`} />
                 <Divider sx={{ margin: 3 }}>SO FINALLY</Divider>
-                <BlockMath math={String.raw`\text{Number of ${this.ballName} needed}\approx \left\lceil\frac{1}{${this.probability.toFixed(2)}}\right\rceil \approx ${this.ballsNeeded}`} />
+                <BlockMath math={String.raw`\text{Number of ${this.ballName}s needed}\approx \left\lceil\frac{1}{${this.probability.toFixed(2)}}\right\rceil \approx ${this.ballsNeeded}`} />
             </Box>);
         }
         else {

@@ -48,14 +48,10 @@ function BallResultItem(props) {
     React.useEffect(() => {
         let candidateProbability;
         try {
-            if (props.ballSettings[0] === "master-ball") {
-                candidateProbability = 1.0;
-            }
-            else {
 
-                calculation.current = new rateCalculators[props.selectedGeneration](props);
-                candidateProbability = calculation.current.probability
-            }
+            calculation.current = new rateCalculators[props.selectedGeneration](props);
+            candidateProbability = calculation.current.probability
+
             if (candidateProbability === NaN) {
                 candidateProbability = 0.0;
             }

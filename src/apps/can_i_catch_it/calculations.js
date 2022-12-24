@@ -88,10 +88,10 @@ function calculateModifiedCatchRate(pokemonCaptureRate, ballModifier, pokemonHpS
 
     // TODO: use the status
     const bonusStatus = 0; // 10 for sleep or freeze, else 0;
+    valueCallbacks.setAilment(bonusStatus);
     const rateModified = calculateRateModified(pokemonCaptureRate, ballModifier);
+    valueCallbacks.setRateModified(rateModified);
 
-    console.log("rateModified = ", rateModified);
-    console.log("bonusStatus  = ", bonusStatus);
     const candidate = ((hpMaxTimes3 - hpCurrentTimes2) * rateModified) / (3 * hpMax);
     console.log("Candidate result = ", candidate);
     const result = Math.max(candidate, minimum) + bonusStatus;
@@ -102,6 +102,7 @@ function calculateModifiedCatchRate(pokemonCaptureRate, ballModifier, pokemonHpS
 
 export function calculateGenIICaptureProbability(captureRate, ballSettings, pokemonHpStat, pokemonLevel, hp, statusAilment, valueCallbacks) {
     const a = calculateModifiedCatchRate(captureRate, ballSettings.ballMod, pokemonHpStat, pokemonLevel, hp, statusAilment, valueCallbacks);
+    valueCallbacks.setA(a);
     const randomMax = 255;
     // if random <= a it's caught. 
     // therefore the probability is a/randomMax
