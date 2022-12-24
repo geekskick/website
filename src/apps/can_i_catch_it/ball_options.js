@@ -39,7 +39,7 @@ class GenICalculation {
         this.pokemonHpCurrent = 0;
         console.log("GenICalculation::constructor");
         console.log("GenICalculation::props", props);
-        if (this.props.ballSettings[0] == 'master-ball') {
+        if (this.ballName === 'master-ball') {
             this.probability = 1;
         }
         else {
@@ -58,49 +58,54 @@ class GenICalculation {
     }
 
     getExplaination() {
-        return (<Box>
-            <Link href="https://bulbapedia.bulbagarden.net/wiki/Catch_rate#Approximate_probability">Bulbapedia</Link> defines the Generation I catch rate appropximation as:
-            <BlockMath math={String.raw`\text{CaptureProbability}\approx {\color{blue}p_{0}} + {\color{red}p_{1}}`} />
-            Where:
-            <BlockMath math="{\color{blue}p_{0}} = \frac{{\color{forestgreen}\text{statusAilment}}}{{\color{fuchsia}\text{ballMod}} + 1}" />
-            and:
-            <BlockMath math="{\color{red}p_{1}} = \frac{\text{catchRate} + 1}{{\color{fuchsia}\text{ballMod}} + 1} \times \frac{{\color{orange}f} + 1}{256}" />
-            which can be combined as:
-            <BlockMath math={String.raw`\text{CaptureProbability} = \frac{{\color{forestgreen}\text{statusAilment}}}{{\color{fuchsia}\text{ballMod}} + 1} + \left(\frac{\text{catchRate} + 1}{{\color{fuchsia}\text{ballMod}} + 1} \times \frac{{\color{orange}f} + 1}{256}\right)`} />
-            and:
-            <BlockMath math={String.raw`{\color{orange}f} = \left\lfloor \frac{{\color{gold}\text{HP}_{\text{max}}} \times 255 \times 4}{\text{HP}_{\text{current}} \times {\color{red}\text{ball}}} \right\rfloor`} />
-            <Divider sx={{ margin: 3 }} >AND USING</Divider>
-            <BlockMath math={String.raw`{\color{red}\text{Ball}} = \begin{cases} 
+        if (this.ballName !== 'master-ball') {
+            return (<Box>
+                <Link href="https://bulbapedia.bulbagarden.net/wiki/Catch_rate#Approximate_probability">Bulbapedia</Link> defines the Generation I catch rate appropximation as:
+                <BlockMath math={String.raw`\text{CaptureProbability}\approx {\color{blue}p_{0}} + {\color{red}p_{1}}`} />
+                Where:
+                <BlockMath math="{\color{blue}p_{0}} = \frac{{\color{forestgreen}\text{statusAilment}}}{{\color{fuchsia}\text{ballMod}} + 1}" />
+                and:
+                <BlockMath math="{\color{red}p_{1}} = \frac{\text{catchRate} + 1}{{\color{fuchsia}\text{ballMod}} + 1} \times \frac{{\color{orange}f} + 1}{256}" />
+                which can be combined as:
+                <BlockMath math={String.raw`\text{CaptureProbability} = \frac{{\color{forestgreen}\text{statusAilment}}}{{\color{fuchsia}\text{ballMod}} + 1} + \left(\frac{\text{catchRate} + 1}{{\color{fuchsia}\text{ballMod}} + 1} \times \frac{{\color{orange}f} + 1}{256}\right)`} />
+                and:
+                <BlockMath math={String.raw`{\color{orange}f} = \left\lfloor \frac{{\color{gold}\text{HP}_{\text{max}}} \times 255 \times 4}{\text{HP}_{\text{current}} \times {\color{red}\text{ball}}} \right\rfloor`} />
+                <Divider sx={{ margin: 3 }} >AND USING</Divider>
+                <BlockMath math={String.raw`{\color{red}\text{Ball}} = \begin{cases} 
                                                                         8 & \text{if great-ball} \\
                                                                         12 & \text{otherwise}
                                                                         \end{cases}`} />
-            <BlockMath math={String.raw`{\color{fuchsia}\text{ballMod}} = \begin{cases}
+                <BlockMath math={String.raw`{\color{fuchsia}\text{ballMod}} = \begin{cases}
                                                                         255 & \text{if poke-ball} \\
                                                                         200 & \text{if great-ball} \\
                                                                         150 & \text{otherwise}
                                                                     \end{cases}`} />
-            <BlockMath math={String.raw`{\color{forestgreen}\text{statusAilment}} =  \begin{cases}
+                <BlockMath math={String.raw`{\color{forestgreen}\text{statusAilment}} =  \begin{cases}
                                                                             12 &\text{if poison, burned, paralysed}  \\
                                                                             25 &\text{if frozen, asleep} \\ 
                                                                             0 &\text{otherwise}\\
                                                                             \end{cases}`} />
-            According to <Link href={"https://pokemon.neoseeker.com/wiki/Statistic#HP"}>Neoseeker</Link> the formula for calculating <InlineMath math={String.raw`{\color{gold}\text{HP}_\text{max}}`} /> is:
-            <BlockMath math={String.raw`{\color{gold}\text{HP}_\text{max}} = \frac{(\text{IV} + \text{Base} + \frac{\sqrt{\text{EV}}}{8} + 50) \times \text{Level}}{50} + 10`} />
-            We ignore both IV and EV vales for simplicity.
-            <Divider sx={{ margin: 3 }} >THEREFORE</Divider>
-            Plugging in our values we get:
-            <BlockMath math={String.raw`{\color{gold}\text{HP}_\text{max}} = \frac{(0 + ${this.props.pokemonHpStat} + 0 + 50) \times ${this.props.pokemonLevel}}{50} + 10 \approx ${this.pokemonHpMax}`} />
-            <BlockMath math={String.raw`\text{HP}_\text{current} = {\color{gold}\text{HP}_\text{max}} \times \text{HP}_\text{ratio} = ${this.pokemonHpMax} \times ${this.props.hp} \approx ${this.pokemonHpCurrent}`} />
-            <BlockMath math={String.raw`{\color{red}\text{Ball}} = \text{${this.ballName}} = ${this.ballFMod}`} />
-            <BlockMath math={String.raw`{\color{fuchsia}\text{ballMod}} = \text{${this.ballName}} = ${this.ballMod}`} />
-            <BlockMath math={String.raw`{\color{forestgreen}\text{statusAilment}} =  \text{${this.props.statusAilment}} = ${this.statusAilment}`} />
-            <BlockMath math={String.raw`{\color{orange}f} \approx \left\lfloor \frac{{\color{gold}\text{HP}_{\text{max}}} \times 255 \times 4}{\text{HP}_{\text{current}} \times {\color{red}\text{ball}}} \right\rfloor \approx \left\lfloor \frac{{\color{gold}${this.pokemonHpMax}} \times 255 \times 4}{${this.pokemonHpCurrent} \times {\color{red}${this.ballMod}}} \right\rfloor \approx ${this.f}`} />
-            <BlockMath math={String.raw`{\color{red}p_{1}} = \frac{\text{catchRate} + 1}{{\color{fuchsia}\text{ballMod}} + 1} \times \frac{{\color{orange}f} + 1}{256} = \frac{${this.props.captureRate} + 1}{{\color{fuchsia}${this.ballMod}} + 1} \times \frac{{\color{orange}${this.f}} + 1}{256} = ${this.p1.toPrecision(2)}`} />
-            <BlockMath math={String.raw`{\color{blue}p_{0}} = \frac{{\color{forestgreen}\text{statusAilment}}}{{\color{fuchsia}\text{ballMod}} + 1} = \frac{{\color{forestgreen}\text{${this.statusAilment}}}}{{\color{fuchsia}\text{${this.ballMod}}} + 1} = ${this.p0.toPrecision(2)}`} />
-            <BlockMath math={String.raw`\text{CaptureProbability}\approx {\color{blue}p_{0}} + {\color{red}p_{1}} \approx {\color{blue}${this.p0.toPrecision(2)}} + {\color{red}${this.p1.toPrecision(2)}} \approx ${this.probability.toPrecision(2)}`} />
-            <Divider sx={{ margin: 3 }}>SO FINALLY</Divider>
-            <BlockMath math={String.raw`\text{Number of ${this.ballName} needed}\approx \left\lceil\frac{1}{${this.probability.toPrecision(2)}}\right\rceil \approx ${this.ballsNeeded}`} />
-        </Box>);
+                According to <Link href={"https://pokemon.neoseeker.com/wiki/Statistic#HP"}>Neoseeker</Link> the formula for calculating <InlineMath math={String.raw`{\color{gold}\text{HP}_\text{max}}`} /> is:
+                <BlockMath math={String.raw`{\color{gold}\text{HP}_\text{max}} = \frac{(\text{IV} + \text{Base} + \frac{\sqrt{\text{EV}}}{8} + 50) \times \text{Level}}{50} + 10`} />
+                We ignore both IV and EV vales for simplicity.
+                <Divider sx={{ margin: 3 }} >THEREFORE</Divider>
+                Plugging in our values we get:
+                <BlockMath math={String.raw`{\color{gold}\text{HP}_\text{max}} = \frac{(0 + ${this.props.pokemonHpStat} + 0 + 50) \times ${this.props.pokemonLevel}}{50} + 10 \approx ${this.pokemonHpMax}`} />
+                <BlockMath math={String.raw`\text{HP}_\text{current} = {\color{gold}\text{HP}_\text{max}} \times \text{HP}_\text{ratio} = ${this.pokemonHpMax} \times ${this.props.hp} \approx ${this.pokemonHpCurrent}`} />
+                <BlockMath math={String.raw`{\color{red}\text{Ball}} = \text{${this.ballName}} = ${this.ballFMod}`} />
+                <BlockMath math={String.raw`{\color{fuchsia}\text{ballMod}} = \text{${this.ballName}} = ${this.ballMod}`} />
+                <BlockMath math={String.raw`{\color{forestgreen}\text{statusAilment}} =  \text{${this.props.statusAilment}} = ${this.statusAilment}`} />
+                <BlockMath math={String.raw`{\color{orange}f} \approx \left\lfloor \frac{{\color{gold}\text{HP}_{\text{max}}} \times 255 \times 4}{\text{HP}_{\text{current}} \times {\color{red}\text{ball}}} \right\rfloor \approx \left\lfloor \frac{{\color{gold}${this.pokemonHpMax}} \times 255 \times 4}{${this.pokemonHpCurrent} \times {\color{red}${this.ballMod}}} \right\rfloor \approx ${this.f}`} />
+                <BlockMath math={String.raw`{\color{red}p_{1}} = \frac{\text{catchRate} + 1}{{\color{fuchsia}\text{ballMod}} + 1} \times \frac{{\color{orange}f} + 1}{256} = \frac{${this.props.captureRate} + 1}{{\color{fuchsia}${this.ballMod}} + 1} \times \frac{{\color{orange}${this.f}} + 1}{256} = ${this.p1.toPrecision(2)}`} />
+                <BlockMath math={String.raw`{\color{blue}p_{0}} = \frac{{\color{forestgreen}\text{statusAilment}}}{{\color{fuchsia}\text{ballMod}} + 1} = \frac{{\color{forestgreen}\text{${this.statusAilment}}}}{{\color{fuchsia}\text{${this.ballMod}}} + 1} = ${this.p0.toPrecision(2)}`} />
+                <BlockMath math={String.raw`\text{CaptureProbability}\approx {\color{blue}p_{0}} + {\color{red}p_{1}} \approx {\color{blue}${this.p0.toPrecision(2)}} + {\color{red}${this.p1.toPrecision(2)}} \approx ${this.probability.toPrecision(2)}`} />
+                <Divider sx={{ margin: 3 }}>SO FINALLY</Divider>
+                <BlockMath math={String.raw`\text{Number of ${this.ballName} needed}\approx \left\lceil\frac{1}{${this.probability.toPrecision(2)}}\right\rceil \approx ${this.ballsNeeded}`} />
+            </Box>);
+        }
+        else {
+            return (<Box><Typography>Master ball always works</Typography></Box>);
+        }
     }
 
     setP0(value) {
@@ -130,16 +135,7 @@ class GenICalculation {
 function BallResultItem(props) {
     console.log("BallResultItem::props = ", props)
 
-
-    const [pokemonHpMax, setPokemonHpMax] = React.useState(0);
-    const [ballFMod, setBallFMod] = React.useState(0);
-    const [ballMod, setBallMod] = React.useState(0);
-    const [statusAilment, setStatusAilment] = React.useState(0);
     const [probability, setProbability] = React.useState(0);
-    const [pokemonHpCurrent, setPokemonHpCurrent] = React.useState(0);
-    const [f, setF] = React.useState(0);
-    const [p1, setP1] = React.useState(0);
-    const [p0, setP0] = React.useState(0);
     const calculation = React.useRef(new GenICalculation(props));
     const [calculationDialogOpen, setCalculationDialogOpen] = React.useState(false);
 
