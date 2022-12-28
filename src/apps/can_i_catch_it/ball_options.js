@@ -2,19 +2,12 @@
 import * as React from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import CONFIGURATION from './config.js';
 import { styled } from '@mui/material/styles';
 import Stack from '@mui/material/Stack';
-import { calculateGenICaptureProbability, calculateCaptureProbability } from './calculations.js';
 import Balls from './data/balls.json';
-import { IconButton, Link, Divider } from '@mui/material';
-import Accordion from '@mui/material/Accordion';
-import AccordionSummary from '@mui/material/AccordionSummary';
-import AccordionDetails from '@mui/material/AccordionDetails';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import { IconButton } from '@mui/material';
 import InfoIcon from '@mui/icons-material/Info';
 import 'katex/dist/katex.min.css';
-import { InlineMath, BlockMath } from 'react-katex';
 import AboutDialog from '../../components/about_dialog.js';
 import GenICalculation from './gen_i_calculation'
 import GenIICalculation from './gen_ii_calculation'
@@ -55,7 +48,7 @@ function BallResultItem(props) {
             calculation.current = new rateCalculators[props.selectedGeneration](props);
             candidateProbability = calculation.current.probability
 
-            if (candidateProbability === NaN) {
+            if (isNaN(candidateProbability)) {
                 candidateProbability = 0.0;
             }
             console.log("Rounding probability up = ", candidateProbability);

@@ -2,19 +2,9 @@ import { calculateGenICaptureProbability } from './calculations.js';
 import * as React from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import CONFIGURATION from './config.js';
-import { styled } from '@mui/material/styles';
-import Stack from '@mui/material/Stack';
-import Balls from './data/balls.json';
-import { IconButton, Link, Divider } from '@mui/material';
-import Accordion from '@mui/material/Accordion';
-import AccordionSummary from '@mui/material/AccordionSummary';
-import AccordionDetails from '@mui/material/AccordionDetails';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import InfoIcon from '@mui/icons-material/Info';
+import { Link, Divider } from '@mui/material';
 import 'katex/dist/katex.min.css';
 import { InlineMath, BlockMath } from 'react-katex';
-import AboutDialog from '../../components/about_dialog.js';
 
 export default class GenICalculation {
     constructor(props) {
@@ -99,9 +89,7 @@ export default class GenICalculation {
     setBallFMod(value) {
         this.ballFMod = value;
     }
-    setF(value) {
-        this.f = value;
-    }
+
     setP1(value) {
         this.p1 = value;
     }
