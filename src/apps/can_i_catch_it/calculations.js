@@ -135,14 +135,22 @@ export function calculateGenIIICaptureProbability(captureRate, ballSettings, pok
     return a / 255;
 }
 
-function calculateModifiedCatchRateGenV(captureRate, ballSettings, pokemonHpStat, pokemonLevel, hp) {
+function calculateModifiedCatchRateGenV(captureRate, ballSettings, pokemonHpStat, pokemonLevel, hp, status, valueCallbacks) {
     const hpMax = calculateHpMax(pokemonHpStat, pokemonLevel);
+    valueCallbacks.setHpMax(hpMax);
     const hpCurrent = hpMax * hp;
+    valueCallbacks.setHpCurrent(hpCurrent);
+    valueCallbacks.setBallModifier(ballSettings.ballMod);
+
+    const darkGrass = 0.5;
+
+    valueCallbacks.setDarkGrass(darkGrass);
+    valueCallbacks.setAilment(1);
     const hpMaxTimes3 = 3 * hpMax;
     const hpCurrentTimes2 = 2 * hpCurrent;
     let top;
     try {
-        top = (hpMaxTimes3 - hpCurrentTimes2) * 4096 * captureRate * ballSettings.ballMod;
+        top = (hpMaxTimes3 - hpCurrentTimes2) * 4096 * darkGrass * captureRate * ballSettings.ballMod;
     }
     catch (err) {
         throw 'No ball modifier available'
@@ -154,12 +162,13 @@ function calculateModifiedCatchRateGenV(captureRate, ballSettings, pokemonHpStat
     return fraction * 1;
 }
 
-function calculateGenVCaptureProbability(captureRate, ballSettings, pokemonHpStat, pokemonLevel, hp) {
-    const a = calculateModifiedCatchRateGenV(captureRate, ballSettings, pokemonHpStat, pokemonLevel, hp);
+export function calculateGenVCaptureProbability(captureRate, ballSettings, pokemonHpStat, pokemonLevel, hp, statusAilment, valueCallbacks) {
+    const a = calculateModifiedCatchRateGenV(captureRate, ballSettings, pokemonHpStat, pokemonLevel, hp, statusAilment, valueCallbacks);
+    valueCallbacks.setA(a);
     if (a >= 1044480) {
         return 1;
     }
     // TODO: what is this value?
-    return a / 4096;
+    return a / (255 * 4096);
 }
 

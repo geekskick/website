@@ -12,6 +12,7 @@ import AboutDialog from '../../components/about_dialog.js';
 import GenICalculation from './gen_i_calculation'
 import GenIICalculation from './gen_ii_calculation'
 import GenIIICalculation from './gen_iii_calculation.js';
+import GenVCalculation from './gen_v_calculation.js';
 
 const Item = styled(Box)(({ theme }) => ({
     backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
@@ -38,13 +39,13 @@ function BallResultItem(props) {
         "generation-i": GenICalculation,
         "generation-ii": GenIICalculation,
         "generation-iii": GenIIICalculation,
-        "generation-iv": GenIIICalculation
+        "generation-iv": GenIIICalculation,
+        "generation-v": GenVCalculation
     };
 
     React.useEffect(() => {
         let candidateProbability;
         try {
-
             calculation.current = new rateCalculators[props.selectedGeneration](props);
             candidateProbability = calculation.current.probability
 
@@ -56,7 +57,8 @@ function BallResultItem(props) {
         }
         catch (error) {
             console.log(error);
-            candidateProbability = `${error}`
+            candidateProbability = "Unable to calculate";
+            calculation.current = null;
         }
         setProbability(candidateProbability);
     }, [props]);
