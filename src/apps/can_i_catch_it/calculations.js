@@ -112,7 +112,7 @@ export function calculateGenIICaptureProbability(captureRate, ballSettings, poke
     return a / randomMax;
 }
 
-function calculateModifiedCatchRateGenIII(captureRate, ballSettings, pokemonHpStat, pokemonLevel, hp) {
+function calculateModifiedCatchRateGenIII(captureRate, ballSettings, pokemonHpStat, pokemonLevel, hp, statusAilment, valueCallbacks) {
     const hpMax = calculateHpMax(pokemonHpStat, pokemonLevel);
     const hpCurrent = hpMax * hp;
     const hpMaxTimes3 = 3 * hpMax;
@@ -124,8 +124,8 @@ function calculateModifiedCatchRateGenIII(captureRate, ballSettings, pokemonHpSt
     return fraction * 1;
 }
 
-function calculateGenIIICaptureProbability(captureRate, ballSettings, pokemonHpStat, pokemonLevel, hp) {
-    const a = calculateModifiedCatchRateGenIII(captureRate, ballSettings, pokemonHpStat, pokemonLevel, hp);
+export function calculateGenIIICaptureProbability(captureRate, ballSettings, pokemonHpStat, pokemonLevel, hp, statusAilment, valueCallbacks) {
+    const a = calculateModifiedCatchRateGenIII(captureRate, ballSettings, pokemonHpStat, pokemonLevel, hp, statusAilment, valueCallbacks);
     return a / 255;
 }
 

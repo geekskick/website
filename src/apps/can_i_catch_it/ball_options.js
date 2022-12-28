@@ -18,6 +18,7 @@ import { InlineMath, BlockMath } from 'react-katex';
 import AboutDialog from '../../components/about_dialog.js';
 import GenICalculation from './gen_i_calculation'
 import GenIICalculation from './gen_ii_calculation'
+import GenIIICalculation from './gen_iii_calculation.js';
 
 const Item = styled(Box)(({ theme }) => ({
     backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
@@ -42,7 +43,9 @@ function BallResultItem(props) {
     const [calculationDialogOpen, setCalculationDialogOpen] = React.useState(false);
     const rateCalculators = {
         "generation-i": GenICalculation,
-        "generation-ii": GenIICalculation
+        "generation-ii": GenIICalculation,
+        "generation-iii": GenIIICalculation,
+        "generation-iv": GenIIICalculation
     };
 
     React.useEffect(() => {
