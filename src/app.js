@@ -23,9 +23,8 @@ export default function App(props) {
         enqueueSnackbar(
             message,
             {
-                key: Math.random(),
                 variant: 'error',
-                action: key => { return <DismissButton handleDismiss={closeSnackbar} key={key} /> }
+                action: (key) => { return <DismissButton handleDismiss={closeSnackbar} key={key} /> }
             });
     };
 
@@ -34,9 +33,8 @@ export default function App(props) {
         enqueueSnackbar(
             message,
             {
-                key: Math.random(),
                 variant: 'info',
-                action: key => { return <DismissButton handleDismiss={closeSnackbar} key={key} /> }
+                //action: (key) => { console.log(`key = ${key}`); return <DismissButton handleDismiss={closeSnackbar} key={key} /> }
             });
     }
     const onAppSelect = (name) => {
