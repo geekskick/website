@@ -5,7 +5,7 @@ import About from './apps/about/app';
 export default class AppFactory {
     static _apps = {
         "Can I Catch It?": (infoHandler, errorHandler) => { return <CanICatchItApp info={infoHandler} error={errorHandler} /> },
-        "Nathans Eats ...": (infoHandler, errorHandler) => { return <NathanEats info={infoHandler} error={errorHandler} /> },
+        "Nathan Eats ...": (infoHandler, errorHandler) => { return <NathanEats info={infoHandler} error={errorHandler} /> },
         "About": (infoHandler, errorHandler) => { return <About info={infoHandler} error={errorHandler} /> }
     };
 
