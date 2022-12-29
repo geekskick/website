@@ -153,7 +153,7 @@ function calculateModifiedCatchRateGenV(captureRate, ballSettings, pokemonHpStat
         top = (hpMaxTimes3 - hpCurrentTimes2) * 4096 * darkGrass * captureRate * ballSettings.ballMod;
     }
     catch (err) {
-        throw 'No ball modifier available'
+        throw new Error('No ball modifier available');
     }
 
     const bottom = hpMaxTimes3;

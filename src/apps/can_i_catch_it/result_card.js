@@ -57,7 +57,7 @@ export default function ResultCard(props) {
             setSpeciesDetails(null);
         });
 
-    }, [props.selectedPokemon]);
+    }, [props]);
 
     let sprite;
     let generationSprites;

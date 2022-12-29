@@ -40,12 +40,6 @@ export default function App(props) {
                 action: key => { return <Button onClick={() => closeSnackbar(key)}>Dismiss</Button> }
             });
     }
-
-    const onGenericError = (errorM, info) => {
-        console.log(`App::onGenericError(${errorM}, ${info})`)
-        error(errorM);
-    }
-
     const onAppSelect = (name) => {
         info("Selected '" + name + "'");
         setSelectedApp(name);

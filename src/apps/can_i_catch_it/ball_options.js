@@ -28,6 +28,13 @@ const Item = styled(Box)(({ theme }) => ({
     display: 'flex',
 }));
 
+const rateCalculators = {
+    "generation-i": GenICalculation,
+    "generation-ii": GenIICalculation,
+    "generation-iii": GenIIICalculation,
+    "generation-iv": GenIIICalculation,
+    "generation-v": GenVCalculation
+};
 
 function BallResultItem(props) {
     console.log("BallResultItem::props = ", props)
@@ -35,13 +42,7 @@ function BallResultItem(props) {
     const [probability, setProbability] = React.useState(0);
     const calculation = React.useRef();
     const [calculationDialogOpen, setCalculationDialogOpen] = React.useState(false);
-    const rateCalculators = {
-        "generation-i": GenICalculation,
-        "generation-ii": GenIICalculation,
-        "generation-iii": GenIIICalculation,
-        "generation-iv": GenIIICalculation,
-        "generation-v": GenVCalculation
-    };
+
 
     React.useEffect(() => {
         let candidateProbability;

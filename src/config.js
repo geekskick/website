@@ -1,4 +1,5 @@
-export default
-    {
-        GITHUB_URL: "https://github.com/geekskick/website"
-    };
+const CONFIG = {
+    GITHUB_URL: "https://github.com/geekskick/website"
+};
+
+export default CONFIG;
