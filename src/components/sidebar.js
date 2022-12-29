@@ -3,12 +3,12 @@ import React from 'react';
 import Divider from '@mui/material/Divider';
 import Drawer from '@mui/material/Drawer'
 import Button from '@mui/material/Button'
-import AppsIcon from '@mui/icons-material/Apps';
 import Toolbar from '@mui/material/Toolbar';
 import { List, ListItemButton, ListItemText, ListItemIcon, Tooltip, Box } from '@mui/material';
 import Config from '../config'
 import GitHubIcon from '@mui/icons-material/GitHub';
 import BugReportIcon from '@mui/icons-material/BugReport';
+import AppFactory from '../available_apps';
 
 export default function Sidebar(props) {
     const appOptions = [];
@@ -20,7 +20,7 @@ export default function Sidebar(props) {
                 props.onAppSelect(appName);
             }}>
                 <ListItemIcon>
-                    <AppsIcon />
+                    {AppFactory.getIconForApp(appName)}
                 </ListItemIcon>
                 <ListItemText primary={appName} />
             </ListItemButton>);
