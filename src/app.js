@@ -2,7 +2,6 @@ import React from 'react';
 import './index.css';
 import NavBar from './components/navbar';
 import { useSnackbar } from 'notistack';
-import Button from '@mui/material/Button'
 import DismissButton from './components/dismiss_button';
 import Box from '@mui/material/Box'
 import Toolbar from '@mui/material/Toolbar';
@@ -37,7 +36,7 @@ export default function App(props) {
             {
                 key: Math.random(),
                 variant: 'info',
-                action: key => { return <Button onClick={() => closeSnackbar(key)}>Dismiss</Button> }
+                action: key => { return <DismissButton handleDismiss={closeSnackbar} key={key} /> }
             });
     }
     const onAppSelect = (name) => {
