@@ -48,6 +48,7 @@ function BallResultItem(props) {
         try {
             calculation.current = new rateCalculators[props.selectedGeneration](props);
             candidateProbability = calculation.current.probability
+            console.log(`Candidate Probability is ${candidateProbability}`);
 
             if (isNaN(candidateProbability)) {
                 candidateProbability = 0.0;
