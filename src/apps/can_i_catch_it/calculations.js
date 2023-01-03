@@ -143,9 +143,12 @@ function calculateModifiedCatchRateGenV(captureRate, ballSettings, pokemonHpStat
     valueCallbacks.setBallModifier(ballSettings.ballMod);
 
     const darkGrass = 0.5;
+    const passPower = 1;
 
     valueCallbacks.setDarkGrass(darkGrass);
     valueCallbacks.setAilment(1);
+    valueCallbacks.setPassPower(1);
+    valueCallbacks.setDarkGrass(darkGrass);
     const hpMaxTimes3 = 3 * hpMax;
     const hpCurrentTimes2 = 2 * hpCurrent;
     let top;
@@ -159,7 +162,7 @@ function calculateModifiedCatchRateGenV(captureRate, ballSettings, pokemonHpStat
     const bottom = hpMaxTimes3;
     const fraction = top / bottom;
     // TODO: take into account status changes
-    return fraction * 1;
+    return fraction * passPower;
 }
 
 export function calculateGenVCaptureProbability(captureRate, ballSettings, pokemonHpStat, pokemonLevel, hp, statusAilment, valueCallbacks) {
