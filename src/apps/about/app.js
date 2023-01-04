@@ -40,6 +40,8 @@ export default function About(props) {
                 })
             }
             </List>
+            <Divider sx={{ margin: 5 }} />
+            <Typography>This is the version of the app with git SHA {process.env.REACT_APP_VERSION}</Typography>
         </Box>
     </ErrorBoundary>);
 }
