@@ -10,23 +10,46 @@ import GitHubIcon from '@mui/icons-material/GitHub';
 import BugReportIcon from '@mui/icons-material/BugReport';
 import AppFactory from '../available_apps';
 
+export function SidebarContents(props) {
+    return (<List>
+        {props.apps.map(appName => {
+            return (
+                <ListItemButton key={appName} onClick={() => {
+                    console.log("CLicked ", appName);
+                    props.onAppSelect(appName);
+                }}>
+                    <ListItemIcon>
+                        {AppFactory.getIconForApp(appName)}
+                    </ListItemIcon>
+                    <ListItemText primary={appName} />
+                </ListItemButton>);
+        })
+        }
+    </List>);
+}
+
+
+export function SidebarFooter() {
+    return <List>
+        <Box sx={{
+            justifyContent: 'space-evenly',
+            align: 'center'
+        }}>
+            <Tooltip title="View the source">
+                <Button href={Config.GITHUB_URL}>
+                    <GitHubIcon />
+                </Button>
+            </Tooltip>
+            <Tooltip title="Report a bug">
+                <Button href={Config.GITHUB_URL}>
+                    <BugReportIcon />
+                </Button>
+            </Tooltip>
+        </Box>
+    </List>
+}
+
 export default function Sidebar(props) {
-    const appOptions = [];
-
-    props.apps.forEach(appName => {
-        appOptions.push(
-            <ListItemButton key={appName} onClick={() => {
-                console.log("CLicked ", appName);
-                props.onAppSelect(appName);
-            }}>
-                <ListItemIcon>
-                    {AppFactory.getIconForApp(appName)}
-                </ListItemIcon>
-                <ListItemText primary={appName} />
-            </ListItemButton>);
-    });
-
-    console.log("AppPptions = ", appOptions);
 
     return (<Drawer
         sx={{
@@ -41,27 +64,8 @@ export default function Sidebar(props) {
         anchor="left"
     >
         <Toolbar />
-        <List>
-            {appOptions}
-        </List>
+        <SidebarContents apps={props.apps} onAppSelect={props.onAppSelect} />
         <Divider />
-        <List>
-            <Box sx={{
-                justifyContent: 'space-evenly',
-                align: 'center'
-            }}>
-                <Tooltip title="View the source">
-                    <Button href={Config.GITHUB_URL}>
-                        <GitHubIcon />
-                    </Button>
-                </Tooltip>
-                <Tooltip title="Report a bug">
-                    <Button href={Config.GITHUB_URL}>
-                        <BugReportIcon />
-                    </Button>
-                </Tooltip>
-            </Box>
-        </List>
-
+        <SidebarFooter />
     </Drawer>);
 }

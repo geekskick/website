@@ -8,13 +8,14 @@ import Toolbar from '@mui/material/Toolbar';
 import CssBaseline from '@mui/material/CssBaseline';
 import Sidebar from './components/sidebar'
 import AppFactory from './available_apps'
+import ResponsiveSidebar from './components/responsive_sidebar';
 
 const drawerWidth = 240;
 
 export default function App(props) {
     console.log("App props = ", props);
 
-
+    const [mobileOpen, setMobileOpen] = React.useState(false);
     const { enqueueSnackbar, closeSnackbar } = useSnackbar();
     const [selectedApp, setSelectedApp] = React.useState(AppFactory.getAvailableApps()[0]);
 
@@ -46,15 +47,17 @@ export default function App(props) {
     return (
         <Box sx={{ display: 'flex' }}>
             <CssBaseline />
-            <NavBar title={selectedApp} width={`calc(100% - ${drawerWidth}px)`} />
-            <Sidebar width={drawerWidth} apps={AppFactory.getAvailableApps()} onAppSelect={onAppSelect} />
+            <NavBar title={selectedApp} width={drawerWidth} handleDrawerToggle={() => { setMobileOpen(!mobileOpen); }} />
+            <ResponsiveSidebar drawerWidth={drawerWidth} apps={AppFactory.getAvailableApps()} onAppSelect={onAppSelect} open={mobileOpen} handleDrawerToggle={() => { setMobileOpen(!mobileOpen); }} />
             <Box
                 component="main"
                 sx={{
                     flexGrow: 1,
                     bgcolor: 'background.default',
-                    p: 3
-                }}>
+                    p: 3,
+                    width: { sm: `calc(100% - ${drawerWidth}px)` }
+                }}
+            >
                 <Toolbar />
                 {AppFactory.create(selectedApp, info, error)}
 
