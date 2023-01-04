@@ -78,7 +78,7 @@ function BallResultItem(props) {
                     component="img"
                     src={props.ballSettings[1]?.sprite}
                 />
-                <Typography>Using {props.ballSettings[0]} you'll need this many: </Typography><Typography>{probability}</Typography>
+                <Typography>Using {props.ballSettings[0]} you'll need: </Typography><Typography>{probability}</Typography>
             </Box>
             <IconButton onClick={() => {
                 setCalculationDialogOpen(true);

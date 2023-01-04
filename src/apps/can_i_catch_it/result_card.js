@@ -117,12 +117,13 @@ export default function ResultCard(props) {
             justifyContent: 'space-evenly'
         }} >
             <Stack
-                direction="row"
+
                 spacing={10}
                 sx={{
                     alignItems: 'center',
                     justifyContent: 'space-evenly',
-                    width: '100%'
+                    width: '100%',
+                    flexDirection: { xs: "column", md: "row" }
                 }}>
                 <Item>
                     <Stack
