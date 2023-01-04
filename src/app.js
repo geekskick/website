@@ -6,7 +6,6 @@ import DismissButton from './components/dismiss_button';
 import Box from '@mui/material/Box'
 import Toolbar from '@mui/material/Toolbar';
 import CssBaseline from '@mui/material/CssBaseline';
-import Sidebar from './components/sidebar'
 import AppFactory from './available_apps'
 import ResponsiveSidebar from './components/responsive_sidebar';
 
