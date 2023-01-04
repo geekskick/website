@@ -9,7 +9,6 @@ import Checkbox from '@mui/material/Checkbox';
 
 const TODOS = [
     "Make the app title all the way to the left when in large screen mode",
-    "Make the pokemon and the calculation result in on top of eather other in small screen mode",
     "Implement Gen VI onwards pokemon catch calculators",
     "Make the Nathan Eats game",
     "Make the notification pop ups different colors based on the apps themselves",
