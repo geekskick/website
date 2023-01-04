@@ -14,20 +14,18 @@ export default function LabelledDropdown(props) {
     // https://reactjs.org/docs/uncontrolled-components.html
     // use defaultValue?
     return (
-        <div>
-            <FormControl fullWidth>
-                <InputLabel>{props.placeholder}</InputLabel>
-                <Select
-                    label={props.label}
-                    onChange={props.onChange}
-                    value={props.value}
-                >
-                    {
-                        props.options.map(option => {
-                            return <MenuItem value={option} key={option}>{option}</MenuItem>;
-                        })
-                    }
-                </Select>
-            </FormControl>
-        </div>);
+        <FormControl fullWidth>
+            <InputLabel>{props.placeholder}</InputLabel>
+            <Select
+                label={props.label}
+                onChange={props.onChange}
+                value={props.value}
+            >
+                {
+                    props.options.map(option => {
+                        return <MenuItem value={option} key={option}>{option}</MenuItem>;
+                    })
+                }
+            </Select>
+        </FormControl>);
 }

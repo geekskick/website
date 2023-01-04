@@ -8,6 +8,7 @@ import Toolbar from '@mui/material/Toolbar';
 import CssBaseline from '@mui/material/CssBaseline';
 import AppFactory from './available_apps'
 import ResponsiveSidebar from './components/responsive_sidebar';
+import { Typography, AppBar } from '@mui/material';
 
 const drawerWidth = 240;
 
@@ -43,6 +44,7 @@ export default function App(props) {
     }
 
     console.log("Selected app = ", selectedApp);
+    console.log("Version = " + process.env.REACT_APP_VERSION);
     return (
         <Box sx={{ display: 'flex' }}>
             <CssBaseline />
@@ -59,7 +61,7 @@ export default function App(props) {
             >
                 <Toolbar />
                 {AppFactory.create(selectedApp, info, error)}
-
             </Box>
+            <AppBar position="fixed" sx={{ top: 'auto', bottom: 0, textAlign: 'center', bgcolor: 'green' }}><Typography>Version {process.env.REACT_APP_VERSION}</Typography></AppBar>
         </Box >)
 }
