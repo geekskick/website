@@ -31,13 +31,8 @@ export default function App(props) {
 
     const info = (message) => {
         console.log("info: ", message);
-        enqueueSnackbar(
-            message,
-            {
-                variant: 'info',
-                //action: (key) => { console.log(`key = ${key}`); return <DismissButton handleDismiss={closeSnackbar} key={key} /> }
-            });
     }
+
     const onAppSelect = (name) => {
         info("Selected '" + name + "'");
         setSelectedApp(name);
