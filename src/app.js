@@ -62,6 +62,16 @@ export default function App(props) {
                 <Toolbar />
                 {AppFactory.create(selectedApp, info, error)}
             </Box>
-            <AppBar position="fixed" sx={{ top: 'auto', bottom: 0, textAlign: 'center', bgcolor: 'green' }}><Typography>Version {process.env.REACT_APP_VERSION}</Typography></AppBar>
+            <AppBar position="fixed"
+                sx={{
+                    width: { sm: `calc(100% - ${drawerWidth}px)` },
+                    top: 'auto',
+                    bottom: 0,
+                    textAlign: 'center',
+                    bgcolor: 'green'
+                }}
+            >
+                <Typography>Version {process.env.REACT_APP_VERSION}</Typography>
+            </AppBar>
         </Box >)
 }
