@@ -3,39 +3,42 @@ import React from 'react';
 import ErrorBoundary from './../../components/error_boundary';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-
 import Divider from '@mui/material/Divider';
 import Checkbox from '@mui/material/Checkbox';
 
-const TODOS = [
-    "Make the app title all the way to the left when in large screen mode",
-    "Implement Gen VI onwards pokemon catch calculators",
-    "Make the Nathan Eats game",
-    "Make the notification pop ups different colors based on the apps themselves",
-    "Refactor all the code as I learn more",
-    "Link this into the github API so that I can pull these issues from github itself",
-    "Link this into the github API so that the content of pages can be generated from files - like a blog system"
-];
 
 export default function About(props) {
     console.log("About::props = ", props);
+
+    const [issues, setIssues] = React.useState([]);
+
+    React.useEffect(() => {
+        // TODO: make this fromthe config
+        fetch("https://api.github.com/repos/geekskick/website/issues?state=all")
+            .then(data => data.text())
+            .then(json => {
+                const issues = JSON.parse(json);
+                console.log("Issues are ", issues);
+                setIssues(issues);
+            });
+    }, []);
     return (<ErrorBoundary onError={props.error}>
         <Box>
             <Typography>This website has been made mostly as a way of learning about React and different technologies which I'm not too familiar with. If there's an issue use the 'Report a Bug' option in the menu to raise a bug on github against this site.</Typography>
             <Divider sx={{ margin: 5 }} />
-            <List subheader="TODOS">{
-                TODOS.map(todo => {
+            <List subheader="Issues">{
+                issues.map(todo => {
                     return (<ListItem>
                         <ListItemIcon>
                             <Checkbox
                                 edge="start"
-                                checked={false}
+                                checked={todo.state !== "open"}
                                 disabled={true}
                                 tabIndex={-1}
                                 disableRipple
                             />
                         </ListItemIcon>
-                        <ListItemText primary={`${todo}`} />
+                        <ListItemText primary={`${todo.title}`} />
                     </ListItem>)
                 })
             }
