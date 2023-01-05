@@ -10,22 +10,19 @@ export default function NavBar(props) {
     return (
         <AppBar position="fixed"
             sx={{
-                justifyContent: 'space-between',
+                justifyContent: 'left',
                 backgroundColor: 'green',
                 width: { sm: `calc(100% - ${props.width}px)` },
                 ml: { sm: `${props.width}px` }
             }}>
             <Toolbar>
-                <Toolbar>
-                    <IconButton
-                        color="inherit"
-                        edge="start"
-                        onClick={props.handleDrawerToggle}
-                        sx={{ mr: 2, display: { sm: 'none' } }}
-                    >
-                        <MenuIcon />
-                    </IconButton>
-                </Toolbar>
+                <IconButton
+                    color="inherit"
+                    onClick={props.handleDrawerToggle}
+                    sx={{ mr: 2, display: { sm: 'none' } }}
+                >
+                    <MenuIcon />
+                </IconButton>
                 <Typography variant="h6" noWrap component="div">
                     {props.title}
                 </Typography>
