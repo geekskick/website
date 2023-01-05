@@ -36,12 +36,12 @@ export function SidebarFooter() {
             align: 'center'
         }}>
             <Tooltip title="View the source">
-                <Button href={Config.GITHUB_URL}>
+                <Button href={Config.GITHUB_URL} target="_blank">
                     <GitHubIcon />
                 </Button>
             </Tooltip>
             <Tooltip title="Report a bug">
-                <Button href={Config.GITHUB_URL}>
+                <Button href={Config.GITHUB_URL} target="_blank">
                     <BugReportIcon />
                 </Button>
             </Tooltip>
