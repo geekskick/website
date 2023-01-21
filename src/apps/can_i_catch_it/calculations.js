@@ -4,9 +4,11 @@ const calculateGenIF = (ballFMod, pokemonHpStat, pokemonLevel, hp, valueCallback
     const hpMax = calculateHpMax(pokemonHpStat, pokemonLevel);
     valueCallbacks?.setHpMax(hpMax);
     const hpCurrent = hpMax * hp;
+    console.log(`HPCurrent = ${hpMax} * ${hp} = ${hpCurrent}`)
     valueCallbacks?.setHpCurrent(hpCurrent);
     valueCallbacks?.setBallFMod(ballFMod);
-    return (hpMax * 255 * 4) / (hpCurrent * ballFMod);
+    const candidateF = (hpMax * 255 * 4) / (hpCurrent * ballFMod);
+    return Math.min(255, candidateF);
 }
 
 function calculateHpMax(pokemonHpStat, pokemonLevel) {
@@ -44,8 +46,8 @@ export function calculateGenICaptureProbability(captureRate, ballSettings, pokem
     const f = calculateGenIF(ballSettings.fBallMod, pokemonHpStat, pokemonLevel, hp, valueCallbacks);
     valueCallbacks?.setF(f);
     console.log(`GenIF() = ${f}`);
-    console.log(`(${captureRate} + 1) / (${ballMod} + 1)) * ((${f}+ 1) / 256)`)
     const p1 = ((captureRate + 1) / (ballMod + 1)) * ((f + 1) / 256);
+    console.log(`p1 = (${captureRate} + 1) / (${ballMod} + 1)) * ((${f}+ 1) / 256) = ${p1}`)
     valueCallbacks?.setP1(p1);
     console.log(`p0 = ${p0}, p1 = ${p1}`);
     return p0 + p1;

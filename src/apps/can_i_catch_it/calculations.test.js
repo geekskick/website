@@ -2,18 +2,26 @@ const { experimental_extendTheme } = require("@mui/material");
 const calculations = require("./calculations");
 const balls = require('./data/balls.json');
 
-function testBulbasaurAgainstThisBall(ballSettings, expected) {
+function testBulbasaurAgainstThisBall(ballSettings, expected, hp = 1) {
     // bulbasaur
     const captureRate = 45;
     const pokemonHpStat = 45;
     const pokemonLevel = 100;
-    const hp = 1;
     const statusAilment = 'none';
     const actual = calculations.calculateGenICaptureProbability(captureRate, ballSettings, pokemonHpStat, pokemonLevel, hp, statusAilment, null);
     expect(actual).toBeCloseTo(expected);
 }
 
 describe('gen i', () => {
+    describe('with hp changed', () => {
+        test('to half', () => {
+            testBulbasaurAgainstThisBall(balls['poke-ball']['settings']['generation-i'], 0.12147, 0.5);
+        });
+        test('to 20%', () => {
+            testBulbasaurAgainstThisBall(balls['poke-ball']['settings']['generation-i'], 0.17969, 0.2);
+        });
+    });
+
     describe('with no hp or status changes', () => {
         test('pokeball matches dragonflycave intended value', () => {
             testBulbasaurAgainstThisBall(balls['poke-ball']['settings']['generation-i'], 0.06036);
