@@ -13,6 +13,31 @@ function testBulbasaurAgainstThisBall(ballSettings, expected, hp = 1) {
 }
 
 describe('gen i', () => {
+    describe('with changed catch rate', () => {
+        test('mewtwo', () => {
+            const captureRate = 3;
+            const pokemonHpStat = 106;
+            const pokemonLevel = 100;
+            const statusAilment = 'none';
+            const hp = 1;
+            const expected = 0.00525;
+            const ballSettings = balls['poke-ball']['settings']['generation-i'];
+            const actual = calculations.calculateGenICaptureProbability(captureRate, ballSettings, pokemonHpStat, pokemonLevel, hp, statusAilment, null);
+            expect(actual).toBeCloseTo(expected);
+        });
+
+        test('mewtwo with different level', () => {
+            const captureRate = 3;
+            const pokemonHpStat = 106;
+            const pokemonLevel = 10;
+            const statusAilment = 'none';
+            const hp = 1;
+            const expected = 0.00547;
+            const ballSettings = balls['poke-ball']['settings']['generation-i'];
+            const actual = calculations.calculateGenICaptureProbability(captureRate, ballSettings, pokemonHpStat, pokemonLevel, hp, statusAilment, null);
+            expect(actual).toBeCloseTo(expected);
+        })
+    })
     describe('with hp changed', () => {
         test('to half', () => {
             testBulbasaurAgainstThisBall(balls['poke-ball']['settings']['generation-i'], 0.12147, 0.5);
