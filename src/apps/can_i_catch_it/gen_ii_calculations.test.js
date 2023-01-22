@@ -13,7 +13,39 @@ function testBulbasaurAgainstThisBall(ballSettings, expected, hp = 1) {
 }
 
 describe('gen ii', () => {
+    describe('with changed catch rate', () => {
+        test('mewtwo', () => {
+            const captureRate = 3;
+            const pokemonHpStat = 106;
+            const pokemonLevel = 100;
+            const statusAilment = 'none';
+            const hp = 1;
+            const expected = 0.00781;
+            const ballSettings = balls['poke-ball']['settings']['generation-ii'];
+            const actual = calculations.calculateGenIICaptureProbability(captureRate, ballSettings, pokemonHpStat, pokemonLevel, hp, statusAilment, null);
+            expect(actual).toBeCloseTo(expected);
+        });
 
+        test('mewtwo with different level', () => {
+            const captureRate = 3;
+            const pokemonHpStat = 106;
+            const pokemonLevel = 10;
+            const statusAilment = 'none';
+            const hp = 1;
+            const expected = 0.00781;
+            const ballSettings = balls['poke-ball']['settings']['generation-ii'];
+            const actual = calculations.calculateGenIICaptureProbability(captureRate, ballSettings, pokemonHpStat, pokemonLevel, hp, statusAilment, null);
+            expect(actual).toBeCloseTo(expected);
+        })
+    })
+    describe('with hp changed', () => {
+        test('to half', () => {
+            testBulbasaurAgainstThisBall(balls['poke-ball']['settings']['generation-ii'], 0.12109, 0.5);
+        });
+        test('to 20%', () => {
+            testBulbasaurAgainstThisBall(balls['poke-ball']['settings']['generation-ii'], 0.15503, 0.2);
+        });
+    });
     describe('with no hp or status changes', () => {
         test('pokeball matches dragonflycave intended value', () => {
             testBulbasaurAgainstThisBall(balls['poke-ball']['settings']['generation-ii'], 0.06055);
