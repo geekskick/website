@@ -1,5 +1,4 @@
 const calculateGenIF = (ballFMod, pokemonHpStat, pokemonLevel, hp, valueCallbacks) => {
-    // TODO: Assume hp levels
     console.log(`calculateGenIF(${ballFMod}, ${pokemonHpStat}, ${pokemonLevel}, ${hp})`);
     const hpMax = calculateHpMax(pokemonHpStat, pokemonLevel);
     valueCallbacks?.setHpMax(hpMax);
@@ -64,7 +63,6 @@ function calculateModifiedCatchRate(pokemonCaptureRate, ballModifier, pokemonHpS
     console.log(`capture rate = ${pokemonCaptureRate}, ballModifier = ${ballModifier}`);
     const minimum = 1.0;
     const maximum = 255;
-    // TODO: Use actual values here
     const hpMax = calculateHpMax(pokemonHpStat, pokemonLevel);
     valueCallbacks?.setHpMax(hpMax);
     const hpCurrent = hpMax * hp;

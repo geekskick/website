@@ -136,7 +136,6 @@ export default function ResultCard(props) {
             </Tooltip>);
         }
     })();
-    // TODO: What about if the thing isn't catchable?
     return (
         <Card sx={{
             width: '100',
