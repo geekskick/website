@@ -5,7 +5,7 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import Divider from '@mui/material/Divider';
 import Checkbox from '@mui/material/Checkbox';
-
+import CONFIG from '../../config'
 
 export default function About(props) {
     console.log("About::props = ", props);
@@ -13,8 +13,7 @@ export default function About(props) {
     const [issues, setIssues] = React.useState([]);
 
     React.useEffect(() => {
-        // TODO: make this fromthe config
-        fetch("https://api.github.com/repos/geekskick/website/issues?state=all")
+        fetch(CONFIG.GITHUB_ISSUES_API_URL)
             .then(data => data.text())
             .then(json => {
                 const issues = JSON.parse(json);

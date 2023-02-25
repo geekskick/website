@@ -10,7 +10,6 @@
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
-    "jest": "^29.3.1",
     "lodash": "^4.17.21",
     "notistack": "^2.0.8",
     "pokedex-promise-v2": "4.0.0",
@@ -52,5 +51,8 @@
     "transformIgnorePatterns": [
       "node_modules/(?!pokedex-promise-v2|p-map|indent-string|aggregate-error|clean-stack|escape-string-regexp)"
     ]
+  },
+  "devDependencies": {
+    "jest": "^29.3.1"
   }
 }

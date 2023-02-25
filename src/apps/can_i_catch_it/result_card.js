@@ -37,6 +37,17 @@ export default function ResultCard(props) {
         setHp(percent);
     }
 
+    const getGenerationSprites = (pokemonDetails, selectedGeneration) => {
+        let generationSprites = null
+        try {
+            generationSprites = Object.entries(pokemonDetails?.sprites.versions[selectedGeneration]);
+        }
+        catch {
+        }
+        console.log("ResultCard::generationSprites = ", generationSprites);
+        return generationSprites;
+    }
+
     React.useEffect(() => {
         console.log("ResultCard::useEffect");
         props.api.getPokemonByName(props.selectedPokemon).then(pokemon => {
@@ -59,28 +70,45 @@ export default function ResultCard(props) {
 
     }, [props]);
 
-    let sprite;
-    let generationSprites;
-    let tooltip = "tooltip";
-    console.log("ResultCard::pokemonDetails = ", pokemonDetails);
-    console.log("ResultCard::speciesDetails = ", speciesDetails);
-    if (pokemonDetails) {
-        generationSprites = Object.entries(pokemonDetails?.sprites.versions[props.selectedGeneration]);
-        console.log("ResultCard::generationSprites = ", generationSprites);
-    }
-    if (generationSprites) {
-        sprite = generationSprites[0][1].front_default;
-        tooltip = `${props.selectedGeneration} ${props.selectedPokemon} `
-        if (!sprite) {
-            console.log("There are NO generation sprites for this (" + props.selectedPokemon + "," + props.selectedGeneration + "), so using default");
-            sprite = pokemonDetails?.sprites.front_default;
-            tooltip = `There are no ${props.selectedGeneration} sprites for ${props.selectedPokemon} so this is just the default one`
+    class SpriteImage {
+        constructor(url, tooltip) {
+            this.url = url;
+            this.tooltip = tooltip;
         }
     }
-    if (!sprite) {
-        sprite = CONFIGURATION.DEFAULT_SPRITE_URL;
-        tooltip = `There are no sprite available for ${props.selectedPokemon}, so this is a default one`
+
+    const getSpriteImage = (generationSprites, pokemonDetails, selectedGeneration, selectedPokemon) => {
+        let rc = new SpriteImage(null, null);
+        /* 
+        There is a chance that the pokemon doesn't have a generation sprite, and it also doesn't have a default sprite. 
+        so here I use the priority order for getting the sprite: 
+            1 - the one for the generation
+            2 - the default for the pokemon
+            3 - the default one if no sprite at all
+        This each time I try to set the SpriteImage url it might be null as a result, so this method feels a bit wierd.
+        */
+        if (generationSprites) {
+            rc.url = generationSprites[0][1].front_default;
+            rc.tooltip = `${props.selectedGeneration} ${props.selectedPokemon}`
+        }
+        if (!rc.url) {
+            console.log("There are NO generation sprites for this (" + selectedPokemon + "," + selectedGeneration + "), so using default");
+            rc.url = pokemonDetails?.sprites.front_default;
+            rc.tooltip = `There are no ${selectedGeneration} sprites for ${selectedPokemon} so this is just the default one`
+        }
+        if (!rc.url) {
+            rc.url = CONFIGURATION.DEFAULT_SPRITE_URL;
+            rc.tooltop = `There are no sprite available for ${selectedPokemon}, so this is a default one`
+        }
+        return rc;
+
     }
+
+    console.log("ResultCard::pokemonDetails = ", pokemonDetails);
+    console.log("ResultCard::speciesDetails = ", speciesDetails);
+    let generationSprites = getGenerationSprites(pokemonDetails, props.selectedGeneration)
+    let spriteImage = getSpriteImage(generationSprites, pokemonDetails, props.selectedGeneration, props.selectedPokemon);
+
 
     const spriteDisplay = (() => {
         console.log(`ResultCard::${pokemonDetails?.species.name} === ${speciesDetails?.name} === ${props.selectedPokemon}`);
@@ -91,11 +119,11 @@ export default function ResultCard(props) {
             }} />
         }
         else {
-            return (<Tooltip title={tooltip}>
+            return (<Tooltip title={spriteImage.tooltip}>
                 <Box
                     component="img"
                     //height={100}
-                    src={sprite}
+                    src={spriteImage.url}
                     alt={props.selectedPokemon}
                     sx={{
                         width: '200px',
@@ -108,7 +136,6 @@ export default function ResultCard(props) {
             </Tooltip>);
         }
     })();
-    // TODO: What about if the thing isn't catchable?
     return (
         <Card sx={{
             width: '100',
