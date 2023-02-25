@@ -27,7 +27,7 @@ export default function About(props) {
             <Divider sx={{ margin: 5 }} />
             <List subheader="Issues">{
                 issues.map(todo => {
-                    return (<ListItem>
+                    return (<ListItem key={todo.title}>
                         <ListItemIcon>
                             <Checkbox
                                 edge="start"

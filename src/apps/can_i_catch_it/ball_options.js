@@ -114,6 +114,7 @@ export default function BallOptions(props) {
                 Object.entries(Balls).map(ball => {
 
                     return <BallResultItem
+                        key={ball}
                         ballSettings={ball}
                         selectedGeneration={props.selectedGeneration}
                         captureRate={props.speciesDetails?.capture_rate}
