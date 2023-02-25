@@ -13,8 +13,7 @@ export default function About(props) {
     const [issues, setIssues] = React.useState([]);
 
     React.useEffect(() => {
-        // TODO: make this fromthe config
-        fetch(`${CONFIG.GITHUB_API_URL}issues?state=all`)
+        fetch(CONFIG.GITHUB_ISSUES_API_URL)
             .then(data => data.text())
             .then(json => {
                 const issues = JSON.parse(json);
