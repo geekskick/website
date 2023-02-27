@@ -1,6 +1,6 @@
 const { experimental_extendTheme } = require("@mui/material");
-const calculations = require("./calculations");
-const balls = require('./data/balls.json');
+const calculations = require("./gen_i.js");
+const balls = require('../data/balls.json');
 
 function testBulbasaurAgainstThisBall(ballSettings, expected, hp = 1) {
     // bulbasaur
