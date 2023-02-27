@@ -1,4 +1,4 @@
-import { calculateGenICaptureProbability } from './calculations.js';
+import { calculateGenICaptureProbability } from './calculations/gen_i';
 import * as React from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
