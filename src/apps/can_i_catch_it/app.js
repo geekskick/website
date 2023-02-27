@@ -4,7 +4,7 @@ import ErrorBoundary from './../../components/error_boundary';
 import Stack from '@mui/material/Stack'
 import TextField from "@mui/material/TextField";
 import Autocomplete from '@mui/material/Autocomplete';
-import ResultCard from './result_card';
+import ResultCard from './components/result_card';
 
 export default function CanICatchItApp(props) {
     const [selectedPokemon, setSelectedPokemon] = React.useState('');

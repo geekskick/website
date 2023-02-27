@@ -4,15 +4,15 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import { styled } from '@mui/material/styles';
 import Stack from '@mui/material/Stack';
-import Balls from './data/balls.json';
+import Balls from '../data/balls.json';
 import { IconButton } from '@mui/material';
 import InfoIcon from '@mui/icons-material/Info';
 import 'katex/dist/katex.min.css';
-import AboutDialog from '../../components/about_dialog.js';
+import AboutDialog from '../../../components/about_dialog.js';
 import GenICalculation from './gen_i_calculation'
 import GenIICalculation from './gen_ii_calculation'
-import GenIIICalculation from './gen_iii_calculation.js';
-import GenVCalculation from './gen_v_calculation.js';
+import GenIIICalculation from './gen_iii_calculation';
+import GenVCalculation from './gen_v_calculation';
 
 const Item = styled(Box)(({ theme }) => ({
     backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
