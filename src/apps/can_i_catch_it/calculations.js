@@ -122,21 +122,17 @@ function calculateModifiedCatchRateGenIII(captureRate, ballSettings, pokemonHpSt
     const hpMaxTimes3 = Math.floor(3 * hpMax);
     const hpCurrentTimes2 = Math.floor(2 * hpCurrent);
     const hpRatio = Math.floor(hpMaxTimes3 - hpCurrentTimes2);
-    const CR = Math.floor(captureRate * ballSettings.ballMod);
-    const top = Math.floor(hpRatio * CR);
+    const CR = captureRate * ballSettings.ballMod;
+    const top = hpRatio * CR;
     const bottom = hpMaxTimes3;
-    const fraction = Math.floor(top / bottom);
+    const fraction = top / bottom;
     console.log(`GenIII (ballsettings = ${ballSettings.ballMod}) top = ${top}, bottom = ${bottom}, result = ${fraction}`)
-    // TODO: take into account status changes
-    // greatball: final probability = 0.09265
-    //                                0.09265 * 255 = 23.6(ish) as this result. 
-    //                                23.6 * 600 = 14160 at top of fraction
-    //                                14160 / 200 = 70.8 as result of (C * B) where C = 45 therefore ballmod = 1.57?!
-    return Math.floor(fraction * bonusStatus);
+    // TODO: Use status changes
+    return fraction * bonusStatus;
 }
 
 export function calculateGenIIICaptureProbability(captureRate, ballSettings, pokemonHpStat, pokemonLevel, hp, statusAilment, valueCallbacks) {
-    const a = Math.floor(calculateModifiedCatchRateGenIII(captureRate, ballSettings, pokemonHpStat, pokemonLevel, hp, statusAilment, valueCallbacks));
+    const a = calculateModifiedCatchRateGenIII(captureRate, ballSettings, pokemonHpStat, pokemonLevel, hp, statusAilment, valueCallbacks);
     valueCallbacks?.setA(a);
     return a / 255.0;
 }
