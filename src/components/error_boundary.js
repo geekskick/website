@@ -1,8 +1,11 @@
-import React from "react";
+import React from 'react';
+import PropTypes from 'prop-types';
+
+
 export default class ErrorBoundary extends React.Component {
     constructor(props) {
         super(props);
-        this.state = { hasError: false, message: "" };
+        this.state = { hasError: false, message: '' };
     }
 
     static getDerivedStateFromError(error) {
@@ -11,7 +14,7 @@ export default class ErrorBoundary extends React.Component {
     }
 
     componentDidCatch(error, errorInfo) {
-        console.log("Error: " + error + "\n" + errorInfo);
+        console.log('Error: ' + error + '\n' + errorInfo);
         this.props.onError(error, errorInfo);
     }
     render() {
@@ -22,3 +25,8 @@ export default class ErrorBoundary extends React.Component {
         return this.props.children;
     }
 }
+
+ErrorBoundary.propTypes = {
+    onError: PropTypes.func.isRequired,
+    children: PropTypes.node.isRequired,
+};
