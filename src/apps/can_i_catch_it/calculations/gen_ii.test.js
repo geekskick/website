@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 const calculations = require('./gen_ii.js');
 const balls = require('./../data/balls.json');
 
@@ -112,6 +113,7 @@ describe('gen ii', () => {
             expect(callbacks.halfHalf).toBe(undefined);
             expect(callbacks.rateModified).toBe(45);
             expect(callbacks.a).toBe(15);
+            expect(actual).toBeCloseTo(expected);
         });
     });
 });

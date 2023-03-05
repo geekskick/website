@@ -1,5 +1,5 @@
-const { experimental_extendTheme } = require("@mui/material");
-const calculations = require("./gen_i.js");
+/* eslint-disable max-len */
+const calculations = require('./gen_i.js');
 const balls = require('../data/balls.json');
 
 function testBulbasaurAgainstThisBall(ballSettings, expected, hp = 1) {
@@ -36,8 +36,8 @@ describe('gen i', () => {
             const ballSettings = balls['poke-ball']['settings']['generation-i'];
             const actual = calculations.calculateGenICaptureProbability(captureRate, ballSettings, pokemonHpStat, pokemonLevel, hp, statusAilment, null);
             expect(actual).toBeCloseTo(expected);
-        })
-    })
+        });
+    });
     describe('with hp changed', () => {
         test('to half', () => {
             testBulbasaurAgainstThisBall(balls['poke-ball']['settings']['generation-i'], 0.12147, 0.5);
@@ -67,8 +67,8 @@ describe('gen i', () => {
 
             // pokeball
             const ballSettings = {
-                "ballMod": 255,
-                "fBallMod": 12
+                'ballMod': 255,
+                'fBallMod': 12,
             };
 
             const pokemonHpStat = 45;
@@ -102,7 +102,7 @@ describe('gen i', () => {
                 },
                 setF(value) {
                     this.f = value;
-                }
+                },
             };
             const actual = calculations.calculateGenICaptureProbability(captureRate, ballSettings, pokemonHpStat, pokemonLevel, hp, statusAilment, callbacks);
             expect(callbacks.ailment).toBe(0);
@@ -113,6 +113,7 @@ describe('gen i', () => {
             expect(callbacks.f).toBe(85);
             expect(callbacks.P0).toBeCloseTo(0); // since the status ailment is none, this can only be 0
             expect(callbacks.P1).toBeCloseTo(0.06036);
+            expect(actual).toBeCloseTo(expected);
         });
     });
 });
