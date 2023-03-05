@@ -10,6 +10,7 @@
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
+    "jest-html-reporter": "^3.7.0",
     "lodash": "^4.17.21",
     "notistack": "^2.0.8",
     "pokedex-promise-v2": "4.0.0",
@@ -25,7 +26,7 @@
   "scripts": {
     "start": "export REACT_APP_VERSION=$(git rev-parse HEAD) && react-scripts start",
     "build": "export REACT_APP_VERSION=$(git rev-parse HEAD) && react-scripts build",
-    "test": "react-scripts test",
+    "test": "react-scripts test --testResultsProcessor='./node_modules/jest-html-reporter' --silent",
     "eject": "react-scripts eject",
     "imports": "eslint . --fix"
   },

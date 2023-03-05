@@ -3,7 +3,7 @@ import Box from '@mui/material/Box';
 import { Link, Divider } from '@mui/material';
 import 'katex/dist/katex.min.css';
 import { InlineMath, BlockMath } from 'react-katex';
-import { calculateGenIIICaptureProbability } from '../calculations.js';
+import { calculateGenIIICaptureProbability } from '../calculations/gen_iii';
 
 export default class GenIIICalculation {
     constructor(props) {

@@ -1,5 +1,6 @@
-const calculations = require('./calculations');
-const balls = require('./data/balls.json');
+/* eslint-disable max-len */
+const calculations = require('./gen_iii');
+const balls = require('./../data/balls.json');
 
 function testBulbasaurAgainstThisBall(ballSettings, expected, hp = 1) {
     // bulbasaur
