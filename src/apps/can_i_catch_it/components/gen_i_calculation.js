@@ -41,9 +41,13 @@ export default class GenICalculation {
         if (this.ballName !== 'master-ball') {
             return (<Box>
                 <Link href="https://bulbapedia.bulbagarden.net/wiki/Catch_rate#Approximate_probability">
-                    Bulbapedia</Link>
-                and <Link href="https://www.dragonflycave.com/mechanics/gen-i-capturing">Dragonfly Cave</Link>
-                define the Generation I catch rate appropximation as:
+                    Bulbapedia
+                </Link>
+                &nbsp;and&nbsp;
+                <Link href="https://www.dragonflycave.com/mechanics/gen-i-capturing">
+                    Dragonfly Cave
+                </Link>
+                &nbsp;define the Generation I catch rate appropximation as:
                 <BlockMath math={
                     String.raw`\text{CaptureProbability}\approx {\color{blue}p_{0}} + {\color{red}p_{1}}`
                 } />

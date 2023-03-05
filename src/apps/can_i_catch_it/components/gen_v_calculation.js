@@ -39,6 +39,7 @@ export default class GenVCalculation {
                 <Link href="https://bulbapedia.bulbagarden.net/wiki/Catch_rate#Approximate_probability">
                     Bulbapedia
                 </Link>
+                &nbsp;
                 defines the Generation V catch rate approximation as:
                 <BlockMath math={String.raw`\text{CaptureProbability} \approx \frac{{\color{blue}a}}{4096}`} />
                 Where:
