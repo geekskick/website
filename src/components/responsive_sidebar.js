@@ -4,7 +4,16 @@ import Divider from '@mui/material/Divider';
 import Drawer from '@mui/material/Drawer';
 import Toolbar from '@mui/material/Toolbar';
 import { SidebarContents, SidebarFooter } from './sidebar';
+import PropTypes from 'prop-types';
 
+ResponsiveSidebar.propTypes = {
+    drawerWidth: PropTypes.number.isRequired,
+    handleDrawerToggle: PropTypes.func.isRequired,
+    onAppSelect: PropTypes.func.isRequired,
+    open: PropTypes.bool.isRequired,
+    window: PropTypes.node.isRequired,
+    apps: PropTypes.arrayOf(PropTypes.string).isRequired,
+};
 
 function ResponsiveSidebar(props) {
     const { window } = props;
@@ -36,7 +45,7 @@ function ResponsiveSidebar(props) {
                     keepMounted: true, // Better open performance on mobile.
                 }}
                 sx={{
-                    display: { xs: 'block', sm: 'none' },
+                    'display': { xs: 'block', sm: 'none' },
                     '& .MuiDrawer-paper': { boxSizing: 'border-box', width: props.drawerWidth },
                 }}
             >
@@ -45,7 +54,7 @@ function ResponsiveSidebar(props) {
             <Drawer
                 variant="permanent"
                 sx={{
-                    display: { xs: 'none', sm: 'block' },
+                    'display': { xs: 'none', sm: 'block' },
                     '& .MuiDrawer-paper': { boxSizing: 'border-box', width: props.drawerWidth },
                 }}
                 open
