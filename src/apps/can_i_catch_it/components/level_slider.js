@@ -4,41 +4,48 @@ import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import Slider from '@mui/material/Slider';
 import MuiInput from '@mui/material/Input';
+import PropTypes from 'prop-types';
 
 const LevelSlider = styled(Slider)(({ theme }) => ({
-    height: 2,
-    padding: '15px 0',
+    'height': 2,
+    'padding': '15px 0',
     // The dragger
     '& .MuiSlider-thumb': {
         backgroundColor: 'blue',
-        //margin: '-18px 0 0',
+        // margin: '-18px 0 0',
         borderRadius: '50%',
         background: 'white',
         cursor: 'pointer',
         border: 0,
     },
     '& .MuiSlider-track': {
-        //opacity: 1,
+        // opacity: 1,
         backgroundColor: 'darkgrey',
         border: 'solid',
         borderColor: 'black',
         height: '10px',
-        borderRadius: 0
+        borderRadius: 0,
     },
     '& .MuiSlider-rail': {
         border: 'solid',
         opacity: 1,
-        //width: '10px',
+        // width: '10px',
         height: '10px',
         backgroundColor: 'white',
         borderColor: 'black',
-        borderRadius: 0
-    }
+        borderRadius: 0,
+    },
 }));
 
 const Input = styled(MuiInput)(({ theme }) => ({
-    width: '50px'
+    width: '50px',
 }));
+
+InputSlider.propTypes = {
+    value: PropTypes.number.isRequired,
+    onChange: PropTypes.func.isRequired,
+    onChangeCommitted: PropTypes.func.isRequired,
+};
 
 export default function InputSlider(props) {
     const [value, setValue] = React.useState(props.value);
@@ -76,7 +83,7 @@ export default function InputSlider(props) {
                             step: 1,
                             min: { min },
                             max: { max },
-                            type: 'number'
+                            type: 'number',
                         }}
                     />
                 </Grid>

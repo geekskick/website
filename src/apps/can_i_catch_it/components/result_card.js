@@ -6,8 +6,10 @@ import { Typography, Tooltip, CircularProgress } from '@mui/material';
 import HPSlider from './hp_slider';
 import InputSlider from './level_slider';
 import CONFIGURATION from '../config.js';
-import BallOptions from './ball_options'
+import BallOptions from './ball_options';
 import { styled } from '@mui/material/styles';
+import PropTypes from 'prop-types';
+
 const Item = styled(Box)(({ theme }) => ({
     padding: theme.spacing(1),
     textAlign: 'center',
@@ -17,57 +19,61 @@ const Item = styled(Box)(({ theme }) => ({
     justifyContent: 'center',
 }));
 
-export default function ResultCard(props) {
+ResultCard.propTypes = {
+    api: PropTypes.object.isRequired,
+    selectedPokemon: PropTypes.string.isRequired,
+    selectedGeneration: PropTypes.string.isRequired,
+    onError: PropTypes.func.isRequired,
+};
 
-    console.log("Result card props = ", props);
+export default function ResultCard(props) {
+    console.log('Result card props = ', props);
     const [pokemonDetails, setPokemonDetails] = React.useState();
     const [speciesDetails, setSpeciesDetails] = React.useState();
     const [level, setLevel] = React.useState(50);
     const [hp, setHp] = React.useState(1.0);
 
     const levelChangeHandler = (event, value) => {
-        console.log("ResultCard::levelChangeHandler", event, value);
+        console.log('ResultCard::levelChangeHandler', event, value);
         setLevel(value);
     };
 
     const hpChangeHandler = (event, value) => {
-        console.log("ResultCard::hpChangeHandler", event, value);
+        console.log('ResultCard::hpChangeHandler', event, value);
         const percent = value / 100.0;
-        console.log("percent = ", percent);
+        console.log('percent = ', percent);
         setHp(percent);
-    }
+    };
 
     const getGenerationSprites = (pokemonDetails, selectedGeneration) => {
-        let generationSprites = null
+        let generationSprites = null;
         try {
             generationSprites = Object.entries(pokemonDetails?.sprites.versions[selectedGeneration]);
+        } catch {
         }
-        catch {
-        }
-        console.log("ResultCard::generationSprites = ", generationSprites);
+        console.log('ResultCard::generationSprites = ', generationSprites);
         return generationSprites;
-    }
+    };
 
     React.useEffect(() => {
-        console.log("ResultCard::useEffect");
-        props.api.getPokemonByName(props.selectedPokemon).then(pokemon => {
-            console.log("ResultCard::fetchedPokemon = ", pokemon);
+        console.log('ResultCard::useEffect');
+        props.api.getPokemonByName(props.selectedPokemon).then((pokemon) => {
+            console.log('ResultCard::fetchedPokemon = ', pokemon);
             setPokemonDetails(pokemon);
-        }).catch(err => {
-            console.log("ResultCard::fetchedPokemon::error =", err);
+        }).catch((err) => {
+            console.log('ResultCard::fetchedPokemon::error =', err);
             setPokemonDetails(null);
             props.onError(`Failed to get the details for ${props.selectedPokemon}: ${err}`);
         });
 
-        props.api.getPokemonSpeciesByName(props.selectedPokemon).then(pokemon => {
-            console.log("ResultCard::fetchedSpecies = ", pokemon);
+        props.api.getPokemonSpeciesByName(props.selectedPokemon).then((pokemon) => {
+            console.log('ResultCard::fetchedSpecies = ', pokemon);
             setSpeciesDetails(pokemon);
-        }).catch(err => {
-            console.log("ResultCard::fetchedSpecies::error =", err);
+        }).catch((err) => {
+            console.log('ResultCard::fetchedSpecies::error =', err);
             props.onError(`Failed to get the species details for ${props.selectedPokemon}: ${err}`);
             setSpeciesDetails(null);
         });
-
     }, [props]);
 
     class SpriteImage {
@@ -78,10 +84,10 @@ export default function ResultCard(props) {
     }
 
     const getSpriteImage = (generationSprites, pokemonDetails, selectedGeneration, selectedPokemon) => {
-        let rc = new SpriteImage(null, null);
-        /* 
-        There is a chance that the pokemon doesn't have a generation sprite, and it also doesn't have a default sprite. 
-        so here I use the priority order for getting the sprite: 
+        const rc = new SpriteImage(null, null);
+        /*
+        There is a chance that the pokemon doesn't have a generation sprite, and it also doesn't have a default sprite.
+        so here I use the priority order for getting the sprite:
             1 - the one for the generation
             2 - the default for the pokemon
             3 - the default one if no sprite at all
@@ -89,40 +95,45 @@ export default function ResultCard(props) {
         */
         if (generationSprites) {
             rc.url = generationSprites[0][1].front_default;
-            rc.tooltip = `${props.selectedGeneration} ${props.selectedPokemon}`
+            rc.tooltip = `${props.selectedGeneration} ${props.selectedPokemon}`;
         }
         if (!rc.url) {
-            console.log("There are NO generation sprites for this (" + selectedPokemon + "," + selectedGeneration + "), so using default");
+            console.log('There are NO generation sprites for this (' +
+                selectedPokemon + ',' + selectedGeneration + '), so using default');
             rc.url = pokemonDetails?.sprites.front_default;
-            rc.tooltip = `There are no ${selectedGeneration} sprites for ${selectedPokemon} so this is just the default one`
+            rc.tooltip = `There are no ${selectedGeneration} sprites for 
+            ${selectedPokemon} so this is just the default one`;
         }
         if (!rc.url) {
             rc.url = CONFIGURATION.DEFAULT_SPRITE_URL;
-            rc.tooltop = `There are no sprite available for ${selectedPokemon}, so this is a default one`
+            rc.tooltop = `There are no sprite available for ${selectedPokemon}, so this is a default one`;
         }
         return rc;
+    };
 
-    }
-
-    console.log("ResultCard::pokemonDetails = ", pokemonDetails);
-    console.log("ResultCard::speciesDetails = ", speciesDetails);
-    let generationSprites = getGenerationSprites(pokemonDetails, props.selectedGeneration)
-    let spriteImage = getSpriteImage(generationSprites, pokemonDetails, props.selectedGeneration, props.selectedPokemon);
+    console.log('ResultCard::pokemonDetails = ', pokemonDetails);
+    console.log('ResultCard::speciesDetails = ', speciesDetails);
+    const generationSprites = getGenerationSprites(pokemonDetails, props.selectedGeneration);
+    const spriteImage = getSpriteImage(
+        generationSprites,
+        pokemonDetails,
+        props.selectedGeneration,
+        props.selectedPokemon);
 
 
     const spriteDisplay = (() => {
-        console.log(`ResultCard::${pokemonDetails?.species.name} === ${speciesDetails?.name} === ${props.selectedPokemon}`);
+        console.log(`ResultCard::${pokemonDetails?.species.name}
+         === ${speciesDetails?.name} === ${props.selectedPokemon}`);
         if (!(speciesDetails?.name === props.selectedPokemon &&
             pokemonDetails?.species.name === props.selectedPokemon)) {
             return <CircularProgress sx={{
                 color: 'green',
-            }} />
-        }
-        else {
+            }} />;
+        } else {
             return (<Tooltip title={spriteImage.tooltip}>
                 <Box
                     component="img"
-                    //height={100}
+                    // height={100}
                     src={spriteImage.url}
                     alt={props.selectedPokemon}
                     sx={{
@@ -130,7 +141,7 @@ export default function ResultCard(props) {
                         height: '200px',
                         justifyContent: 'center',
                         alignItems: 'center',
-                        objectFit: 'contain'
+                        objectFit: 'contain',
                     }}
                 />
             </Tooltip>);
@@ -141,7 +152,7 @@ export default function ResultCard(props) {
             width: '100',
             display: 'flex',
             alignItems: 'center',
-            justifyContent: 'space-evenly'
+            justifyContent: 'space-evenly',
         }} >
             <Stack
 
@@ -150,7 +161,7 @@ export default function ResultCard(props) {
                     alignItems: 'center',
                     justifyContent: 'space-evenly',
                     width: '100%',
-                    flexDirection: { xs: "column", md: "row" }
+                    flexDirection: { xs: 'column', md: 'row' },
                 }}>
                 <Item>
                     <Stack
