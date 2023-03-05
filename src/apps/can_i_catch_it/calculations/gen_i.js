@@ -1,7 +1,7 @@
 
 import { calculateHpMax } from './hp_max';
 
-export function calculateGenIF(ballFMod, pokemonHpStat, pokemonLevel, hp, valueCallbacks) {
+function calculateGenIF(ballFMod, pokemonHpStat, pokemonLevel, hp, valueCallbacks) {
     console.log(`calculateGenIF(${ballFMod}, ${pokemonHpStat}, ${pokemonLevel}, ${hp})`);
     const hpMax = calculateHpMax(pokemonHpStat, pokemonLevel);
     valueCallbacks?.setHpMax(hpMax);

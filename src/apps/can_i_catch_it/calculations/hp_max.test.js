@@ -1,4 +1,4 @@
-const calculations = require("./hp_max.js");
+const calculations = require('./hp_max.js');
 
 
 describe('hp max', () => {
@@ -6,5 +6,5 @@ describe('hp max', () => {
         const actual = calculations.calculateHpMax(45, 100);
         const expected = 200;
         expect(actual).toBeCloseTo(expected);
-    })
+    });
 });

@@ -1,5 +1,4 @@
-const { experimental_extendTheme } = require("@mui/material");
-const calculations = require("./calculations");
+const calculations = require('./calculations');
 const balls = require('./data/balls.json');
 
 function testBulbasaurAgainstThisBall(ballSettings, expected, hp = 1) {
@@ -33,15 +32,14 @@ function testBulbasaurAgainstThisBall(ballSettings, expected, hp = 1) {
         },
         setA(value) {
             this.a = value;
-        }
+        },
     };
     const actual = calculations.calculateGenIIICaptureProbability(captureRate, ballSettings, pokemonHpStat, pokemonLevel, hp, statusAilment, callbacks);
-    console.log(`Callbacks = ${JSON.stringify(callbacks)}`)
+    console.log(`Callbacks = ${JSON.stringify(callbacks)}`);
     expect(actual).toBeCloseTo(expected);
 }
 
 describe('gen iii', () => {
-
     describe('with changed catch rate', () => {
         test('mewtwo', () => {
             const captureRate = 3;
@@ -51,7 +49,7 @@ describe('gen iii', () => {
             const hp = 1;
             const expected = 0.00781;
             const ballSettings = balls['poke-ball']['settings']['generation-ii'];
-            const actual = calculations.calculateGenIICaptureProbability(captureRate, ballSettings, pokemonHpStat, pokemonLevel, hp, statusAilment, null);
+            const actual = calculations.calculateGenIIICaptureProbability(captureRate, ballSettings, pokemonHpStat, pokemonLevel, hp, statusAilment, null);
             expect(actual).toBeCloseTo(expected);
         });
 
@@ -63,10 +61,10 @@ describe('gen iii', () => {
             const hp = 1;
             const expected = 0.00781;
             const ballSettings = balls['poke-ball']['settings']['generation-ii'];
-            const actual = calculations.calculateGenIICaptureProbability(captureRate, ballSettings, pokemonHpStat, pokemonLevel, hp, statusAilment, null);
+            const actual = calculations.calculateGenIIICaptureProbability(captureRate, ballSettings, pokemonHpStat, pokemonLevel, hp, statusAilment, null);
             expect(actual).toBeCloseTo(expected);
-        })
-    })
+        });
+    });
     describe('with hp changed', () => {
         test('to half', () => {
             testBulbasaurAgainstThisBall(balls['poke-ball']['settings']['generation-ii'], 0.12109, 0.5);
@@ -86,21 +84,20 @@ describe('gen iii', () => {
         });
 
         test('ultra ball matches dragonflycave intended value', () => {
-            // the actual dragonfly cave value is 0.1233 but I'm not convinced that's correct, 
+            // the actual dragonfly cave value is 0.1233 but I'm not convinced that's correct,
             // and this is such a small error that I'm o with accepting that for now
             testBulbasaurAgainstThisBall(balls['ultra-ball']['settings']['generation-iii'], 0.1176);
         });
 
 
         describe('callbacks are called with correct values', () => {
-
-            test("Pokeball", () => {
+            test('Pokeball', () => {
                 // bulbasaur
                 const captureRate = 45;
 
                 // pokeball
                 const ballSettings = {
-                    "ballMod": 1,
+                    'ballMod': 1,
                 };
 
                 const pokemonHpStat = 45;
@@ -132,7 +129,7 @@ describe('gen iii', () => {
                     },
                     setA(value) {
                         this.a = value;
-                    }
+                    },
                 };
                 const actual = calculations.calculateGenIIICaptureProbability(captureRate, ballSettings, pokemonHpStat, pokemonLevel, hp, statusAilment, callbacks);
                 expect(callbacks.ailment).toBe(1);
@@ -142,13 +139,13 @@ describe('gen iii', () => {
                 expect(callbacks.a).toBe(15);
             });
 
-            test("Greatball", () => {
+            test('Greatball', () => {
                 // bulbasaur
                 const captureRate = 45;
 
                 // pokeball
                 const ballSettings = {
-                    "ballMod": 1.5,
+                    'ballMod': 1.5,
                 };
 
                 const pokemonHpStat = 45;
@@ -180,7 +177,7 @@ describe('gen iii', () => {
                     },
                     setA(value) {
                         this.a = value;
-                    }
+                    },
                 };
                 const actual = calculations.calculateGenIIICaptureProbability(captureRate, ballSettings, pokemonHpStat, pokemonLevel, hp, statusAilment, callbacks);
                 expect(callbacks.ailment).toBe(1);
@@ -188,7 +185,7 @@ describe('gen iii', () => {
                 expect(callbacks.hpCurrent).toBeCloseTo(200);
                 expect(callbacks.ballModifier).toBe(1.5);
                 expect(callbacks.a).toBe(22.5);
-            })
+            });
         });
     });
 });

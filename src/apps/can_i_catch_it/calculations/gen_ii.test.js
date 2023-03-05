@@ -1,6 +1,5 @@
-const { experimental_extendTheme } = require("@mui/material");
-const calculations = require("./calculations");
-const balls = require('./data/balls.json');
+const calculations = require('./gen_ii.js');
+const balls = require('./../data/balls.json');
 
 function testBulbasaurAgainstThisBall(ballSettings, expected, hp = 1) {
     // bulbasaur
@@ -36,8 +35,8 @@ describe('gen ii', () => {
             const ballSettings = balls['poke-ball']['settings']['generation-ii'];
             const actual = calculations.calculateGenIICaptureProbability(captureRate, ballSettings, pokemonHpStat, pokemonLevel, hp, statusAilment, null);
             expect(actual).toBeCloseTo(expected);
-        })
-    })
+        });
+    });
     describe('with hp changed', () => {
         test('to half', () => {
             testBulbasaurAgainstThisBall(balls['poke-ball']['settings']['generation-ii'], 0.12109, 0.5);
@@ -66,7 +65,7 @@ describe('gen ii', () => {
 
             // pokeball
             const ballSettings = {
-                "ballMod": 1,
+                'ballMod': 1,
             };
 
             const pokemonHpStat = 45;
@@ -103,7 +102,7 @@ describe('gen ii', () => {
                 },
                 setA(value) {
                     this.a = value;
-                }
+                },
             };
             const actual = calculations.calculateGenIICaptureProbability(captureRate, ballSettings, pokemonHpStat, pokemonLevel, hp, statusAilment, callbacks);
             expect(callbacks.ailment).toBe(0);
