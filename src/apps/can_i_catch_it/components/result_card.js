@@ -4,7 +4,7 @@ import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
 import { Typography, Tooltip, CircularProgress } from '@mui/material';
 import HPSlider from './hp_slider';
-import InputSlider from './level_slider';
+import InputSlider from './input_slider';
 import CONFIGURATION from '../config.js';
 import BallOptions from './ball_options';
 import { styled } from '@mui/material/styles';

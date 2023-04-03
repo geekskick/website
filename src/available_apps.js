@@ -1,5 +1,5 @@
 import CanICatchItApp from './apps/can_i_catch_it/app';
-import NathanEats from './apps/nathan_eats/app';
+import Creatures from './apps/creatures/app';
 import About from './apps/about/app';
 import CatchingPokemonIcon from '@mui/icons-material/CatchingPokemon';
 import InfoIcon from '@mui/icons-material/Info';
@@ -16,12 +16,12 @@ export default class AppFactory {
                 return <CanICatchItApp info={infoHandler} error={errorHandler} />;
             },
         },
-        'Nathan Eats ...': {
+        'Creatures': {
             icon: () => {
                 return <PetsIcon />;
             },
             app: (infoHandler, errorHandler) => {
-                return <NathanEats info={infoHandler} error={errorHandler} />;
+                return <Creatures info={infoHandler} error={errorHandler} />;
             },
         },
         'About': {
