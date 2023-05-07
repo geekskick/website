@@ -5,6 +5,8 @@ import CatchingPokemonIcon from '@mui/icons-material/CatchingPokemon';
 import InfoIcon from '@mui/icons-material/Info';
 import PetsIcon from '@mui/icons-material/Pets';
 import React from 'react';
+import DirectionsCarIcon from '@mui/icons-material/DirectionsCar';
+import RoadTrip from './apps/roadmap/app';
 
 export default class AppFactory {
     static _apps = {
@@ -22,6 +24,14 @@ export default class AppFactory {
             },
             app: (infoHandler, errorHandler) => {
                 return <Creatures info={infoHandler} error={errorHandler} />;
+            },
+        },
+        'Road Trip': {
+            icon: () => {
+                return <DirectionsCarIcon />;
+            },
+            app: (infoHandler, errorHandler) => {
+                return <RoadTrip info={infoHandler} error={errorHandler} />;
             },
         },
         'About': {

@@ -11,6 +11,7 @@
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
     "jest-html-reporter": "^3.7.0",
+    "leaflet": "^1.9.3",
     "lodash": "^4.17.21",
     "notistack": "^2.0.8",
     "pokedex-promise-v2": "4.0.0",
@@ -19,6 +20,7 @@
     "react-dropdown": "*",
     "react-gauge-chart": "*",
     "react-katex": "^3.0.1",
+    "react-leaflet": "^4.2.1",
     "react-notifications": "*",
     "react-scripts": "5.0.1",
     "web-vitals": "^2.1.4"
