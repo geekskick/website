@@ -34,7 +34,7 @@ export default function Map(props) {
         scrollWheelZoom={true}
         style={{
             width: '100%',
-            height: '80vh',
+            height: '70vh',
             zIndex: '1',
         }}
     >
