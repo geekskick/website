@@ -8,6 +8,7 @@ import Checkbox from '@mui/material/Checkbox';
 import CONFIG from '../../config';
 import PropTypes from 'prop-types';
 
+
 About.propTypes = {
     error: PropTypes.func.isRequired,
 };
