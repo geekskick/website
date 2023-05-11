@@ -1,11 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { MapContainer, TileLayer, Marker } from 'react-leaflet';
+import { MapContainer, TileLayer } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
-import markerIconGrey from './dist/grey-marker-icon.png';
-import markerIconGreen from './dist/green-marker-icon.png';
-
-import { Icon } from 'leaflet';
+import MapIcon from './map_icon';
 
 Map.propTypes = {
     locations: PropTypes.array.isRequired,
@@ -15,17 +12,6 @@ Map.propTypes = {
 };
 
 export default function Map(props) {
-    const GREEN_ICON = new Icon({
-        iconSize: [25, 41], iconAnchor: [12, 41],
-        iconUrl:
-            markerIconGreen,
-    });
-    const GREY_ICON = new Icon({
-        iconSize: [25, 41], iconAnchor: [12, 41],
-        iconUrl:
-            markerIconGrey,
-    });
-
     return <MapContainer
         className="map"
         center={props.center}
@@ -44,15 +30,13 @@ export default function Map(props) {
         />
         {
             props.locations.map((loc) => {
-                return <Marker icon={loc.idx == props.active ? GREEN_ICON : GREY_ICON}
+                return <MapIcon
                     key={loc.idx}
-                    position={[loc.data.lat, loc.data.lon]}
-                    eventHandlers={{
-                        click: () => {
-                            props.onSelect(loc.idx);
-                        },
-                    }}
-                />;
+                    idx={loc.idx}
+                    active={props.active}
+                    lat={loc.data.lat}
+                    lon={loc.data.lon}
+                    onSelect={props.onSelect} />;
             })
         }
     </MapContainer>;
