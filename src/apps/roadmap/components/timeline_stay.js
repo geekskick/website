@@ -8,6 +8,10 @@ import TimelineDot from '@mui/lab/TimelineDot';
 import Typography from '@mui/material/Typography';
 import 'datejs';
 import StayIcon from './stay_icon';
+import { createTheme, responsiveFontSizes, ThemeProvider } from '@mui/material/styles';
+
+let theme = createTheme();
+theme = responsiveFontSizes(theme);
 
 TimelineStay.propTypes = {
     activeCallback: PropTypes.func.isRequired,
@@ -29,12 +33,14 @@ export default function TimelineStay(props) {
             <TimelineConnector />
         </TimelineSeparator>
         <TimelineContent onClick={() => props.activeCallback(props.idx)}>
-            <Typography variant="h5">{props.name}</Typography>
-            {props.dates.map((date, idx) => {
-                const d = Date.parse(date).toString('dddd dS MMMM');
-                return <Typography key={idx}>{d}</Typography>;
-            })}
-            <Typography hidden={!active}>Highlighted in Map tab</Typography>
+            <ThemeProvider theme={theme}>
+                <Typography variant="h5">{props.name}</Typography>
+                {props.dates.map((date, idx) => {
+                    const d = Date.parse(date).toString('dddd dS MMMM');
+                    return <Typography key={idx}>{d}</Typography>;
+                })}
+                <Typography hidden={!active}>Highlighted in Map tab</Typography>
+            </ThemeProvider>
         </TimelineContent>
     </TimelineItem>);
 }
