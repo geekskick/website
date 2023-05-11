@@ -11,11 +11,10 @@ Map.propTypes = {
     locations: PropTypes.array.isRequired,
     active: PropTypes.number.isRequired,
     onSelect: PropTypes.func.isRequired,
+    center: PropTypes.arrayOf(PropTypes.number),
 };
 
-
 export default function Map(props) {
-    console.log(`map ${props}`);
     const GREEN_ICON = new Icon({
         iconSize: [25, 41], iconAnchor: [12, 41],
         iconUrl:
@@ -29,7 +28,7 @@ export default function Map(props) {
 
     return <MapContainer
         className="map"
-        center={[42.910092820981276, -122.14088068662235]}
+        center={props.center}
         zoom={5}
         scrollWheelZoom={true}
         style={{

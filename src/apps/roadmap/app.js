@@ -1,4 +1,3 @@
-/* eslint-disable indent */
 import React from 'react';
 import PropTypes from 'prop-types';
 import Map from './map';
@@ -10,24 +9,13 @@ import TimelineConnector from '@mui/lab/TimelineConnector';
 import TimelineContent from '@mui/lab/TimelineContent';
 import TimelineOppositeContent from '@mui/lab/TimelineOppositeContent';
 import TimelineDot from '@mui/lab/TimelineDot';
-// import FastfoodIcon from '@mui/icons-material/Fastfood';
-// import LaptopMacIcon from '@mui/icons-material/LaptopMac';
-// import HotelIcon from '@mui/icons-material/Hotel';
-// import RepeatIcon from '@mui/icons-material/Repeat';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
-// import { Stack } from '@mui/material';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import 'datejs';
 
-RoadTrip.propTypes = {
-    info: PropTypes.func.isRequired,
-    error: PropTypes.func.isRequired,
-};
-
 function customizedTimeline(items, activeidx, activeCallback) {
-    console.log(activeidx);
     return (
         <Timeline position='left'>
             {
@@ -35,10 +23,8 @@ function customizedTimeline(items, activeidx, activeCallback) {
                     return (<TimelineItem key={idx} >
                         <TimelineOppositeContent onClick={() => activeCallback(idx)}>
                             {item.dates.map((date, idx) => {
-                                console.log(date);
-                                const d = Date.parse(date);
-                                const d2 = d.toString('dddd dS MMMM');
-                                return <Typography key={idx}>{d2}</Typography>;
+                                const d = Date.parse(date).toString('dddd dS MMMM');
+                                return <Typography key={idx}>{d}</Typography>;
                             })}
                         </TimelineOppositeContent>
                         <TimelineSeparator>
@@ -84,29 +70,40 @@ TabPanel.propTypes = {
 };
 
 function TabPanel(props) {
-    const { children, value, index, ...other } = props;
-    console.log(`Tabpanel[${index}] value `, value);
+    const hidden = props.value !== props.index;
     return (
-        <div
-            role="tabpanel"
-            hidden={value !== index}
-            id={`simple-tabpanel-${index}`}
-            aria-labelledby={`simple-tab-${index}`}
-            {...other}
-        >
-            {value === index && (
+        <div hidden={hidden}>
+            {!hidden && (
                 <Box sx={{ p: 3 }}>
-                    {children}
+                    {props.children}
                 </Box>
             )}
         </div>
     );
 }
+
+
+RoadTrip.propTypes = {
+    info: PropTypes.func.isRequired,
+    error: PropTypes.func.isRequired,
+};
+
+function calculateCenter(lats, lons) {
+    const sortedLats = lats.toSorted();
+    const sortedLons = lons.toSorted();
+    const midLat = ((sortedLats.at(-1) - sortedLats.at(0)) / 2) + sortedLats.at(0);
+    const midLon = ((sortedLons.at(-1) - sortedLons.at(0)) / 2) + sortedLons.at(0);
+    return [midLat, midLon];
+}
+
 export default function RoadTrip(props) {
-    console.log('RoadTrip');
     const [active, setActive] = React.useState(0);
     const [value, setValue] = React.useState(0);
-    console.log('Value ', value);
+    const center = React.useRef(calculateCenter(LOCATIONS.map((loc) => {
+        return loc.lat;
+    }), LOCATIONS.map((loc) => {
+        return loc.lon;
+    })));
     return <Box sx={{ width: '100%' }}>
         <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
             <Tabs value={value}
@@ -124,20 +121,12 @@ export default function RoadTrip(props) {
             })}
         </TabPanel>
         <TabPanel value={value} index={1}>
-            < Map locations={LOCATIONS} active={active} onSelect={(idx) => {
-                setActive(idx);
-            }} />
+            < Map center={center.current}
+                locations={LOCATIONS}
+                active={active}
+                onSelect={(idx) => {
+                    setActive(idx);
+                }} />
         </TabPanel>
     </Box>;
-    /* return (
-        <Stack direction="row"><Box sx={{
-            minWidth: '300px',
-        }}>{
-                customizedTimeline(LOCATIONS, active, (idx) => {
-                    setActive(idx);
-                })} </Box>
-            < Map locations={LOCATIONS} active={active} onSelect={(idx) => {
-                setActive(idx);
-            }} />
-        </Stack>);*/
 }
