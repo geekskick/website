@@ -43,13 +43,13 @@ export default function Map(props) {
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
         {
-            props.locations.map((loc, idx) => {
-                return <Marker icon={idx == props.active ? GREEN_ICON : GREY_ICON}
-                    key={idx}
-                    position={[loc.lat, loc.lon]}
+            props.locations.map((loc) => {
+                return <Marker icon={loc.idx == props.active ? GREEN_ICON : GREY_ICON}
+                    key={loc.idx}
+                    position={[loc.data.lat, loc.data.lon]}
                     eventHandlers={{
                         click: () => {
-                            props.onSelect(idx);
+                            props.onSelect(loc.idx);
                         },
                     }}
                 />;
