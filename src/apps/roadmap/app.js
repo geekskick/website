@@ -98,10 +98,10 @@ RoadTrip.propTypes = {
 };
 
 function calculateCenter(lats, lons) {
-    const sortedLats = lats.toSorted();
-    const sortedLons = lons.toSorted();
-    const midLat = ((sortedLats.at(-1) - sortedLats.at(0)) / 2) + sortedLats.at(0);
-    const midLon = ((sortedLons.at(-1) - sortedLons.at(0)) / 2) + sortedLons.at(0);
+    lats.sort();
+    lons.sort();
+    const midLat = ((lats.at(-1) - lats.at(0)) / 2) + lats.at(0);
+    const midLon = ((lons.at(-1) - lons.at(0)) / 2) + lons.at(0);
     return [midLat, midLon];
 }
 
@@ -109,11 +109,15 @@ export default function RoadTrip(props) {
     const [active, setActive] = React.useState(0);
     const [value, setValue] = React.useState(0);
     console.log('Active is ', active);
-    const center = React.useRef(calculateCenter(ITINERARY.filter((item) => item.type === 'stay').map((loc) => {
+    const stays = React.useRef(ITINERARY.filter((item) => item.type === 'stay'));
+    const lats = React.useRef(stays.current.map((loc) => {
         return loc.lat;
-    }), ITINERARY.filter((item) => item.type === 'stay').map((loc) => {
+    }));
+    const lons = React.useRef(stays.current.map((loc) => {
         return loc.lon;
-    })));
+    }));
+    console.log(`Lats = `, lats, ' Lons = ', lons);
+    const center = React.useRef(calculateCenter(lats.current, lons.current));
     return <Box sx={{ width: '100%' }}>
         <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
             <Tabs value={value}
