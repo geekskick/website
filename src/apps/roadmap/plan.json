@@ -1,0 +1,140 @@
+{
+    "plan": [
+        {
+            "type": "travel",
+            "time": "11hr",
+            "method": "Flight"
+        },
+        {
+            "type": "travel",
+            "time": "1hr 30mins",
+            "method": "Drive"
+        },
+        {
+            "type": "stay",
+            "name": "Niagara Falls",
+            "lat": 43.082957218782624,
+            "lon": -79.07410925895593,
+            "dates": [
+                "11-oct-23"
+            ],
+            "location": "city"
+        },
+        {
+            "type": "travel",
+            "time": "1hr 30mins",
+            "method": "Drive"
+        },
+        {
+            "type": "stay",
+            "name": "Toronto",
+            "lat": 43.63862160908512,
+            "lon": -79.50016327269437,
+            "dates": [
+                "12-oct-23",
+                "13-oct-23",
+                "14-oct-23"
+            ],
+            "location": "city"
+        },
+        {
+            "type": "travel",
+            "time": "10hr",
+            "method": "Flight"
+        },
+        {
+            "type": "travel",
+            "time": "1hr 30mins",
+            "method": "Drive"
+        },
+        {
+            "type": "travel",
+            "time": "3hr 30mins",
+            "method": "Drive"
+        },
+        {
+            "type": "stay",
+            "name": "Jasper",
+            "lat": 46.75073479266735,
+            "lon": -121.81330747669331,
+            "dates": [
+                "15-oct-23",
+                "16-oct-23"
+            ],
+            "location": "city"
+        },
+        {
+            "type": "travel",
+            "time": "4hr 35mins",
+            "method": "Drive"
+        },
+        {
+            "type": "stay",
+            "name": "Kamloops",
+            "lat": 45.500773,
+            "lon": -122.677754,
+            "dates": [
+                "17-oct-23"
+            ],
+            "location": "city"
+        },
+        {
+            "type": "travel",
+            "time": "4hr",
+            "method": "Drive"
+        },
+        {
+            "type": "stay",
+            "name": "Whistler",
+            "lat": 50.126181470595476,
+            "lon": -122.96022728043106,
+            "dates": [
+                "18-oct-23",
+                "19-oct-23"
+            ],
+            "location": "city"
+        },
+        {
+            "type": "travel",
+            "time": "1hr 30mins",
+            "method": "Drive"
+        },
+        {
+            "type": "stay",
+            "name": "Vancouver",
+            "lat": 49.29401285048678,
+            "lon": -123.10574893358603,
+            "dates": [
+                "20-oct-23",
+                "21-oct-23"
+            ],
+            "location": "city"
+        },
+        {
+            "type": "travel",
+            "time": "1hr 35mins",
+            "method": "Boat"
+        },
+        {
+            "type": "stay",
+            "name": "Victoria",
+            "lat": 48.45290304177396,
+            "lon": -123.36439740494878,
+            "dates": [
+                "22-oct-23",
+                "23-oct-23"
+            ],
+            "location": "city"
+        },
+        {
+            "type": "travel",
+            "time": "30 mins",
+            "method": "Flight"
+        },
+        {
+            "type": "travel",
+            "time": "12hrs",
+            "method": "Flight"
+        }
+    ]
+}
