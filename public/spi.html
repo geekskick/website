@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<head>
+  <script
+    src="https://cdnjs.cloudflare.com/ajax/libs/wavedrom/3.1.0/skins/default.js"
+    type="text/javascript"
+  ></script>
+  <script
+    src="https://cdnjs.cloudflare.com/ajax/libs/wavedrom/3.1.0/wavedrom.min.js"
+    type="text/javascript"
+  ></script>
+  <script
+    src="https://cdnjs.cloudflare.com/ajax/libs/svg.js/3.2.4/svg.min.js"
+    integrity="sha512-ovlWyhrYXr3HEkGJI5YPXIFYIbHEKs2yfemKVVIIQe9U74tXyTuVdzMlvZlw/0X5lnIDRgtVlckrkeuCrDpq4Q=="
+    crossorigin="anonymous"
+    referrerpolicy="no-referrer"
+  ></script>
+  <script>
+    var tick = 0;
+    const MAX_TICKS = 10;
+    const MIN_ACTIVE_TICK = 1;
+    const MAX_ACTIVE_TICK = 9;
+    function setCharAt(str, index, chr) {
+      if (index > str.length - 1) return str;
+      return str.substring(0, index) + chr + str.substring(index + 1);
+    }
+    function generateJson(csState, mosiData, misoData, tick) {
+      tick += 1;
+      const dots = ".".repeat(6);
+      const json = {
+        signal: [
+          { name: "SCLK", wave: "x0P" + dots + "H" },
+          { name: "CS", wave: "x" + csState + dots + ".x" },
+          { name: "MOSI", wave: "x" + mosiData + "x" },
+          { name: "MISO", wave: "x" + misoData + "x" },
+          {},
+        ],
+        foot: { tock: 0 },
+      };
+      const alpha = "ABCDEFGHIJKLMNOP";
+      json.edge = [];
+      for (var i = 0; i < json.signal.length; i++) {
+        json.signal[i].node = setCharAt(".." + dots + ".", 0, alpha[i]);
+        json.edge.push(alpha[i] + "-" + alpha[i + 1]);
+      }
+      json.edge.pop();
+      json.edge[json.edge.length - 1] += " Now";
+
+      return json;
+    }
+
+    function validInput(s) {
+      return s.match(/[01]{8}/);
+    }
+
+    function allInputsValid() {
+      if (!validInput(document.getElementById("mosi").value)) {
+        console.log("Mosi input invalid");
+        document.getElementById("mosi").classList.add("error");
+        return false;
+      } else {
+        document.getElementById("mosi").classList.remove("error");
+      }
+      if (!validInput(document.getElementById("miso").value)) {
+        console.log("Miso invalid");
+        document.getElementById("miso").classList.add("error");
+        return false;
+      }
+      document.getElementById("miso").classList.remove("error");
+      return true;
+    }
+
+    function getBinStringFromId(id) {
+      let s = document.getElementById(id).value;
+      if (s.length > 8) {
+        s = s.substring(0, 8);
+      } else if (s.length < 8) {
+        s = s.padStart(8, "0");
+      }
+      return s;
+    }
+
+    function doit() {
+      if (!allInputsValid()) {
+        return;
+      }
+      const s = document.createElement("script");
+      s.setAttribute("type", "wavedrom");
+      if (tick == MAX_TICKS) {
+        tick = 0;
+      }
+
+      s.innerHTML = JSON.stringify(
+        generateJson(
+          "0",
+          getBinStringFromId("mosi"),
+          getBinStringFromId("miso"),
+          0
+        )
+      );
+      document.getElementById("mosi").value = getBinStringFromId("mosi");
+      document.getElementById("miso").value = getBinStringFromId("miso");
+      document.getElementById("waveDisplay").innerHTML = "";
+      document.getElementById("waveDisplay").appendChild(s);
+
+      WaveDrom.ProcessAll();
+
+      const j = SVG("#svgcontent_0");
+
+      j.findOne("#wavearcs_0").each(function (i, childen) {
+        this.x(0);
+      }, true);
+    }
+
+    function reset() {
+      tick = 0;
+      document.getElementById("mosi").disabled = false;
+      document.getElementById("miso").disabled = false;
+      document.getElementById("tick").disabled = false;
+      document.getElementById("waveDisplay").innerHTML = "";
+      document.getElementById("masterInput").innerHTML = "";
+      document.getElementById("slaveInput").innerHTML = "";
+      document.getElementById("mosi").value = "10100101";
+      document.getElementById("miso").value = "01011010";
+      doit();
+    }
+
+    function moveBit(now, from, to) {
+      const letter = 7 - (now - 1);
+      const slaveIn = document.getElementById(from).value[letter];
+      document.getElementById(to).innerHTML =
+        document.getElementById(to).innerHTML + slaveIn;
+    }
+
+    function animateTick() {
+      if (tick == 0) {
+        if (!allInputsValid()) {
+          return;
+        }
+        document.getElementById("miso").disabled = true;
+        document.getElementById("mosi").disabled = true;
+        doit();
+      }
+      document.getElementById("tick").disabled = true;
+      const now = tick++;
+      if (tick == MAX_TICKS) {
+        return;
+      }
+
+      var time = new SVG.Timeline();
+      time.on("finished", (o) => {
+        if (now < MAX_ACTIVE_TICK - 1) {
+          document.getElementById("tick").disabled = false;
+        }
+        if (now >= MIN_ACTIVE_TICK && now <= MAX_ACTIVE_TICK) {
+          moveBit(now, "miso", "masterInput");
+          moveBit(now, "mosi", "slaveInput");
+        }
+      });
+      const j = SVG("#svgcontent_0");
+
+      j.findOne("#wavearcs_0").each(function (i, childen) {
+        this.timeline(time);
+        const speed = parseInt(document.getElementById("speed").value);
+        this.animate(speed, 100, "now").x(this.x() + 40);
+      }, true);
+    }
+
+    function updateLabel() {
+      document.getElementById("speedLabel").innerHTML =
+        document.getElementById("speed").value;
+    }
+  </script>
+  <style>
+    .error {
+      background-color: red;
+    }
+    .mainDisplay {
+      display: flex;
+      flex-direction: row;
+      width: 100%;
+      justify-content: center;
+    }
+    @media (max-width: 1050px) {
+      .mainDisplay {
+        flex-direction: column;
+      }
+    }
+    .deviceControls {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    .title {
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .userInput {
+      display: flex;
+      justify-content: stretch;
+    }
+    #waveDisplay {
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .controls {
+      margin-left: auto;
+      margin-right: auto;
+      margin-top: 1em;
+      margin-bottom: 1em;
+    }
+  </style>
+</head>
+<body onload="doit()" style="display: flex; flex-direction: column">
+  <div class="title">
+    <h1>SPI Simulator</h1>
+  </div>
+
+  <div class="mainDisplay">
+    <div class="deviceControls" id="master">
+      <div class="userInput">
+        <label for="#mosi">Master MOSI Buffer</label>
+        <input
+          id="mosi"
+          type="text"
+          pattern="[0-9]{8}"
+          placeholder="MOSI"
+          maxlength="8"
+          minlength="8"
+          value="10101010"
+        />
+      </div>
+      <div
+        style="
+          display: flex;
+          justify-content: space-around;
+          align-items: baseline;
+        "
+      >
+        <p>Master Input:</p>
+        <label id="masterInput"></label>
+      </div>
+    </div>
+    <div id="waveDisplay"></div>
+    <div id="slave" class="deviceControls">
+      <div style="display: flex; justify-content: stretch">
+        <label for="#miso">Slave MISO Buffer</label>
+        <input
+          id="miso"
+          type="text"
+          placeholder="MISO"
+          maxlength="8"
+          minlength="8"
+          value="01010101"
+        />
+      </div>
+      <div
+        style="
+          display: flex;
+          justify-content: space-around;
+          align-items: baseline;
+        "
+      >
+        <p>Slave Input:</p>
+        <label id="slaveInput"></label>
+      </div>
+    </div>
+  </div>
+  <div class="controls">
+    <h2>Animation Controls</h2>
+    <button onclick="animateTick()" id="tick">Tick</button>
+    <button onclick="reset()">Reset</button>
+    <div>
+      Speed:
+      <label for="#speed" id="speedLabel">500</label>
+      <input
+        type="range"
+        min="100"
+        max="1000"
+        value="500"
+        id="speed"
+        onchange="updateLabel()"
+      />
+    </div>
+  </div>
+  <footer>
+    Made with <a href="https://wavedrom.com/tutorial.html">WaveDrom</a> and
+    <a href="https://svgjs.dev/docs/3.0/referencing-creating-elements/"
+      >SVG.js</a
+    >
+  </footer>
+</body>
