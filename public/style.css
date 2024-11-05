@@ -1,0 +1,100 @@
+@keyframes pulse {
+  0% {
+    font-size: medium;
+    font-weight: normal;
+  }
+
+  50% {
+    font-size: large;
+    font-weight: bold;
+  }
+
+  100% {
+    font-size: medium;
+    font-weight: bold;
+  }
+
+}
+
+.controlsRow{
+  display: flex;
+  flex-direction: row;
+  gap:1em;
+  width:100%;
+  justify-content: space-evenly;
+  flex-wrap: wrap;
+}
+
+.cards{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+}
+
+.card-body{
+  display:flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.inputText {
+  display: flex;
+  justify-content: space-around;
+  align-items: baseline;
+}
+
+body {
+  margin: 1em;
+  display: flex;
+  flex-direction: column;
+  gap: 1em;
+}
+
+.error {
+  background-color: red;
+}
+
+.mainDisplay {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  justify-content: center;
+  align-items: center;
+  gap: 2em;
+}
+
+
+.deviceControls {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap:10px;
+  width: fit-content;
+}
+
+.text {
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+}
+
+.userInput {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  flex-direction: row;
+  gap:1em;
+}
+
+#waveDisplay {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+
+
+.waves {
+  margin-left: auto;
+  margin-right: auto;
+}
